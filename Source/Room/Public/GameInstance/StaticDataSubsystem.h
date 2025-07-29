@@ -14,7 +14,7 @@ class ROOM_API UStaticDataSubsystem : public UGameInstanceSubsystem
 
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
+	
  
     UPROPERTY(EditDefaultsOnly, Category = "DataTable")
     TObjectPtr<UDataTable> ItemDataTable;
@@ -36,13 +36,7 @@ public:
     void LoadBulletData();
     void LoadEnemyData();
     void LoadMapSpawnData();
-	//TODO: 데이터테이블을 맵으로 변환 후 언로드
-	void UnloadItemData();
-	void ULoadInventoryData();
-	void ULoadWeaponData();
-	void ULoadBulletData();
-	void ULoadEnemyData();
-	void ULoadMapSpawnData();
+
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
     TMap<int32, FItemData> ItemDataMap;
@@ -65,8 +59,9 @@ public:
     const FEnemyData* GetEnemyData(int32 EnemyID) const;
     const FMapSpawnData* GetMapSpawnData(FName MapName) const;
 
-    
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	virtual void Deinitialize() override;
+	
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")

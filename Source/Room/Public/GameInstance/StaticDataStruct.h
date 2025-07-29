@@ -40,7 +40,7 @@ struct FItemData : public FTableRowBase
     TSoftClassPtr<AActor> EffectClass;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    int32 MaxSlotSize;
+    int32 MaxStack;
 };
 
 USTRUCT(BlueprintType)
@@ -49,10 +49,7 @@ struct FInventoryData : public FTableRowBase
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    TArray<int32> ItemList;
-    
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    int32 ItemCount;
+    TMap<int32, int32> ItemList; //ItemID, count
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
     int32 MaxSlotSize;
