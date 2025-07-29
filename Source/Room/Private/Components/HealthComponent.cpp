@@ -1,6 +1,4 @@
 #include "Components/HealthComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/Character.h"
 
 UHealthComponent::UHealthComponent()
 {
@@ -18,7 +16,7 @@ void UHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
-
+	
 	if (AActor* Owner = GetOwner())
 	{
 		Owner->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
@@ -27,8 +25,6 @@ void UHealthComponent::BeginPlay()
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (DamagedActor != CharacterRef) return;
-
 	SetCurrentHealth(CurrentHealth - Damage);
 }
 
