@@ -68,6 +68,9 @@ DerivedDataCache/*
 *.VC.opendb
 *.VC.db
 
+# Rider
+.idea/*
+
 # Local Plugins
 **/Plugins/**/Intermediate/*
 **/Plugins/**/Binaries/*
