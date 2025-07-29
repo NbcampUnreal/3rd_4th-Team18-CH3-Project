@@ -16,17 +16,13 @@ class ROOM_API UHealthComponent : public UActorComponent
 public:	
 	UHealthComponent();
 
-	void SetDestroyDelay(float NewDelay);
 	void SetMaxHealth(float NewMaxHealth);
-
-	float GetDestroyDelay()const;
-	float GetMaxHealth()const;
+	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
 
 	DeathDelegate OnDead;
 	
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY()
 	TObjectPtr<ACharacter> CharacterRef = nullptr;

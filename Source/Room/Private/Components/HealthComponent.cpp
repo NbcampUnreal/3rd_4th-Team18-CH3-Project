@@ -4,29 +4,13 @@
 
 UHealthComponent::UHealthComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
-}
-
-void UHealthComponent::SetDestroyDelay(float NewDelay)
-{
-	if (NewDelay<=0.0f) NewDelay = 1.0f;
-	DestroyDelay = NewDelay;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UHealthComponent::SetMaxHealth(float NewMaxHealth)
 {
 	if (NewMaxHealth<=0.0f) NewMaxHealth = 1.0f;
 	MaxHealth = NewMaxHealth;
-}
-
-float UHealthComponent::GetDestroyDelay() const
-{
-	return DestroyDelay;	
-}
-
-float UHealthComponent::GetMaxHealth() const
-{
-	return MaxHealth;
 }
 
 void UHealthComponent::BeginPlay()
@@ -39,11 +23,6 @@ void UHealthComponent::BeginPlay()
 	{
 		Owner->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
 	}
-}
-
-void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
