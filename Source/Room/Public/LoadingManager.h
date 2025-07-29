@@ -1,9 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 #include "Engine/StreamableManager.h"
+#include "UObject/SoftObjectPtr.h"
 #include "LoadingManager.generated.h"
 
+DECLARE_DELEGATE(FOnAssetLoadComplete)
+
+UCLASS()
 class ROOM_API ULoadingManager : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
@@ -13,7 +18,7 @@ public:
     void RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& Assets, FOnAssetLoadComplete OnComplete);
 
     void RequestUnload(const TSoftObjectPtr<UObject>& Asset);
-    bool IsLoaded(const TSoftObjectPtr<UObject>& Asset) const;
+    bool IsLoaded(const TSoftObjectPtr<UObject>& Asset) const; 
 
 private:
     FStreamableManager StreamableManager;
