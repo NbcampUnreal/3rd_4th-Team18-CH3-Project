@@ -1,4 +1,4 @@
-#include "LoadingManager.h"
+#include "Core/LoadingManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingManager)
 
 void ULoadingManager::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
