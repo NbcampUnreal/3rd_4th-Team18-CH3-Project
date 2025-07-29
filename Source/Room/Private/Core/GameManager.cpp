@@ -1,7 +1,7 @@
 
 
 
-#include "GameManager.h"
+#include "Core/GameManager.h"
 
 #include "GameMapsSettings.h"
 #include "GameInstance/StaticDataSubsystem.h"
