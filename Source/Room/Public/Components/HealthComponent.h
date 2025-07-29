@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+DECLARE_DELEGATE(DeathDelegate)
+
 class ACharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,6 +21,8 @@ public:
 
 	float GetDestroyDelay()const;
 	float GetMaxHealth()const;
+
+	DeathDelegate OnDead;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -37,7 +41,5 @@ private:
 	UFUNCTION()
 	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 	void SetCurrentHealth(float NewHealth);
-	void OnDeath();
-
 
 };

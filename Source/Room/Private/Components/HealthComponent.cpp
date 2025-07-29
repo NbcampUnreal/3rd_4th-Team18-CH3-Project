@@ -32,12 +32,13 @@ float UHealthComponent::GetMaxHealth() const
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CharacterRef = Cast<ACharacter>(GetOwner());
-	if (!CharacterRef) return;
 	
 	CurrentHealth = MaxHealth;
-	CharacterRef->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
+
+	if (AActor* Owner = GetOwner())
+	{
+		Owner->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
+	}
 }
 
 void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -60,17 +61,7 @@ void UHealthComponent::SetCurrentHealth(float NewHealth)
 
 	if (CurrentHealth <= 0.0f)
 	{
-		OnDeath();
+		OnDead.Execute();
 	}
-}
-
-void UHealthComponent::OnDeath()
-{
-	if (!CharacterRef) return;
-	CharacterRef->GetController()->UnPossess();
-	CharacterRef->GetMesh()->SetSimulatePhysics(true);
-	CharacterRef->GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
-	CharacterRef->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Spectator"));
-	CharacterRef->SetLifeSpan(DestroyDelay);
 }
 
