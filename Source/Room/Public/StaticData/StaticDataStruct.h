@@ -6,9 +6,18 @@
 #include "BehaviorTree/BehaviorTree.h" 
 #include "StaticDataStruct.generated.h" 
 
+USTRUCT(BlueprintType)
+struct FStaticDataBase : public FTableRowBase
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
+    int32 ID; 
+
+};
 
 USTRUCT(BlueprintType)
-struct FStatData : public FTableRowBase
+struct FStatData : public FStaticDataBase
 {
     GENERATED_BODY()
 
@@ -23,12 +32,9 @@ struct FStatData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FItemData : public FTableRowBase
+struct FItemData : public FStaticDataBase
 {
     GENERATED_BODY()
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    int32 ItemID;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
     TSoftObjectPtr<UStaticMesh> Mesh;
@@ -44,10 +50,10 @@ struct FItemData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryData : public FTableRowBase
+struct FInventoryData : public FStaticDataBase
 {
     GENERATED_BODY()
-
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
     TMap<int32, int32> ItemList; //ItemID, count
     
@@ -57,12 +63,9 @@ struct FInventoryData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FBulletData : public FTableRowBase
+struct FBulletData : public FStaticDataBase
 {
     GENERATED_BODY()
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    int32 BulletID;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
     float Speed;
@@ -75,13 +78,10 @@ struct FBulletData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FWeaponData : public FTableRowBase
+struct FWeaponData : public FStaticDataBase
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    int32 WeaponID;
-    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
     float Damage;
 
@@ -100,12 +100,9 @@ struct FWeaponData : public FTableRowBase
 
 
 USTRUCT(BlueprintType)
-struct FEnemyData : public FTableRowBase
+struct FEnemyData : public FStaticDataBase
 {
     GENERATED_BODY()
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    int32 EnemyID;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
     FStatData Stat;
@@ -121,7 +118,7 @@ struct FEnemyData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FEnemySpawnData : public FTableRowBase
+struct FEnemySpawnData : public FStaticDataBase
 {
     GENERATED_BODY()
 
@@ -139,7 +136,7 @@ struct FEnemySpawnData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FItemSpawnData : public FTableRowBase
+struct FItemSpawnData : public FStaticDataBase
 {
     GENERATED_BODY()
 
@@ -157,12 +154,9 @@ struct FItemSpawnData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FMapSpawnData : public FTableRowBase
+struct FMapSpawnData : public FStaticDataBase
 {
     GENERATED_BODY()
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
-    FName MapName;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Map")
     TArray<FEnemySpawnData> EnemySpawns;
