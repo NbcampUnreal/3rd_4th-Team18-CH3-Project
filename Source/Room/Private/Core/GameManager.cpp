@@ -4,7 +4,7 @@
 #include "Core/GameManager.h"
 
 #include "GameMapsSettings.h"
-#include "GameInstance/StaticDataSubsystem.h"
+#include "Subsystem/StaticDataSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameManager)
