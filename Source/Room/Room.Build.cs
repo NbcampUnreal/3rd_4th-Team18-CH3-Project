@@ -8,7 +8,19 @@ public class Room : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
+			"AIModule",
+			"NavigationSystem",
+			"GameplayTasks",
+			"EngineSettings",
+			"GameplayTags",
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
