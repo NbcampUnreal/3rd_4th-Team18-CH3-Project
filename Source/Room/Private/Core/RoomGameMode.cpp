@@ -22,6 +22,12 @@ bool ARoomGameMode::IsLevelClear()
 	return false;
 }
 
+void ARoomGameMode::StartNewRoom()
+{
+	// 모든 캐릭터 베이스 가져와서 적 태그인것만 사용.
+	//RoomGameState->AliveEnemyCount =  
+}
+
 void ARoomGameMode::OnClearLevel()
 {
 	

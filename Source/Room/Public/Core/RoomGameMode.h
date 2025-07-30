@@ -25,6 +25,7 @@ public:
 	virtual void NotifyActorDead(AActor* DeadActor);
 	virtual void NotifyActorSpawn(AActor* SpawnedActor);
 	virtual bool IsLevelClear();
+	virtual void StartNewRoom();
 private:
 	virtual void OnClearLevel();
 
