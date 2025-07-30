@@ -16,7 +16,8 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
             }
         }
     }
-
+   
+    
     RegisterDataManager<FItemData>(TEXT("ItemDataTable"), [](const FItemData& Data) { return Data.ID; });
     RegisterDataManager<FInventoryData>(TEXT("InventoryDataTable"), [](const FInventoryData& Data) { return Data.ID; });
     RegisterDataManager<FWeaponData>(TEXT("WeaponDataTable"), [](const FWeaponData& Data) { return Data.ID; });

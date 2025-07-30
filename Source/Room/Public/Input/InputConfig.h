@@ -3,7 +3,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "InputConfig.generated.h"
-
+//캐릭터 입력 액션, 매핑컨텍스트 관리
 USTRUCT(BlueprintType)
 struct FInputConfig
 {

@@ -5,9 +5,9 @@
 #include "Engine/DataTable.h"
 #include "StaticData/StaticDataManager.h"
 #include "StaticDataSubsystem.generated.h"
-
-//로딩매니저에서 로드하여 사용
-
+/*데이터 테이블을 자동으로 로드하고 각 데이터 타입에 맞는 전용 데이터 매니저를
+생성 및 등록하여 정적 데이터를 쉽게 조회할 수 있도록 관리하는 시스템/
+로딩매니저에서 로드하여 사용*/
 UCLASS()
 class ROOM_API UStaticDataSubsystem : public UGameInstanceSubsystem
 {

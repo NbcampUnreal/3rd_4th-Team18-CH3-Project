@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-
+//데이터 테이블에서 구조체 데이터를 로드하고 키를 사용하여 데이터를 조회하는 매니저
 struct FDataManagerBase
 {
 	virtual ~FDataManagerBase() = default;
 	virtual void Load(const UDataTable* DataTable) = 0;
+	
 };
 
 template<typename TStruct>
