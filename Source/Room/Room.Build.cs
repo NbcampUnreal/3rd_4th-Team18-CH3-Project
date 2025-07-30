@@ -19,6 +19,7 @@ public class Room : ModuleRules
 			"NavigationSystem",
 			"GameplayTasks",
 			"EngineSettings",
+			"GameplayTags",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
