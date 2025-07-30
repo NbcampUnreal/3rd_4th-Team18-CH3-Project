@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Engine/DataTable.h"
 #include "StaticData/StaticDataManager.h"
 #include "StaticDataSubsystem.generated.h"
+
+//로딩매니저에서 로드하여 사용
 
 UCLASS()
 class ROOM_API UStaticDataSubsystem : public UGameInstanceSubsystem
