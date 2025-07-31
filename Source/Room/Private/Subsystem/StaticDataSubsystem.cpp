@@ -1,6 +1,7 @@
 #include "Room/Public/Subsystem/StaticDataSubsystem.h"
 #include "StaticData/StaticDataStruct.h"
 
+
 void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
@@ -16,18 +17,22 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
             }
         }
     }
-   
+
     
-    RegisterDataManager<FItemData>(TEXT("ItemDataTable"), [](const FItemData& Data) { return Data.ID; });
-    RegisterDataManager<FInventoryData>(TEXT("InventoryDataTable"), [](const FInventoryData& Data) { return Data.ID; });
-    RegisterDataManager<FWeaponData>(TEXT("WeaponDataTable"), [](const FWeaponData& Data) { return Data.ID; });
-    RegisterDataManager<FBulletData>(TEXT("BulletDataTable"), [](const FBulletData& Data) { return Data.ID; });
-    RegisterDataManager<FEnemyData>(TEXT("EnemyDataTable"), [](const FEnemyData& Data) { return Data.ID; });
-    RegisterDataManager<FMapSpawnData>(TEXT("MapSpawnDataTable"), [](const FMapSpawnData& Data) { return Data.ID; });
+    RegisterDataManager<FItemData>(GetDTName<FItemData>());
+    RegisterDataManager<FInventoryData>(GetDTName<FInventoryData>());
+    RegisterDataManager<FBulletData>(GetDTName<FBulletData>());
+    RegisterDataManager<FWeaponData>(GetDTName<FWeaponData>());
+    RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
+   
 }
 
 void UStaticDataSubsystem::Deinitialize()
 {
+    
     StaticDataManagers.Empty();
     Super::Deinitialize();
 }
+
+
+

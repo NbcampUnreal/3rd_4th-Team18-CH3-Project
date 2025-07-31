@@ -47,6 +47,9 @@ struct FItemData : public FStaticDataBase
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
     int32 MaxStack;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+    int32 ItemCount;
 };
 
 USTRUCT(BlueprintType)
@@ -55,11 +58,10 @@ struct FInventoryData : public FStaticDataBase
     GENERATED_BODY()
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    TMap<int32, int32> ItemList; //ItemID, count
+    TMap<int32, int32> ItemList; //ItemID, SlotIndex
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
     int32 MaxSlotSize;
-    //아이템 리스트 추가??
 };
 
 USTRUCT(BlueprintType)
