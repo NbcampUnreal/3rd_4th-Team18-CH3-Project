@@ -1,4 +1,9 @@
 #include "Subsystem/LoadingSubsystem.h"
+
+#include "Engine/AssetManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "StaticData/GameConfigData.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingSubsystem)
 
 void ULoadingSubsystem::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
@@ -143,4 +148,93 @@ void ULoadingSubsystem::GetOrLoadAsset(const TSoftObjectPtr<UObject>& Asset, FOn
     {
         OnReady.ExecuteIfBound(Asset.Get());
     }));
+}
+
+float ULoadingSubsystem::GetLoadingProgress() const
+{
+    if (ActiveHandles.Num() == 0)
+    {
+        return -1.0f;
+    }
+
+    float TotalProgress = 0.0f;
+    int32 HandleCount = 0;
+
+    for (const auto& Pair : ActiveHandles)
+    {
+        if (Pair.Value.IsValid())
+        {
+            TotalProgress += Pair.Value->GetProgress();
+            HandleCount++;
+        }
+        else TotalProgress += 1.f;
+    }
+
+    return TotalProgress / ActiveHandles.Num();
+}
+
+void ULoadingSubsystem::LoadLevelWithLoadingScreen(
+    const TSoftObjectPtr<UWorld>& TargetLevel,
+    const TArray<TSoftObjectPtr<UObject>>& ResourcesToLoad
+    )
+{
+    if (TargetLevel.ToSoftObjectPath().IsNull())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Target level is invalid."));
+        return;
+    }
+
+    PendingTargetLevel = TargetLevel;
+    PendingResources = ResourcesToLoad;
+
+    // 1. GameConfig에서 로딩 레벨 경로 가져오기
+    auto GameConfig = GetDefault<UGameConfigData>();
+    if (!GameConfig || GameConfig->LoadingLevel.ToSoftObjectPath().IsNull())
+    {
+        UE_LOG(LogTemp, Error, TEXT("LoadingLevel not set in GameConfigData."));
+        return;
+    }
+
+    FString LoadingMapPath = GameConfig->LoadingLevel.ToSoftObjectPath().GetLongPackageName();
+
+    // 2. 로딩 레벨로 전환
+    UGameplayStatics::OpenLevel(GetWorld(), FName(*LoadingMapPath));
+
+}
+
+void ULoadingSubsystem::StartLoadingAssets()
+{
+    ActiveHandles.Empty();
+
+    FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+
+    // 4. 리소스 목록 로드
+    for (const auto& Asset : PendingResources)
+    {
+        if (!Asset.ToSoftObjectPath().IsNull())
+        {
+            auto SoftPath = Asset.ToSoftObjectPath();
+            auto Handle = Streamable.RequestAsyncLoad(
+                SoftPath,
+                FStreamableDelegate(),
+                FStreamableManager::AsyncLoadHighPriority
+            );
+            ActiveHandles.Add(SoftPath , Handle);
+        }
+    }
+
+    auto LevelSoftPath = PendingTargetLevel.ToSoftObjectPath();
+    // 5. 타겟 레벨 로드 (비동기, 하지만 Visible 상태로는 안 띄움)
+    auto LevelHandle = Streamable.RequestAsyncLoad(
+        LevelSoftPath,
+        FStreamableDelegate::CreateUObject(this, &ULoadingSubsystem::OpenTargetLevel),
+        FStreamableManager::AsyncLoadHighPriority
+    );
+    ActiveHandles.Add(LevelSoftPath, LevelHandle);
+}
+
+void ULoadingSubsystem::OpenTargetLevel() const
+{
+    FString TargetMapPath = PendingTargetLevel.ToSoftObjectPath().GetLongPackageName();
+    UGameplayStatics::OpenLevel(GetWorld(), FName(*TargetMapPath));
 }
