@@ -5,9 +5,9 @@
 #include "Engine/DataTable.h"
 #include "StaticData/StaticDataManager.h"
 #include "StaticDataSubsystem.generated.h"
-
-//로딩매니저에서 로드하여 사용
-
+/*데이터 테이블을 자동으로 로드하고 각 데이터 타입에 맞는 전용 데이터 매니저를
+생성 및 등록하여 정적 데이터를 쉽게 조회할 수 있도록 관리하는 시스템/
+로딩매니저에서 로드하여 사용*/
 UCLASS()
 class ROOM_API UStaticDataSubsystem : public UGameInstanceSubsystem
 {
@@ -47,19 +47,31 @@ public:
     }
 
     template<typename TStruct>
-    void RegisterDataManager(const FName& DataTableName, TFunction<int32(const TStruct&)> GetKeyFunc)
+    void RegisterDataManager(
+     const FName& DataTableName,
+     TFunction<int32(const TStruct&)> GetKeyFunc = [](const TStruct& Data) { return Data.ID; })
     {
         //등록된 데이터 테이블을 찾고 없으면 종료
         TObjectPtr<UDataTable>* FoundTable = DataTables.Find(DataTableName);
         if (!FoundTable || !*FoundTable) return;
+    
         
         //구조체 이름을 키로 사용, 중복 방지
         FName StructName = TStruct::StaticStruct()->GetFName();
         if (StaticDataManagers.Contains(StructName)) return;
-
+        
         //데이터 매니저 생성, 맵에 등록
         TSharedPtr<FDataManagerBase> NewManager = MakeShared<TStaticDataManager<TStruct>>(GetKeyFunc);
         NewManager->Load(*FoundTable);
         StaticDataManagers.Add(StructName, NewManager);
+    }
+
+    //데이터 테이블 이름 : DT_???DataTable로 통일해야 함
+    template<typename TStruct>
+    FName GetDTName()
+    {
+        FString S = TStruct::StaticStruct()->GetFName().ToString();
+        if (S.StartsWith("F")) S.RemoveAt(0);
+        return FName(*("DT_" + S + "Table"));
     }
 };
