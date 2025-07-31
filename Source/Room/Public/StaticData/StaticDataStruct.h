@@ -5,104 +5,105 @@
 #include "Animation/AnimInstance.h" 
 #include "BehaviorTree/BehaviorTree.h" 
 #include "StaticDataStruct.generated.h" 
+
 //다양한 데이터를 데이터 테이블로 관리하기 위한 구조체들을 정의
 USTRUCT(BlueprintType)
-struct FStaticDataBase : public FTableRowBase
+struct FStaticData : public FTableRowBase
 {
     GENERATED_BODY()
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
-    int32 ID; 
+    int32 ID = 0;
 
 };
 
 USTRUCT(BlueprintType)
-struct FStatData : public FStaticDataBase
+struct FStatData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat")
-    float HP;
+    float HP = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat")
-    float Attack;
+    float Attack = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat")
-    float Defense;
+    float Defense = 0.0f;
 };
 
 USTRUCT(BlueprintType)
-struct FItemData : public FStaticDataBase
+struct FItemData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftObjectPtr<UStaticMesh> Mesh;
+    TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftObjectPtr<UMaterialInterface> Material;
+    TSoftObjectPtr<UMaterialInterface> Material = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftClassPtr<AActor> EffectClass;
+    TSoftClassPtr<AActor> EffectClass = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    int32 MaxStack;
+    int32 MaxStack = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    int32 ItemCount;
+    int32 ItemCount = 0;
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryData : public FStaticDataBase
+struct FInventoryData : public FStaticData
 {
     GENERATED_BODY()
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    TMap<int32, int32> ItemList; //ItemID, SlotIndex
+    TMap<int32, int32> ItemList;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-    int32 MaxSlotSize;
+    int32 MaxSlotSize = 0;
 };
 
 USTRUCT(BlueprintType)
-struct FBulletData : public FStaticDataBase
+struct FBulletData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    float Speed;
+    float Speed = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    TSoftObjectPtr<UStaticMesh> Mesh;
+    TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    TSoftObjectPtr<UTexture2D> Icon;
+    TSoftObjectPtr<UTexture2D> Icon = nullptr;
 };
 
 USTRUCT(BlueprintType)
-struct FWeaponData : public FStaticDataBase
+struct FWeaponData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    float Damage;
+    float Damage = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    float FireRate;
+    float FireRate = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    float Spread;
+    float Spread = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    TSoftObjectPtr<UStaticMesh> Mesh;
+    TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-    int32 BulletID;
+    int32 BulletID = 0;
 };
 
 
 USTRUCT(BlueprintType)
-struct FEnemyData : public FStaticDataBase
+struct FEnemyData : public FStaticData
 {
     GENERATED_BODY()
 
@@ -110,53 +111,53 @@ struct FEnemyData : public FStaticDataBase
     FStatData Stat;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftObjectPtr<USkeletalMesh> Mesh;
+    TSoftObjectPtr<USkeletalMesh> Mesh = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-     TSoftClassPtr<UAnimInstance> AnimBP;
+     TSoftClassPtr<UAnimInstance> AnimBP = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftClassPtr<UBehaviorTree> Behavior;
+    TSoftClassPtr<UBehaviorTree> Behavior = nullptr;
 };
 
 USTRUCT(BlueprintType)
-struct FEnemySpawnData : public FStaticDataBase
+struct FEnemySpawnData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    FVector Location;
+    FVector Location = FVector::ZeroVector;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    int32 EnemyID;
+    int32 EnemyID = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    int32 Count;
+    int32 Count = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    float SpawnTime;
+    float SpawnTime = 0.0f;
 };
 
 USTRUCT(BlueprintType)
-struct FItemSpawnData : public FStaticDataBase
+struct FItemSpawnData : public FStaticData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    FVector Location;
+    FVector Location = FVector::ZeroVector;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    int32 ItemID;
+    int32 ItemID = 0;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    float SpawnProbability;
+    float SpawnProbability = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    float SpawnTime;
+    float SpawnTime = 0.0f;
 };
 
 USTRUCT(BlueprintType)
-struct FMapSpawnData : public FStaticDataBase
+struct FMapSpawnData : public FStaticData
 {
     GENERATED_BODY()
 
