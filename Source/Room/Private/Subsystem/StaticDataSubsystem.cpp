@@ -17,8 +17,7 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
             }
         }
     }
-
-    
+    //신규 데이터 테이블 추가시 매니저 등록 함수도 추가
     RegisterDataManager<FItemData>(GetDTName<FItemData>());
     RegisterDataManager<FInventoryData>(GetDTName<FInventoryData>());
     RegisterDataManager<FBulletData>(GetDTName<FBulletData>());
