@@ -1,7 +1,7 @@
-#include "Core/LoadingManager.h"
-#include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingManager)
+#include "Subsystem/LoadingSubsystem.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingSubsystem)
 
-void ULoadingManager::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
+void ULoadingSubsystem::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
 {
     if (!Asset.IsValid() && Asset.ToSoftObjectPath().IsNull())
     {
@@ -42,7 +42,7 @@ void ULoadingManager::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAsset
     }
 }
 
-void ULoadingManager::RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& Assets, FOnAssetLoadComplete OnComplete)
+void ULoadingSubsystem::RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& Assets, FOnAssetLoadComplete OnComplete)
 {
     TArray<FSoftObjectPath> PathsToLoad;
 
@@ -85,7 +85,7 @@ void ULoadingManager::RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& As
     }
 }
 
-void ULoadingManager::RequestUnload(const TSoftObjectPtr<UObject>& Asset)
+void ULoadingSubsystem::RequestUnload(const TSoftObjectPtr<UObject>& Asset)
 {
     FSoftObjectPath Path = Asset.ToSoftObjectPath();
 
@@ -104,12 +104,12 @@ void ULoadingManager::RequestUnload(const TSoftObjectPtr<UObject>& Asset)
     }
 }
 
-bool ULoadingManager::IsLoaded(const TSoftObjectPtr<UObject>& Asset) const
+bool ULoadingSubsystem::IsLoaded(const TSoftObjectPtr<UObject>& Asset) const
 {
     return LoadedAssets.Contains(Asset.ToSoftObjectPath());
 }
 
-void ULoadingManager::UnloadUnusedAssets(const TSet<FSoftObjectPath>& KeepList)
+void ULoadingSubsystem::UnloadUnusedAssets(const TSet<FSoftObjectPath>& KeepList)
 {
     for (auto It = AssetRefCount.CreateIterator(); It; ++It)
     {
@@ -123,7 +123,7 @@ void ULoadingManager::UnloadUnusedAssets(const TSet<FSoftObjectPath>& KeepList)
     CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
 }
 
-void ULoadingManager::GetOrLoadAsset(const TSoftObjectPtr<UObject>& Asset, FOnAssetReady OnReady)
+void ULoadingSubsystem::GetOrLoadAsset(const TSoftObjectPtr<UObject>& Asset, FOnAssetReady OnReady)
 {
     if (Asset.IsValid())
     {

@@ -4,14 +4,14 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Engine/StreamableManager.h"
 #include "UObject/SoftObjectPtr.h"
-#include "LoadingManager.generated.h"
+#include "LoadingSubsystem.generated.h"
 
 DECLARE_DELEGATE(FOnAssetLoadComplete)
 
 // UObject* 를 전달하는 콜백
 DECLARE_DELEGATE_OneParam(FOnAssetReady, UObject*);
 UCLASS()
-class ROOM_API ULoadingManager : public UGameInstanceSubsystem
+class ROOM_API ULoadingSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
 
