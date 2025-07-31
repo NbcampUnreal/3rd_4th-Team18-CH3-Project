@@ -6,84 +6,72 @@
 
 class UUserWidget;
 class UHUDWidget;
+class UMainMenuWidget;
+class UPauseMenuWidget;
+class UInventoryWidget;
+class UHitMarkerWidget;
+class UDamageIndicatorWidget;
+class UKillConfirmWidget;
 
 UCLASS()
 class ROOM_API UUISubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-private:
-	
-
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	// HUD display controls
+	// UI Show Methods
 	void ShowHUD();
+	void ShowMainMenu();
+	void ShowPauseMenu();
+	void ShowInventory();
 	void HideCurrentUI();
 
-	// Real-time gameplay updates
+	// Game Info Update
 	void UpdateHealth(float Current, float Max);
 	void UpdateAmmo(int32 Current, int32 Max);
 	void UpdateScore(int32 Score);
 	void UpdateMission(const FString& Name, float Progress);
 	void AddKillLog(const FString& Killer, const FString& Victim);
+
+	// Feedback
 	void ShowHitMarker();
 	void ShowDamageIndicator(float FromAngle);
 	void ShowKillConfirm();
 
-	// Menu & UI panels
-	void ShowMainMenu();
-	void ShowPauseMenu();
-	void ShowInventory();
-
 protected:
-	
-	TObjectPtr<UUserWidget> ActiveWidget;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UHUDWidget> HUDWidgetClass;
 
-	
-	UPROPERTY(EditAnywhere, Category = "UI|HUD")
-	TSoftClassPtr<UUserWidget> HUDWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UMainMenuWidget> MainMenuClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|Menus")
-	TSoftClassPtr<UUserWidget> MainMenuClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UPauseMenuWidget> PauseMenuClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|Menus")
-	TSoftClassPtr<UUserWidget> PauseMenuClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UInventoryWidget> InventoryClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|Menus")
-	TSoftClassPtr<UUserWidget> InventoryClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UHitMarkerWidget> HitMarkerClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|HUD")
-	TSoftClassPtr<UUserWidget> HitMarkerClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UDamageIndicatorWidget> DamageIndicatorClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|HUD")
-	TSoftClassPtr<UUserWidget> DamageIndicatorClass;
+	UPROPERTY(EditAnywhere, Category = "UI|Classes")
+	TSoftClassPtr<UKillConfirmWidget> KillConfirmClass;
 
-	UPROPERTY(EditAnywhere, Category = "UI|HUD")
-	TSoftClassPtr<UUserWidget> KillConfirmClass;
+	UPROPERTY(Transient) TObjectPtr<UHUDWidget> HUDWidget;
+	UPROPERTY(Transient) TObjectPtr<UMainMenuWidget> MainMenuWidget;
+	UPROPERTY(Transient) TObjectPtr<UPauseMenuWidget> PauseMenuWidget;
+	UPROPERTY(Transient) TObjectPtr<UInventoryWidget> InventoryWidget;
+	UPROPERTY(Transient) TObjectPtr<UHitMarkerWidget> HitMarkerWidget;
+	UPROPERTY(Transient) TObjectPtr<UDamageIndicatorWidget> DamageIndicatorWidget;
+	UPROPERTY(Transient) TObjectPtr<UKillConfirmWidget> KillConfirmWidget;
 
-	/** Instantiated widget instances */
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> HUDInstance;
+	UPROPERTY(Transient) TObjectPtr<UUserWidget> ActiveWidget;
 
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> MainMenuInstance;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> PauseMenuInstance;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> InventoryInstance;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> HitMarkerInstance;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> DamageIndicatorInstance;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UUserWidget> KillConfirmInstance;
-
+	void ShowWidget(TSoftClassPtr<UUserWidget> WidgetClass, TObjectPtr<UUserWidget>& OutInstance);
 };
