@@ -17,6 +17,9 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::HandleDeath()
 {
-	//캐릭터 사망처리
+	bIsDead = true;
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//컨트롤러 해제 등은 상속받은 클래스에서 처리
 }
+
 
