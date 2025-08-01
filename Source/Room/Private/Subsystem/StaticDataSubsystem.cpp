@@ -23,7 +23,7 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FBulletData>(GetDTName<FBulletData>());
     RegisterDataManager<FWeaponData>(GetDTName<FWeaponData>());
     RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
-   
+    RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
 }
 
 void UStaticDataSubsystem::Deinitialize()

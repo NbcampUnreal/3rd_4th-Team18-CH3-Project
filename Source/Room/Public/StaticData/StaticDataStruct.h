@@ -168,6 +168,17 @@ struct FMapSpawnData : public FStaticData
     TArray<FItemSpawnData> ItemSpawns;
 };
 
+USTRUCT(BlueprintType)
+struct FRoomData : public FStaticData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSoftObjectPtr<UWorld> Level;
+
+    // 기타 로딩용 데이터들 파티클, 사운드, 동적 젠 되는 몬스터 등.
+};
+
 UENUM(BlueprintType)
 enum class EClearCondition : uint8
 {
