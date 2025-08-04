@@ -1,5 +1,6 @@
 #include "Subsystem/LoadingSubsystem.h"
 
+#include "Core/GameManager.h"
 #include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "StaticData/GameConfigData.h"
@@ -186,9 +187,10 @@ void ULoadingSubsystem::LoadLevelWithLoadingScreen(
 
     PendingTargetLevel = TargetLevel;
     PendingResources = ResourcesToLoad;
-
+    
     // 1. GameConfig에서 로딩 레벨 경로 가져오기
-    auto GameConfig = GetDefault<UGameConfigData>();
+    auto GInst = GetGameManager();
+    auto GameConfig = UGameConfigData::Get();
     if (!GameConfig || GameConfig->LoadingLevel.ToSoftObjectPath().IsNull())
     {
         UE_LOG(LogTemp, Error, TEXT("LoadingLevel not set in GameConfigData."));
