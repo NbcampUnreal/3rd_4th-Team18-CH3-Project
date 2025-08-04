@@ -24,10 +24,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> LoadingLevel;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UWorld> TitleLevel;
+
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+
 	// 전역 접근 함수
 	UFUNCTION(BlueprintCallable, Category="Game Config")
 	static UGameConfigData* Get();
-
-	// 이 Asset의 고정 Primary ID
-	static const FPrimaryAssetId PrimaryId;
+	
 };

@@ -94,7 +94,11 @@ void ULoadingSubsystem::RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& 
 void ULoadingSubsystem::RequestUnload(const TSoftObjectPtr<UObject>& Asset)
 {
     FSoftObjectPath Path = Asset.ToSoftObjectPath();
+    RequestUnload(Path);
+}
 
+void ULoadingSubsystem::RequestUnload(const FSoftObjectPath Path)
+{
     if (int32* Count = AssetRefCount.Find(Path))
     {
         (*Count)--;
@@ -109,6 +113,7 @@ void ULoadingSubsystem::RequestUnload(const TSoftObjectPtr<UObject>& Asset)
         }
     }
 }
+
 
 bool ULoadingSubsystem::IsLoaded(const TSoftObjectPtr<UObject>& Asset) const
 {
@@ -189,8 +194,7 @@ void ULoadingSubsystem::LoadLevelWithLoadingScreen(
     PendingResources = ResourcesToLoad;
     
     // 1. GameConfig에서 로딩 레벨 경로 가져오기
-    auto GInst = GetGameManager();
-    auto GameConfig = UGameConfigData::Get();
+    const auto GameConfig = UGameConfigData::Get();
     if (!GameConfig || GameConfig->LoadingLevel.ToSoftObjectPath().IsNull())
     {
         UE_LOG(LogTemp, Error, TEXT("LoadingLevel not set in GameConfigData."));
@@ -239,4 +243,19 @@ void ULoadingSubsystem::OpenTargetLevel() const
 {
     FString TargetMapPath = PendingTargetLevel.ToSoftObjectPath().GetLongPackageName();
     UGameplayStatics::OpenLevel(GetWorld(), FName(*TargetMapPath));
+}
+
+const TArray<FSoftObjectPath> ULoadingSubsystem::GetAllLoadedAssets() const
+{
+    return LoadedAssets.Array();
+}
+
+void ULoadingSubsystem::Deinitialize()
+{
+    Super::Deinitialize();
+    auto Array = GetAllLoadedAssets();
+    for (const auto& Path : Array)
+    {
+        RequestUnload(Path);
+    }
 }

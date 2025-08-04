@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Subsystem/RoomSubsystem.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UISubsystem.generated.h"
 
@@ -14,7 +15,7 @@ class UDamageIndicatorWidget;
 class UKillConfirmWidget;
 
 UCLASS()
-class ROOM_API UUISubsystem : public UGameInstanceSubsystem
+class ROOM_API UUISubsystem : public URoomSubsystem
 {
 	GENERATED_BODY()
 

@@ -5,8 +5,11 @@
 
 #include "Engine/AssetManager.h"
 
-const FPrimaryAssetId UGameConfigData::PrimaryId = FPrimaryAssetId("GameConfigData", "DA_GameConfigData");
 
+FPrimaryAssetId UGameConfigData::GetPrimaryAssetId() const
+{
+	return FPrimaryAssetId(TEXT("GameConfigData"), GetFName());
+}
 
 UGameConfigData* UGameConfigData::Get()
 {
@@ -17,12 +20,13 @@ UGameConfigData* UGameConfigData::Get()
 		return CachedConfig.Get();
 	}
 	
+	const FPrimaryAssetId PrimaryId = FPrimaryAssetId(TEXT("GameConfigData"), TEXT("DA_GameConfig"));
 	UAssetManager& Manager = UAssetManager::Get();
-
 	UObject* AssetObj = Manager.GetPrimaryAssetObject(PrimaryId);
 	if (!AssetObj)
 	{
-		AssetObj = Manager.GetStreamableManager().LoadSynchronous(Manager.GetPrimaryAssetPath(PrimaryId));
+		auto Path = Manager.GetPrimaryAssetPath(PrimaryId);
+		AssetObj = Manager.GetStreamableManager().LoadSynchronous(Path);
 	}
 
 	CachedConfig = Cast<UGameConfigData>(AssetObj);

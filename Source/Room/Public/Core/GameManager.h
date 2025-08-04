@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "StaticData/GameConfigData.h"
 #include "GameManager.generated.h"
 
 /**
@@ -13,7 +14,8 @@ class ROOM_API UGameManager : public UGameInstance
 {
 	GENERATED_BODY()
 	
-	
+public:
+	TObjectPtr<const UGameConfigData> Config;
 public:
 	virtual void Init() override;
 
@@ -22,6 +24,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReturnToTitle();
+	
 
 private:
 	
