@@ -1,21 +1,21 @@
-﻿// BaseAICharacter.h
+﻿// BaseAICharacterInterface.h
 // 이 인터페이스는 AI 캐릭터가 공통적으로 수행해야 하는 기능들을 정의.
 #pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "AI/Enums/AIEnums.h" // 열거형 포함
-#include "BaseAICharacter.generated.h"
+#include "BaseAICharacterInterface.generated.h"
 
 class UBaseAttackComponent;
 
 UINTERFACE(MinimalAPI)
-class UBaseAICharacter : public UInterface
+class UBaseAICharacterInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class ROOM_API IBaseAICharacter
+class ROOM_API IBaseAICharacterInterface
 {
 	GENERATED_BODY()
 

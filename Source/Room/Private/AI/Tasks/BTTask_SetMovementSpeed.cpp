@@ -2,7 +2,7 @@
 #include "AI/Tasks/BTTask_SetMovementSpeed.h"
 #include "AIController.h"
 //#include "AI/TmpCharacters/TmpAICharacter.h" // AI 캐릭터 헤더 포함
-#include "AI/Interface/BaseAICharacter.h"
+#include "AI/Interface/BaseAICharacterInterface.h"
 
 UBTTask_SetMovementSpeed::UBTTask_SetMovementSpeed()
 {
@@ -20,14 +20,14 @@ EBTNodeResult::Type UBTTask_SetMovementSpeed::ExecuteTask(UBehaviorTreeComponent
 	if (!Pawn) return EBTNodeResult::Failed; // Pawn이 없으면 실패 처리
 
 	// 인터페이스 기반으로 캐스팅 시도
-	if (!Pawn->Implements<UBaseAICharacter>())
+	if (!Pawn->Implements<UBaseAICharacterInterface>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AI][SetMovementSpeed] Pawn does not implement BaseAICharacter interface"));
+		UE_LOG(LogTemp, Warning, TEXT("[AI][SetMovementSpeed] Pawn does not implement BaseAICharacterInterface"));
 		return EBTNodeResult::Failed;
 	}
 
 	// Pawn을 AI 전용 캐릭터 클래스로 캐스팅 시도
-	IBaseAICharacter* AICharacter = Cast<IBaseAICharacter>(Pawn);
+	IBaseAICharacterInterface* AICharacter = Cast<IBaseAICharacterInterface>(Pawn);
 	if (!AICharacter) return EBTNodeResult::Failed; // 캐스팅 실패 시 실패 처리
 
 	// 이동 속도 변수 초기화

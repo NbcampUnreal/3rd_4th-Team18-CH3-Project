@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "AI/Interface/BaseAICharacter.h"
+#include "AI/Interface/BaseAICharacterInterface.h"
 #include "AI/Components/Attack/BaseAttackComponent.h"
 #include "AI/Components/Attack/MeleeAttackComponent.h"
 #include "MeleeEnemyCharacter.generated.h"
 
 UCLASS()
-class ROOM_API AMeleeEnemyCharacter : public ACharacter, public IBaseAICharacter
+class ROOM_API AMeleeEnemyCharacter : public ACharacter, public IBaseAICharacterInterface
 {
 	GENERATED_BODY()
 

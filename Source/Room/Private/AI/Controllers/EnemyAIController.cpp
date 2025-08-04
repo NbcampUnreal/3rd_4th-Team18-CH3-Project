@@ -5,7 +5,7 @@
 //#include "Perception/AISense_Sight.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Kismet/GameplayStatics.h"
-#include "AI/Interface/BaseAICharacter.h"
+#include "AI/Interface/BaseAICharacterInterface.h"
 #include "GameFramework/Character.h"
 
 // StaticDataSubsystem 관련 포함은 팀 프로젝트에서만 존재하므로 조건부 include
