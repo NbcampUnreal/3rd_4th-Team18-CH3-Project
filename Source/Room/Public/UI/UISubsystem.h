@@ -5,6 +5,8 @@
 #include "Subsystem/RoomSubsystem.h"
 
 #include "Widget/MainMenuWidget.h"
+#include "Widget/PauseMenuWidget.h"
+#include "Widget/HUDWidget.h"
 
 #include "UISubsystem.generated.h"
 
@@ -21,14 +23,11 @@ public:
 
 	// UI Management
 	void ShowMainMenu();
-	/*
 	void ShowPauseMenu();
 	void HidePauseMenu();
 	void ShowHUD();
 	void HideHUD();
-	*/
 
-	/*
 	void UpdateAmmo(int32 Current, int32 Total);
 	void UpdateObjective(
 		int32 RangedKill,
@@ -37,16 +36,15 @@ public:
 		int32 MeleeTotal
 	);
 	void UpdateHealth(float HealthRaito);
-	*/
 
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;
-	/*TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
-	TWeakObjectPtr<UHUDWidget> HUDWidget;*/
+	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
+	TWeakObjectPtr<UHUDWidget> HUDWidget;
 
 	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
-	/*TSubclassOf<UPauseMenuWidget> PauseMenuWidgetClass;
-	TSubclassOf<UHUDWidget> HUDWidgetClass;*/
+	TSubclassOf<UPauseMenuWidget> PauseMenuWidgetClass;
+	TSubclassOf<UHUDWidget> HUDWidgetClass;
 
 	void InitializeWidgetClasses();
 };

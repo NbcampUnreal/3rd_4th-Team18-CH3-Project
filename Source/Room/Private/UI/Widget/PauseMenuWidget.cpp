@@ -5,6 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Core/GameManager.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(PauseMenuWidget)
+
 void UPauseMenuWidget::NativeConstruct()
 {
     Super::NativeConstruct();
