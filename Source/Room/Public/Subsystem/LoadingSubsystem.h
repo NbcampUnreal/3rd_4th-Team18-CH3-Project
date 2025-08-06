@@ -35,7 +35,7 @@ public:
     void StartLoadingAssets();
     void OpenTargetLevel() const;
 
-    const TArray<FSoftObjectPath> GetAllLoadedAssets() const;
+    TArray<FSoftObjectPath> GetAllLoadedAssets() const;
 
     virtual void Deinitialize() override;
 

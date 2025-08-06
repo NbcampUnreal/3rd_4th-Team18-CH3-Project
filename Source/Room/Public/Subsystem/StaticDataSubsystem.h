@@ -31,16 +31,30 @@ public:
     template<typename TStruct>
     const TStruct* GetData(int32 Key) const
     {
-        //구조체 이름을 키로 사용
         FName StructName = TStruct::StaticStruct()->GetFName();
-
-        //매니저를 찾고 다운캐스팅하여 키로 데이터 조회
         if (const TSharedPtr<FDataManagerBase>* FoundManager = StaticDataManagers.Find(StructName))
         {
-            TSharedPtr<TStaticDataManager<TStruct>> Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
+            // TStaticDataManager로 캐스팅하여 GetTypedData 함수를 호출합니다.
+            auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
             if (Manager.IsValid())
             {
-                return Manager->GetData(Key);
+                return Manager->GetTypedData(Key);
+            }
+        }
+        return nullptr;
+    }
+
+    // 보조 키로 데이터를 조회하는 템플릿 함수
+    template<typename TStruct, typename TKey>
+    const TStruct* GetDataByKey(const TKey& Key, const FName& IndexName = NAME_None) const
+    {
+        FName StructName = TStruct::StaticStruct()->GetFName();
+        if (const TSharedPtr<FDataManagerBase>* FoundManager = StaticDataManagers.Find(StructName))
+        {
+            auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
+            if (Manager.IsValid())
+            {
+                return Manager->GetDataByKey<TKey>(IndexName, Key);
             }
         }
         return nullptr;
@@ -64,6 +78,22 @@ public:
         TSharedPtr<FDataManagerBase> NewManager = MakeShared<TStaticDataManager<TStruct>>(GetKeyFunc);
         NewManager->Load(*FoundTable);
         StaticDataManagers.Add(StructName, NewManager);
+    }
+
+    // 특정 데이터 매니저에 보조 인덱스를 등록하는 템플릿 함수
+    // 동일 타입으로 여러 종류의
+    template<typename TStruct, typename TKey>
+    void RegisterExtraKey(TFunction<TKey(const TStruct&)> GetKeyFunc, const FName& IndexName = NAME_None)
+    {
+        FName StructName = TStruct::StaticStruct()->GetFName();
+        if (TSharedPtr<FDataManagerBase>* FoundManager = StaticDataManagers.Find(StructName))
+        {
+            auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
+            if (Manager.IsValid())
+            {
+                Manager->AddIndex<TKey>(IndexName, GetKeyFunc);
+            }
+        }
     }
 
     //데이터 테이블 이름 : DT_???DataTable로 통일해야 함

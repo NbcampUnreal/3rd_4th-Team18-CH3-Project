@@ -6,6 +6,8 @@
 #include "Core/RoomGameState.h"
 #include "RoomGameMode.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartRoomSignature);
+
 /**
  * Room 하나의 규칙에 대한 GameMode
  * 모든적 처치시 다음 레벨.
@@ -22,6 +24,9 @@ protected:
 	
 public:
 
+	UPROPERTY(BlueprintAssignable, Category = "Room Game")
+	FOnStartRoomSignature OnStartRoom;
+
 	virtual void NotifyActorDead(AActor* DeadActor);
 	virtual void NotifyActorSpawn(AActor* SpawnedActor);
 	virtual bool IsLevelClear();
@@ -31,5 +36,6 @@ private:
 
 	virtual void BeginPlay() override;
 
+	void InitializeGame();
 	
 };

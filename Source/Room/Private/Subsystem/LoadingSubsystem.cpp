@@ -205,7 +205,6 @@ void ULoadingSubsystem::LoadLevelWithLoadingScreen(
 
     // 2. 로딩 레벨로 전환
     UGameplayStatics::OpenLevel(GetWorld(), FName(*LoadingMapPath));
-
 }
 
 void ULoadingSubsystem::StartLoadingAssets()
@@ -245,7 +244,7 @@ void ULoadingSubsystem::OpenTargetLevel() const
     UGameplayStatics::OpenLevel(GetWorld(), FName(*TargetMapPath));
 }
 
-const TArray<FSoftObjectPath> ULoadingSubsystem::GetAllLoadedAssets() const
+TArray<FSoftObjectPath> ULoadingSubsystem::GetAllLoadedAssets() const
 {
     return LoadedAssets.Array();
 }

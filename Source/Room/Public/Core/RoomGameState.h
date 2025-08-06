@@ -22,4 +22,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
 	int32 AliveEnemyCount = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Room Game")
+	bool bIsRoomStarted = false;
 };

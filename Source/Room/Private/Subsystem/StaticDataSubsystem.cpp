@@ -1,6 +1,6 @@
 #include "Room/Public/Subsystem/StaticDataSubsystem.h"
 #include "StaticData/StaticDataStruct.h"
-
+#include "Subsystem/ObjectPoolSubsystem.h"
 
 void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -24,14 +24,15 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FWeaponData>(GetDTName<FWeaponData>());
     RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
     RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
+
+    // FRoomData에 대한 보조 인덱스 등록 예시 (LevelName을 키로 사용)
+    RegisterExtraKey<FRoomData, FName>([](const FRoomData& Data) {
+        return Data.Level->GetFName();
+    });
 }
 
 void UStaticDataSubsystem::Deinitialize()
 {
-    
     StaticDataManagers.Empty();
     Super::Deinitialize();
 }
-
-
-
