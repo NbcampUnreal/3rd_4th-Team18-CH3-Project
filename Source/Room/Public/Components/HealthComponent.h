@@ -4,8 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DELEGATE(DeathDelegate)
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
 class ACharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,7 +18,7 @@ public:
 	void SetMaxHealth(float NewMaxHealth);
 	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
 
-	DeathDelegate OnDead;
+	FDeathDelegate OnDead;
 	
 protected:
 	virtual void BeginPlay() override;
