@@ -6,7 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/HealthComponent.h"
 #include "BaseCharacter.generated.h"
-//캐릭터, 에너미 공통 기능을 포함한 베이스
+
 UCLASS()
 class ROOM_API ABaseCharacter : public ACharacter
 {
@@ -17,7 +17,7 @@ public:
 	//상속 받은 캐릭터에서 태그 설정
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Tag")
 	FGameplayTag ActorTag;
-	FGameplayTag GetActorTag() const { return ActorTag; }
+	FORCEINLINE FGameplayTag GetActorTag() const { return ActorTag; }
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UHealthComponent> HealthComponent;
@@ -25,7 +25,7 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable, Category = "States")
-	bool IsDead() const { return bIsDead; }
+	FORCEINLINE bool IsDead() const { return bIsDead; }
 	
 	UFUNCTION()
 	virtual void HandleDeath();
@@ -33,5 +33,6 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "States")
 	bool bIsDead = false;
 };
