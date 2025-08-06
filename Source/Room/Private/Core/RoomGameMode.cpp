@@ -2,6 +2,10 @@
 
 
 #include "Core/RoomGameMode.h"
+#include "Subsystem/StaticDataSubsystem.h"
+#include "Subsystem/ObjectPoolSubsystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "StaticData/StaticDataStruct.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RoomGameMode)
 
@@ -37,4 +41,33 @@ void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	RoomGameState = GetGameState<ARoomGameState>();
+
+	InitializeGame();
+}
+
+void ARoomGameMode::InitializeGame()
+{
+	UStaticDataSubsystem* StaticDataSubsystem = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+	UObjectPoolSubsystem* ObjectPoolSubsystem = GetWorld()->GetSubsystem<UObjectPoolSubsystem>();
+
+	if (!StaticDataSubsystem || !ObjectPoolSubsystem || !RoomGameState)
+	{
+		return;
+	}
+
+	const FName CurrentLevelName = FName(*UGameplayStatics::GetCurrentLevelName(GetWorld()));
+	const FRoomData* RoomData = StaticDataSubsystem->GetDataByKey<FRoomData, FName>(CurrentLevelName);
+	if (!RoomData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot find RoomData for the current level: %s"), *CurrentLevelName.ToString());
+		return;
+	}
+
+	for (const FPoolableActorData& PoolableActorData : RoomData->PoolAbleActorInfos)
+	{
+		ObjectPoolSubsystem->InitializePool(PoolableActorData.ActorClass.Get(), PoolableActorData.InitialPoolSize);
+	}
+
+	RoomGameState->bIsRoomStarted = true;
+	OnStartRoom.Broadcast();
 }

@@ -71,7 +71,13 @@ struct FBulletData : public FStaticData
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    float Speed = 0.0f;
+    float InitialSpeed = 0.0f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
+    float MaxSpeed = 0.0f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
+    float AutoDestroyTime = 0.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
     TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
@@ -176,7 +182,21 @@ struct FRoomData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UWorld> Level;
 
+    TArray<FPoolableActorData> PoolAbleActorInfos;
     // 기타 로딩용 데이터들 파티클, 사운드, 동적 젠 되는 몬스터 등.
+    
+};
+
+USTRUCT(BlueprintType)
+struct FPoolableActorData : public FStaticData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pool")
+    TSoftClassPtr<AActor> ActorClass = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pool")
+    int32 InitialPoolSize = 0;
 };
 
 UENUM(BlueprintType)

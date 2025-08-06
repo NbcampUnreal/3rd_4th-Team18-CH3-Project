@@ -3,6 +3,7 @@
 
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Interface/PoolableInterface.h"
+#include "Subsystem/StaticDataSubsystem.h"
 
 void UObjectPoolSubsystem::Deinitialize()
 {
@@ -21,7 +22,7 @@ void UObjectPoolSubsystem::Deinitialize()
     Super::Deinitialize();
 }
 
-void UObjectPoolSubsystem::InitializePool(TSubclassOf<AActor> PooledActorClass, int32 PoolSize)
+void UObjectPoolSubsystem::InitializePool(const TSubclassOf<AActor> PooledActorClass, int32 PoolSize)
 {
 	if (!PooledActorClass)
 	{

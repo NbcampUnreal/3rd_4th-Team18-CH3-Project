@@ -30,7 +30,7 @@ class ROOM_API UObjectPoolSubsystem : public UWorldSubsystem
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "ObjectPool")
-	void InitializePool(TSubclassOf<AActor> PooledActorClass, int32 PoolSize);
+	void InitializePool(const TSubclassOf<AActor> PooledActorClass, int32 PoolSize);
 
 	UFUNCTION(BlueprintCallable, Category = "ObjectPool")
 	AActor* GetPooledObject(TSubclassOf<AActor> PooledActorClass, const FTransform& SpawnTransform);
