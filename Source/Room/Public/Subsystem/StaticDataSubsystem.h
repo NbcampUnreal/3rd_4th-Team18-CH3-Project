@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/RoomSubsystem.h"
 #include "Engine/DataTable.h"
 #include "StaticData/StaticDataManager.h"
 #include "StaticDataSubsystem.generated.h"
@@ -9,7 +9,7 @@
 생성 및 등록하여 정적 데이터를 쉽게 조회할 수 있도록 관리하는 시스템/
 로딩매니저에서 로드하여 사용*/
 UCLASS()
-class ROOM_API UStaticDataSubsystem : public UGameInstanceSubsystem
+class ROOM_API UStaticDataSubsystem : public URoomSubsystem
 {
     GENERATED_BODY()
 

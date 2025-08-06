@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/RoomSubsystem.h"
 #include "Engine/StreamableManager.h"
 #include "UObject/SoftObjectPtr.h"
 #include "LoadingSubsystem.generated.h"
@@ -11,7 +11,7 @@ DECLARE_DELEGATE(FOnAssetLoadComplete)
 // UObject* 를 전달하는 콜백
 DECLARE_DELEGATE_OneParam(FOnAssetReady, UObject*);
 UCLASS()
-class ROOM_API ULoadingSubsystem : public UGameInstanceSubsystem
+class ROOM_API ULoadingSubsystem : public URoomSubsystem
 {
     GENERATED_BODY()
 
@@ -20,6 +20,7 @@ public:
     void RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& Assets, FOnAssetLoadComplete OnComplete);
 
     void RequestUnload(const TSoftObjectPtr<UObject>& Asset);
+    void RequestUnload(const FSoftObjectPath Path);
     bool IsLoaded(const TSoftObjectPtr<UObject>& Asset) const; 
     void UnloadUnusedAssets(const TSet<FSoftObjectPath>& KeepList);
     // 새로 추가: 로드돼 있으면 즉시, 아니면 로드 후 콜백
@@ -33,6 +34,11 @@ public:
 
     void StartLoadingAssets();
     void OpenTargetLevel() const;
+
+    const TArray<FSoftObjectPath> GetAllLoadedAssets() const;
+
+    virtual void Deinitialize() override;
+
 private:
     FStreamableManager StreamableManager;
 
