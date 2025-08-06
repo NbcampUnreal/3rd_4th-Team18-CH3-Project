@@ -10,6 +10,5 @@
 #include "EnemySpawnData.h"
 #include "ItemSpawnData.h"
 #include "MapSpawnData.h"
-#include "PoolableActorData.h"
 #include "RoomData.h"
 #include "ClearCondition.h"

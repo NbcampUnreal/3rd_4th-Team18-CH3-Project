@@ -2,8 +2,21 @@
 
 #include "CoreMinimal.h"
 #include "StaticData.h"
-#include "PoolableActorData.h"
+
 #include "RoomData.generated.h"
+
+USTRUCT(BlueprintType)
+struct FPoolableActorData 
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pool")
+    TSoftClassPtr<AActor> ActorClass = nullptr;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pool")
+    int32 InitialPoolSize = 0;
+};
+
 
 USTRUCT(BlueprintType)
 struct FRoomData : public FStaticData
