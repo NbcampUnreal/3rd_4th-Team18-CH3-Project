@@ -28,4 +28,5 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AmmoSegment")
 	void OnAmmoUpdated(int32 CurrentAmmo);
+
 };

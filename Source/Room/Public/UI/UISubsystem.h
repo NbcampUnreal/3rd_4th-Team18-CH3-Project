@@ -10,7 +10,7 @@ class UMainMenuWidget;
 class UPauseMenuWidget;
 class UHUDWidget;
 
-UCLASS(Config = Game, DefaultConfig)
+UCLASS()
 class ROOM_API UUISubsystem : public URoomSubsystem
 {
 	GENERATED_BODY()
@@ -19,15 +19,25 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetUIInputMode();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetGameInputMode();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowMainMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowPauseMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HidePauseMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowHUD();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HideHUD();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateAmmo(int32 Current, int32 Total);
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateObjective(int32 RangedKill, int32 RangedTotal, int32 MeleeKill, int32 MeleeTotal);
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateHealth(float HealthRatio);
 
 private:
@@ -35,13 +45,12 @@ private:
 	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
 	TWeakObjectPtr<UHUDWidget> HUDWidget;
 
-	UPROPERTY(Config)
-	TSoftClassPtr<UMainMenuWidget> MainMenuWidgetClass;
+	UPROPERTY()
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
 
-	UPROPERTY(Config)
-	TSoftClassPtr<UPauseMenuWidget> PauseMenuWidgetClass;
+	UPROPERTY()
+	TSubclassOf<UPauseMenuWidget> PauseMenuWidgetClass;
 
-	UPROPERTY(Config)
-	TSoftClassPtr<UHUDWidget> HUDWidgetClass;
-
+	UPROPERTY()
+	TSubclassOf<UHUDWidget> HUDWidgetClass;
 };
