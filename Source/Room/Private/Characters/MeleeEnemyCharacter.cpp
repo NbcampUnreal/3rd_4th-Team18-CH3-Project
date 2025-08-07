@@ -27,6 +27,18 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 	Movement->AirControl = 0.2f;
 }
 
+void AMeleeEnemyCharacter::TakeDamage(float DamageAmount, AActor* DamageCauser)
+{
+}
+
+void AMeleeEnemyCharacter::HandleDeath(AActor* Killer)
+{
+}
+
+void AMeleeEnemyCharacter::PlayDeathAnimation()
+{
+}
+
 void AMeleeEnemyCharacter::SetMovementSpeed(float NewSpeed)
 {
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())

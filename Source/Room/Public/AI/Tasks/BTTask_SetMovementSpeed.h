@@ -1,4 +1,5 @@
 ﻿// BTTask_SetMovementSpeed.h
+// AI 캐릭터의 이동 속도를 설정하는 Task
 #pragma once
 
 #include "CoreMinimal.h"
@@ -22,3 +23,4 @@ protected:
 	// ExecuteTask 함수 재정의
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };
+

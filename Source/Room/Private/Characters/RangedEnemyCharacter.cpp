@@ -27,6 +27,18 @@ ARangedEnemyCharacter::ARangedEnemyCharacter()
 	Movement->AirControl = 0.2f;
 }
 
+void ARangedEnemyCharacter::TakeDamage(float DamageAmount, AActor* DamageCauser)
+{
+}
+
+void ARangedEnemyCharacter::HandleDeath(AActor* Killer)
+{
+}
+
+void ARangedEnemyCharacter::PlayDeathAnimation()
+{
+}
+
 void ARangedEnemyCharacter::SetMovementSpeed(float NewSpeed)
 {
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
