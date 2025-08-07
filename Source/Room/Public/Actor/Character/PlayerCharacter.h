@@ -44,7 +44,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPlayerAttackComponent> PlayerAttackComponent;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	UAnimMontage* FireMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	UAnimMontage* DeathMontage;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -53,4 +57,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void StartFire();
 	void StopFire();
+
+	UFUNCTION()
+	void PlayFireMontage();
 };
