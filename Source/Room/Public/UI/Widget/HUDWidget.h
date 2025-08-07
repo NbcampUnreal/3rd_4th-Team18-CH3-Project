@@ -21,7 +21,13 @@ protected:
     UPROPERTY(meta = (BindWidget)) UHealthWidget* HealthWidget;
 
 public:
+    UFUNCTION(BlueprintCallable)
     void UpdateWeaponInfo(int32 CurrentAmmo, int32 TotalAmmo);
+    UFUNCTION(BlueprintCallable)
     void UpdateObjective(int32 RangedKills, int32 RangedTotal, int32 MeleeKills, int32 MeleeTotal);
+    UFUNCTION(BlueprintCallable)
     void UpdateHealth(float HealthRatio);
+
+protected:
+    
 };

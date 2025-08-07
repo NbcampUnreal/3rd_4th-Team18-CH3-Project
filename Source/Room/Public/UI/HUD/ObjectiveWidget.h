@@ -4,24 +4,26 @@
 #include "Blueprint/UserWidget.h"
 #include "ObjectiveWidget.generated.h"
 
-class UTextBlock;
-
 UCLASS()
 class ROOM_API UObjectiveWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-protected:
-	virtual void NativeConstruct() override;
-
-	UPROPERTY(meta = (BindWidget)) UTextBlock* RangedText;
-	UPROPERTY(meta = (BindWidget)) UTextBlock* MeleeText;
-	UPROPERTY(meta = (BindWidget)) UTextBlock* StatusText;
 
 public:
 	void UpdateObjective(
 		int32 RangedKills,
 		int32 RangedTotal,
 		int32 MeleeKills,
-		int32 MeleeTotal);
+		int32 MeleeTotal
+	);
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnRangedObjectiveUpdated(int32 Kills, int32 Total);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnMeleeObjectiveUpdated(int32 Kills, int32 Total);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnStatusUpdated(bool bIsCleared);
 };

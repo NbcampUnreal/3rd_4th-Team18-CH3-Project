@@ -4,30 +4,15 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
-class UButton;
-class UTextBlock;
-
 UCLASS()
 class ROOM_API UMainMenuWidget : public UUserWidget
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 protected:
-    virtual void NativeConstruct() override;
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void StartGame();
 
-    // Widget Bindings
-    UPROPERTY(meta = (BindWidget)) UButton* GameStartButton;
-    UPROPERTY(meta = (BindWidget)) UButton* ExitButton;
-    UPROPERTY(meta = (BindWidget)) UTextBlock* GameStartText;
-    UPROPERTY(meta = (BindWidget)) UTextBlock* ExitText;
-    UPROPERTY(meta = (BindWidget)) UTextBlock* DescriptionText;
-
-	// Button Click Events
-    UFUNCTION() void OnGameStartClicked();
-    UFUNCTION() void OnExitClicked();
-
-	// Button Hover Events
-    UFUNCTION() void OnGameStartHovered();
-    UFUNCTION() void OnExitHovered();
-    UFUNCTION() void OnButtonUnhovered();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ExitGame();
 };
