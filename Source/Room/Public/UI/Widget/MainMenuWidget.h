@@ -8,8 +8,11 @@ UCLASS()
 class ROOM_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-public:
-	void ShowMainOptions();
 
+protected:
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void StartGame();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ExitGame();
 };

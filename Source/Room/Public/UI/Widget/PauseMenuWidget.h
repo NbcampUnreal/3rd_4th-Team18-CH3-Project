@@ -5,11 +5,15 @@
 #include "PauseMenuWidget.generated.h"
 
 UCLASS()
-class ROOM_API UPauseMenuWidget : public UUserWidget
-{
-	GENERATED_BODY()
-	
-public:
-	void ShowPauseOptions();
+class ROOM_API UPauseMenuWidget : public UUserWidget {
 
+	GENERATED_BODY()
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ResumeGame();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ReturnToMainMenu();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ExitGameFromPause();
 };
