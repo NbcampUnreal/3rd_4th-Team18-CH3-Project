@@ -17,7 +17,7 @@ class ROOM_API IInteractable
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	void Interact();
+	void Interact(AActor* Caller);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	FText GetInteractableMessage();

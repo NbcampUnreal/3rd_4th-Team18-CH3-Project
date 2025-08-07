@@ -12,18 +12,22 @@ URoomHUD::URoomHUD(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-void URoomHUD::ToggleInventoryWidget()
+bool URoomHUD::ToggleInventoryWidget()
 {
 	auto InventoryVisibility = InventoryWidget_RoomInventory->GetVisibility();
 	switch (InventoryVisibility)
 	{
 		case ESlateVisibility::Collapsed:
 			InventoryWidget_RoomInventory->SetVisibility(ESlateVisibility::Visible);
+			bInventoryOn = true;
 			break;
 		default:
 			InventoryWidget_RoomInventory->SetVisibility(ESlateVisibility::Collapsed);
+			bInventoryOn = false;
 			break;
 	}
+
+	return bInventoryOn;
 	
 }
 

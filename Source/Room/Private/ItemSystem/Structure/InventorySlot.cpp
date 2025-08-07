@@ -1,1 +1,1 @@
-#include "ItemSystem/Inventory/InventoryComponent.h"
+#include "Room/Public/ItemSystem/Structure/InventorySlot.h"

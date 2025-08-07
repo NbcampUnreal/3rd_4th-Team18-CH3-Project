@@ -1,7 +1,10 @@
 
 #include "ItemSystem/Item/FieldItem/FieldItem.h"
 
+#include "GameFramework/PlayerState.h"
+#include "ItemSystem/InventoryComponent/InventoryComponent.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
+#include "Kismet/GameplayStatics.h"
 
 AFieldItem::AFieldItem()
 {
@@ -12,10 +15,10 @@ AFieldItem::AFieldItem()
 	ItemMesh->SetCollisionProfileName(TEXT("Item"));
 }
 
-void AFieldItem::Interact_Implementation()
+void AFieldItem::Interact_Implementation(AActor* Caller)
 {
-	IInteractable::Interact_Implementation();
-	Pickuped();
+	IInteractable::Interact_Implementation(Caller);
+	OnPickup(Caller);
 }
 
 void AFieldItem::InFocus_Implementation()
@@ -37,13 +40,37 @@ FText AFieldItem::GetInteractableMessage_Implementation()
 	FName ItemName = Item->GetItemName();
 	FString PickString = FString::Printf(TEXT("Pickup! ItemName: %s"), *ItemName.ToString());
 	
-	// return FText::FromString(PickString);
 	return Item->GetItemDescription();
 }
 
-void AFieldItem::Pickuped()
+void AFieldItem::OnPickup(AActor* Caller)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Pickuped!");
-	Destroy();
+	if (Caller)
+	{
+		auto Inventory = Caller->FindComponentByClass<UInventoryComponent>();
+		if (Inventory)
+		{
+			int32 Remain = Inventory->AddItemToInventory(Item,Quantity);
+			Quantity = Remain;
+			if (Quantity <= 0)
+			{
+				Destroy();
+			}
+		}
+
+	}
+	
+	// auto PlayerState = UGameplayStatics::GetPlayerState(this,0);
+	// if (PlayerState)
+	// {
+	// 	auto Inventory = PlayerState->FindComponentByClass<UInventoryComponent>();
+	// 	int32 Remain = Inventory->AddItemToInventory(Item,Quantity);
+	// 	Quantity = Remain;
+	// 	if (Quantity <= 0)
+	// 	{
+	// 		Destroy();
+	// 	}
+	//
+	// }
 }
 

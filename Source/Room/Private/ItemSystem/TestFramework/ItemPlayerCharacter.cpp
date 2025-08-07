@@ -17,6 +17,7 @@ AItemPlayerCharacter::AItemPlayerCharacter()
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
 }
 
 void AItemPlayerCharacter::Equip_Implementation(UObject* Equipment)

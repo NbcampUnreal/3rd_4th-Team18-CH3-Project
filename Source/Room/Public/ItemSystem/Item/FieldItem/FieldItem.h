@@ -15,7 +15,7 @@ public:
 	AFieldItem();
 
 protected:
-	virtual void Interact_Implementation() override;
+	virtual void Interact_Implementation(AActor* Caller) override;
 	virtual void InFocus_Implementation() override;
 	virtual void OutFocus_Implementation() override;
 	virtual FText GetInteractableMessage_Implementation() override;
@@ -37,7 +37,7 @@ protected:
 	FText InteractableMessage;
 	
 private:
-	void Pickuped();
+	void OnPickup(AActor* Caller);
 	
 };
 

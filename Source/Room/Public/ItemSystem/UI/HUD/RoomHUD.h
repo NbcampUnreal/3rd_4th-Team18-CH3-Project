@@ -16,17 +16,19 @@ class ROOM_API URoomHUD : public UUserWidget
 public:
 	URoomHUD(const FObjectInitializer& ObjectInitializer);
 	
-	void ToggleInventoryWidget();
+	bool ToggleInventoryWidget();
 	void ShowInteractMessage(const FText& MSG);
 	void HideInteractMessage();
 	
 protected:
 	virtual void NativeConstruct() override;
-
+	
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UOverlay> Overlay_PickupMessage;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UTextBlock> TEXT_PickupMessage;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UInventoryWidget> InventoryWidget_RoomInventory;
+
+	bool bInventoryOn = false;
 };

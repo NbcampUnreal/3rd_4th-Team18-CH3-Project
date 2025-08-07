@@ -86,21 +86,32 @@ void AItemPlayerController::InteractByInput(const FInputActionValue& Value)
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Interact Input"));
 	if (CurrentTargetActor.IsValid())
 	{
-		IInteractable::Execute_Interact(CurrentTargetActor.Get());
+		IInteractable::Execute_Interact(CurrentTargetActor.Get(),this);
 	}
 }
 void AItemPlayerController::ToggleInventoryByInput()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("ToggleInventory Input"));
-	HUDWidget->ToggleInventoryWidget();
+	bool bInventoryOn = HUDWidget->ToggleInventoryWidget();
+	if (bInventoryOn)
+	{
+		SetInputMode(FInputModeGameAndUI());
+		bShowMouseCursor = true;
+	}
+	else
+	{
+		SetInputMode(FInputModeGameOnly());
+		bShowMouseCursor = false;
+	}
 }
 void AItemPlayerController::UpdateInteractableTarget()
 {
+	
 	FHitResult HitResult;
 	FVector Start = CameraRef->GetComponentLocation();
 	FVector End = Start + CameraRef->GetForwardVector() * InteractTraceLength;
 	GetWorld()->LineTraceSingleByChannel(OUT HitResult,Start,End,InteractTraceChannel);
-
+		
 	PreviousTargetActor = CurrentTargetActor;
 	if (HitResult.bBlockingHit && HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 	{

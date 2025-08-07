@@ -21,7 +21,7 @@ void UStaticDataSubsystem::Deinitialize()
     WeaponDataMap.Empty();
     BulletDataMap.Empty();
     EnemyDataMap.Empty();
-    MapSpawnDataMap.Empty();
+    MapSpawnDataMap.Empty();    
   
     InventoryData = FInventoryData(); 
    
