@@ -1,4 +1,5 @@
 ﻿// BTTask_FindRandomLocation.h
+// 일정 반경 내에서 랜덤한 위치를 찾아 Blackboard에 저장하는 Task
 #pragma once
 
 #include "CoreMinimal.h"
@@ -28,4 +29,5 @@ protected:
 	float SearchRadius = 1000.0f;
 
 };
+
 

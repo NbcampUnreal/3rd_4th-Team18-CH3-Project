@@ -23,6 +23,7 @@ enum class ECharacterMovementSpeedType : uint8
 UENUM(BlueprintType)
 enum class EAICombatType : uint8
 {
+	None		UMETA(DisplayName = "None"),	// 기본값/미설정 상태
 	Melee		UMETA(DisplayName = "Melee"),	// 근접 공격 타입 (Melee)
 	Ranged		UMETA(DisplayName = "Ranged"),	// 원거리 공격 타입 (Ranged)
 	Mixed		UMETA(DisplayName = "Mixed")	// 혼합형 (근거리 + 원거리 모두 사용하는 타입)

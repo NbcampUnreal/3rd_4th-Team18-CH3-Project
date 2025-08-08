@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "AI/Interface/BaseAICharacterInterface.h"
-#include "AI/Components/Attack/BaseAttackComponent.h"
-#include "AI/Components/Attack/MeleeAttackComponent.h"
+#include "AI/Interface/BaseAICharacterInterface.h"		// AI 캐릭터 인터페이스
+#include "AI/Components/Attack/BaseAttackComponent.h"	// 기본 공격 컴포넌트
+#include "AI/Components/Attack/MeleeAttackComponent.h"	// 근접 공격 컴포넌트
 #include "MeleeEnemyCharacter.generated.h"
 
 UCLASS()
@@ -17,25 +17,68 @@ class ROOM_API AMeleeEnemyCharacter : public ACharacter, public IBaseAICharacter
 public:
 	AMeleeEnemyCharacter();
 
+	// AI 이동 속도 설정 (걷기 속도)
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float WalkSpeed = 300.0f;
 
+	// AI 이동 속도 설정 (달리기 속도)
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float RunSpeed = 600.0f;
 
-	virtual UBaseAttackComponent* GetAttackComponent() const override { return Cast<UBaseAttackComponent>(AttackComponent); }
-	virtual EAIStateType GetCurrentState() const override { return CurrentState; }
-	virtual void SetCurrentState(EAIStateType NewState) override { CurrentState = NewState; }
+	// 최대 체력
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float MaxHP = 100.0f;
 
+	// 현재 체력
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	float CurrentHP = 100.0f;
+
+	// 사망 여부 플래그
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	bool bIsDead = false;
+
+	// 현재 캐릭터에 장착된 공격 컴포넌트 반환 (근접 공격 컴포넌트를 기본으로 캐스팅)
+	virtual UBaseAttackComponent* GetAttackComponent() const override { return Cast<UBaseAttackComponent>(AttackComponent); }
+
+	// 현재 AI 상태 반환
+	//virtual EAIStateType GetCurrentState() const override { return CurrentState; }
+
+	// AI 상태 설정
+	//virtual void SetCurrentState(EAIStateType NewState) override { CurrentState = NewState; }
+
+	// 걷기 속도 반환
 	virtual float GetWalkSpeed() const override { return WalkSpeed; }
+
+	// 달리기 속도 반환
 	virtual float GetRunSpeed() const override { return RunSpeed; }
 
+	// 현재 체력 반환
+	virtual float GetCurrentHP() const override { return CurrentHP; }
+
+	// 최대 체력 반환
+	virtual float GetMaxHP() const override { return MaxHP; }
+
+	// 사망 여부 반환
+	virtual bool IsDead() const override { return bIsDead; }
+
+	// 데미지를 입었을 때 호출되는 함수 (DamageCauser는 데미지를 준 액터)
+	virtual void TakeDamage(float DamageAmount, AActor* DamageCauser = nullptr) override;
+
+	// 사망 처리 함수 (죽인 액터 정보 포함 가능)
+	virtual void HandleDeath(AActor* Killer = nullptr) override;
+
+	// 사망 시 재생할 애니메이션 함수
+	virtual void PlayDeathAnimation() override;
+
+	// 캐릭터 이동 속도를 변경하는 함수
 	void SetMovementSpeed(float NewSpeed);
 
 protected:
+	// 근접 공격 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
 	TObjectPtr<UMeleeAttackComponent> AttackComponent;
 
+	// 현재 AI 상태 저장 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	EAIStateType CurrentState;
 
