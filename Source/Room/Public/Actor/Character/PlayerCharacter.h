@@ -11,8 +11,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
+
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
@@ -20,16 +19,12 @@ class ROOM_API APlayerCharacter : public ABaseCharacter
 
 public:
 	APlayerCharacter();
-
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnAttack OnAttack;
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnAttackEnd OnAttackEnd;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	float Health = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	float Attack = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -44,7 +39,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPlayerAttackComponent> PlayerAttackComponent;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	UAnimMontage* FireMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	UAnimMontage* DeathMontage;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -53,4 +52,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void StartFire();
 	void StopFire();
+
+	UFUNCTION()
+	void PlayFireMontage();
 };
