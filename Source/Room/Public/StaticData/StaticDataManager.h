@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "StaticDataStruct.h" // FPoolableActorData를 위해 포함
 
 //데이터 테이블에서 구조체 데이터를 로드하고 키를 사용하여 데이터를 조회하는 매니저
 struct FDataManagerBase

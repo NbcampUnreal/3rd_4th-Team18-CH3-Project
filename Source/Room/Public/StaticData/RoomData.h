@@ -29,4 +29,7 @@ struct FRoomData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FPoolableActorData> PoolAbleActorInfos;
     // 기타 로딩용 데이터들 파티클, 사운드, 동적 젠 되는 몬스터 등.
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Preload")
+	TArray<TSoftObjectPtr<UObject>> PreloadAssets;
 };

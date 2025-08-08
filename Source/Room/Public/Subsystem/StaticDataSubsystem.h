@@ -54,7 +54,7 @@ public:
             auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
             if (Manager.IsValid())
             {
-                return Manager->GetDataByKey<TKey>(IndexName, Key);
+                return Manager->template GetDataByKey<TKey>(IndexName, Key);
             }
         }
         return nullptr;
@@ -96,7 +96,7 @@ public:
             auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
             if (Manager.IsValid())
             {
-                Manager->AddIndex<TKey>(IndexName, GetKeyFunc);
+                Manager->template AddIndex<TKey>(IndexName, GetKeyFunc);
             }
         }
     }
