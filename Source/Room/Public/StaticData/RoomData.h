@@ -26,15 +26,10 @@ struct FRoomData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UWorld> Level;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FPoolableActorData> PoolAbleActorInfos;
     // 기타 로딩용 데이터들 파티클, 사운드, 동적 젠 되는 몬스터 등.
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Preload")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Preload")
 	TArray<TSoftObjectPtr<UObject>> PreloadAssets;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Monsters")
-	TArray<FDataTableRowHandle>	Monsters; 
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Item")
-	// TArray<FDataTableRowHandle>	Items;
 };
