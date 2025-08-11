@@ -17,7 +17,7 @@ public:
 
 	void SetMaxHealth(float NewMaxHealth);
 	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
-
+	FORCEINLINE float GetCurrentHealth() const {return CurrentHealth; }
 	FDeathDelegate OnDead;
 	
 protected:
