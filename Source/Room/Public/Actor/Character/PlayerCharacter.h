@@ -57,5 +57,6 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void StartFire();
 	void StopFire();
+	void Interact();
 	
 };
