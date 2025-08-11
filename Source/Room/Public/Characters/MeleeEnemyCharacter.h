@@ -26,7 +26,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float RunSpeed = 600.0f;
 	
-
+	//사망 애니메이션 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UAnimMontage* DeathMontage;
+	
 	// 현재 캐릭터에 장착된 공격 컴포넌트 반환 (근접 공격 컴포넌트를 기본으로 캐스팅)
 	virtual UBaseAttackComponent* GetAttackComponent() const override { return Cast<UBaseAttackComponent>(AttackComponent); }
 
@@ -51,6 +54,7 @@ public:
 	// 캐릭터 이동 속도를 변경하는 함수
 	void SetMovementSpeed(float NewSpeed);
 
+	
 protected:
 	// 근접 공격 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
