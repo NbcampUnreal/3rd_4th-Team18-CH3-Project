@@ -6,11 +6,11 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HUDWidget)
 
-void UHUDWidget::UpdateWeaponInfo(int32 CurrentAmmo, int32 TotalAmmo)
+void UHUDWidget::UpdateWeaponInfo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo)
 {
     if (WeaponInfoWidget)
     {
-        WeaponInfoWidget->UpdateAmmo(CurrentAmmo, TotalAmmo);
+        WeaponInfoWidget->UpdateAmmo(CurrentAmmo, MaxAmmo, TotalAmmo);
     }
 }
 
@@ -28,4 +28,20 @@ void UHUDWidget::UpdateHealth(float HealthRatio)
     {
         HealthWidget->UpdateHealth(HealthRatio);
     }
+}
+
+void UHUDWidget::ShowCrosshairHitMarker()
+{
+    if (CrosshairWidget)
+    {
+        CrosshairWidget->ShowHitMarker();
+    }
+}
+
+void UHUDWidget::ShowKillMarker()
+{
+    if (CrosshairWidget)
+    {
+        CrosshairWidget->ShowKillMarker();
+	}
 }

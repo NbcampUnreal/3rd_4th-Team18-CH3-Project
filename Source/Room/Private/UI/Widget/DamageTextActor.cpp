@@ -1,40 +1,26 @@
 #include "UI/Widget/DamageTextActor.h"
+
 #include "Components/WidgetComponent.h"
-#include "UI/HUD/DamageNumberWidget.h"
-#include "Kismet/GameplayStatics.h"
-#include "TimerManager.h"
+
+#include "UI/Widget/DamageTextWidget.h"
 
 ADamageTextActor::ADamageTextActor()
 {
     PrimaryActorTick.bCanEverTick = false;
 
     WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-    WidgetComponent->SetupAttachment(RootComponent);
-    WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 또는 World
-    WidgetComponent->SetDrawSize(FVector2D(100.f, 50.f));
-    WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    SetRootComponent(WidgetComponent);
+
+    WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+
+    InitialLifeSpan = 1.5f;
 }
 
-void ADamageTextActor::BeginPlay()
+void ADamageTextActor::SetDamage(int32 Damage)
 {
-    Super::BeginPlay();
-
-    // 일정 시간 후 제거
-    GetWorldTimerManager().SetTimer(DestroyTimer, this, &ADamageTextActor::DestroySelf, DestroyDelay, false);
-}
-
-void ADamageTextActor::DestroySelf()
-{
-    Destroy();
-}
-
-void ADamageTextActor::SetDamageValue(int32 Damage)
-{
-    if (UUserWidget* Widget = WidgetComponent->GetUserWidgetObject())
+    UDamageTextWidget* DamageWidget = Cast<UDamageTextWidget>(WidgetComponent->GetUserWidgetObject());
+    if (DamageWidget)
     {
-        if (UDamageNumberWidget* DamageWidget = Cast<UDamageNumberWidget>(Widget))
-        {
-            DamageWidget->SetDamage(Damage);
-        }
+        DamageWidget->SetDamageText(Damage);
     }
 }

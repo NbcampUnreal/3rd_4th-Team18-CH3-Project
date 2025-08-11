@@ -9,7 +9,7 @@ void UWeaponInfoWidget::NativeConstruct()
 
 }
 
-void UWeaponInfoWidget::UpdateAmmo(int32 CurrentAmmo, int32 TotalAmmo)
+void UWeaponInfoWidget::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo)
 {
 	if (CurrentAmmoText)
 	{
@@ -21,5 +21,5 @@ void UWeaponInfoWidget::UpdateAmmo(int32 CurrentAmmo, int32 TotalAmmo)
 		TotalAmmoText->SetText(FText::AsNumber(TotalAmmo));
 	}
 
-	OnAmmoUpdated(CurrentAmmo);
+	OnAmmoUpdated(CurrentAmmo, MaxAmmo);
 }
