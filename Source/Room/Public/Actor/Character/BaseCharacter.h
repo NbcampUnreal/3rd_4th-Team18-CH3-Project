@@ -5,6 +5,7 @@
 #include "Define/GameDefine.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/HealthComponent.h"
+#include "ItemSystem/Interfaces/Equipper.h"
 #include "BaseCharacter.generated.h"
 
 UENUM()
@@ -17,7 +18,7 @@ enum class ECharacterAnim
 };
 
 UCLASS()
-class ROOM_API ABaseCharacter : public ACharacter
+class ROOM_API ABaseCharacter : public ACharacter, public IEquipper
 {
 	GENERATED_BODY()
 
