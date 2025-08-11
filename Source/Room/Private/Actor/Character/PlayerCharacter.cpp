@@ -25,7 +25,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//IMC 연결
+	
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
@@ -35,11 +35,6 @@ void APlayerCharacter::BeginPlay()
 				Subsystem->AddMappingContext(InputConfig.DefaultMappingContext, 0);
 			}
 		}
-	}
-	
-	if (PlayerAttackComponent)
-	{
-		PlayerAttackComponent->OnFire.AddDynamic(this, &APlayerCharacter::PlayFireMontage);
 	}
 }
 
@@ -52,7 +47,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 		EnhancedInput->BindAction(InputConfig.MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInput->BindAction(InputConfig.JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInput->BindAction(InputConfig.JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		EnhancedInput->BindAction(InputConfig.LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+		EnhancedInput->BindAction(InputConfig.AimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInput->BindAction(InputConfig.FireAction,  ETriggerEvent::Started, this, &APlayerCharacter::StartFire);
 		EnhancedInput->BindAction(InputConfig.FireAction,ETriggerEvent::Completed, this, &APlayerCharacter::StopFire);
 	}
@@ -61,22 +56,13 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 void APlayerCharacter::HandleDeath()
 {
 	Super::HandleDeath();
-	//사망 시 컨트롤러 해제
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		PC->DisableInput(PC);  
 	}
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	if (MeshComp)
-	{
-		
-		UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
-		if (AnimInstance)
-		{
-			AnimInstance->Montage_Play(DeathMontage); 
-		}
-	}
 }
+
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -115,18 +101,5 @@ void APlayerCharacter::StopFire()
 	if (PlayerAttackComponent)
 	{
 		PlayerAttackComponent->StopFire();
-	}
-}
-
-void APlayerCharacter::PlayFireMontage()
-{
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	if (MeshComp)
-	{
-		UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
-		if (AnimInstance && FireMontage)
-		{
-			AnimInstance->Montage_Play(FireMontage);
-		}
 	}
 }
