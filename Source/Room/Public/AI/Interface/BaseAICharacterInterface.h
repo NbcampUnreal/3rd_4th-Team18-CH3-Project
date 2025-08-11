@@ -30,14 +30,7 @@ public:
 	// 이동 속도 가져오기 함수들
 	virtual float GetWalkSpeed() const = 0;
 	virtual float GetRunSpeed() const = 0;
-
-	// 체력 관련 함수들 추가
-	virtual float GetCurrentHP() const = 0;
-	virtual float GetMaxHP() const = 0;
-	virtual void TakeDamage(float DamageAmount, AActor* DamageCauser = nullptr) = 0;
-	virtual bool IsDead() const = 0;
-
+	
 	// 죽음 처리 함수들 추가
-	virtual void HandleDeath(AActor* Killer = nullptr) = 0;
 	virtual void PlayDeathAnimation() = 0;
 };

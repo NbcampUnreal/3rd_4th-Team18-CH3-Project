@@ -7,7 +7,7 @@
 AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
+	
 	// 공격 컴포넌트 생성 및 루트에 붙이기
 	AttackComponent = CreateDefaultSubobject<UMeleeAttackComponent>(TEXT("MeleeAttackComponent"));
 	AttackComponent->SetupAttachment(RootComponent);
@@ -27,16 +27,26 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 	Movement->AirControl = 0.2f;
 }
 
-void AMeleeEnemyCharacter::TakeDamage(float DamageAmount, AActor* DamageCauser)
-{
-}
 
-void AMeleeEnemyCharacter::HandleDeath(AActor* Killer)
+void AMeleeEnemyCharacter::HandleDeath()
 {
+	bIsDead = true;
+	//AI 컨트롤러 비활성화
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StopMovement();
+		AIController->UnPossess();
+	}
 }
-
 void AMeleeEnemyCharacter::PlayDeathAnimation()
 {
+	if (DeathMontage)
+	{
+		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(DeathMontage);
+		}
+	}
 }
 
 void AMeleeEnemyCharacter::SetMovementSpeed(float NewSpeed)
@@ -50,5 +60,6 @@ void AMeleeEnemyCharacter::SetMovementSpeed(float NewSpeed)
 void AMeleeEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	ActorTag = GameDefine::EnemyTag;
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }
