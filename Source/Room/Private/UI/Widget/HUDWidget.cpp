@@ -29,3 +29,11 @@ void UHUDWidget::UpdateHealth(float HealthRatio)
         HealthWidget->UpdateHealth(HealthRatio);
     }
 }
+
+void UHUDWidget::ShowCrosshairHitMarker()
+{
+    if (CrosshairWidget)
+    {
+        CrosshairWidget->ShowHitMarker();
+    }
+}

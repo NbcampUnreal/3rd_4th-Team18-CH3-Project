@@ -182,3 +182,11 @@ void UUISubsystem::HideLoadingScreen()
         LoadingWidget->RemoveFromParent();
     }
 }
+
+void UUISubsystem::ShowHitMarkerOnHUD()
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowCrosshairHitMarker();
+    }
+}

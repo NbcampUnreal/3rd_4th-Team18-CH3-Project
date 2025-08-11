@@ -28,6 +28,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void UpdateHealth(float HealthRatio);
 
+    UFUNCTION(BlueprintCallable)
+    void ShowCrosshairHitMarker();
+
 protected:
     
 };

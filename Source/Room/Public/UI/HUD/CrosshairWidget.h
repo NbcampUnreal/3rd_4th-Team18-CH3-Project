@@ -11,4 +11,8 @@ class ROOM_API UCrosshairWidget : public UUserWidget
 
 protected:
     virtual void NativeConstruct() override;
+
+public:
+    UFUNCTION(BlueprintImplementableEvent, Category = "Crosshair")
+    void ShowHitMarker();
 };

@@ -45,6 +45,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HideLoadingScreen();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowHitMarkerOnHUD();
+
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;
 	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
