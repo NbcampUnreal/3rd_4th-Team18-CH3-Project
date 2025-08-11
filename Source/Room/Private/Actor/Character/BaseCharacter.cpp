@@ -23,4 +23,41 @@ void ABaseCharacter::HandleDeath()
 	//컨트롤러 해제 등은 상속받은 캐릭터에서 처리
 }
 
+void ABaseCharacter::RunMontage(ECharacterAnim Anim, float delay, float duration, float speed)
+{
+	if (AnimMontages.Contains(Anim))
+	{
+		UAnimMontage* MontageToPlay = AnimMontages[Anim];
+        
+		// 애니메이션 몽타주가 유효하고, 이미 재생 중인 애니메이션이 아닐 경우
+		if (MontageToPlay && GetMesh()->GetAnimInstance() && !GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+		{
+			// 애니메이션 몽타주를 재생
+			GetMesh()->GetAnimInstance()->Montage_Play(MontageToPlay, speed);
+
+			// 현재 애니메이션 상태를 업데이트
+			CurrentAnimState = Anim;
+
+		}
+	}
+}
+bool ABaseCharacter::StopMontage()
+{
+		if (GetMesh()->GetAnimInstance() && GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+		{
+			// 모든 몽타주를 중지
+			GetMesh()->GetAnimInstance()->Montage_Stop(0.2f);
+        
+			// 애니메이션 상태를 초기화
+			CurrentAnimState = ECharacterAnim::Idle; 
+        
+			return true;
+		}
+	return false;
+}
+
+ECharacterAnim ABaseCharacter::GetCurrentCharacterAnim() const
+{
+		return CurrentAnimState;
+}
 

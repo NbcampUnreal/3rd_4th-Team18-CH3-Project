@@ -7,6 +7,15 @@
 #include "Components/HealthComponent.h"
 #include "BaseCharacter.generated.h"
 
+UENUM()
+enum class ECharacterAnim
+{
+	Hited,
+	Attaking,
+	Dead,
+	Idle
+};
+
 UCLASS()
 class ROOM_API ABaseCharacter : public ACharacter
 {
@@ -23,14 +32,24 @@ public:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	
 	
-
 	UFUNCTION(BlueprintCallable, Category = "States")
 	FORCEINLINE bool IsDead() const { return bIsDead; }
 	
 	UFUNCTION()
 	virtual void HandleDeath();
 
+	// 애니메이션 몽타주를 담을 TMap 변수
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	TMap<ECharacterAnim, TObjectPtr<UAnimMontage>> AnimMontages;
+
+	// 현재 재생 중인 애니메이션 몽타주
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	ECharacterAnim CurrentAnimState;
 	
+	void RunMontage(ECharacterAnim Anim, float delay, float duration, float speed);
+	bool StopMontage();	
+	ECharacterAnim GetCurrentCharacterAnim() const;
+
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "States")
