@@ -10,8 +10,8 @@
 UENUM()
 enum class ECharacterAnim
 {
-	Hited,
-	Attaking,
+	GetHit,
+	Attacking,
 	Dead,
 	Idle
 };
