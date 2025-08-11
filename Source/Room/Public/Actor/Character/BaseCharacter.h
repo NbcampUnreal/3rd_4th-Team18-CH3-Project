@@ -25,7 +25,7 @@ class ROOM_API ABaseCharacter : public ACharacter, public IEquipper
 public:
 	ABaseCharacter();
 	//상속 받은 캐릭터에서 태그 설정
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Tag")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tag")
 	FGameplayTag ActorTag;
 	FORCEINLINE FGameplayTag GetActorTag() const { return ActorTag; }
 	
