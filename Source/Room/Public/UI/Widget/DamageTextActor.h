@@ -5,30 +5,18 @@
 #include "DamageTextActor.generated.h"
 
 class UWidgetComponent;
-class UDamageNumberWidget;
 
 UCLASS()
 class ROOM_API ADamageTextActor : public AActor
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    ADamageTextActor();
+	ADamageTextActor();
+
+	void SetDamage(int32 Damage);
 
 protected:
-    virtual void BeginPlay() override;
-
-    UPROPERTY(VisibleAnywhere)
-    UWidgetComponent* WidgetComponent;
-
-    FTimerHandle DestroyTimer;
-
-public:
-    void SetDamageValue(int32 Damage);
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    float DestroyDelay = 1.0f;
-
-    UFUNCTION()
-    void DestroySelf();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UWidgetComponent* WidgetComponent;
 };

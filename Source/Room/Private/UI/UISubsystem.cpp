@@ -3,6 +3,7 @@
 #include "UI/Widget/PauseMenuWidget.h"
 #include "UI/Widget/HUDWidget.h"
 #include "UI/Widget/LoadingScreenWidget.h"
+#include "UI/Widget/DamageTextActor.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Engine/Engine.h"
@@ -21,11 +22,13 @@ void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
     const FString PauseMenuPath = TEXT("/Game/UI/WBP_PauseMenu.WBP_PauseMenu_C");
     const FString HUDPath = TEXT("/Game/UI/WBP_HUD.WBP_HUD_C");
     const FString LoadingScreentPath = TEXT("/Game/UI/WBP_LoadingScreen.WBP_LoadingScreen_C");
+    const FString DamageTextActorPath = TEXT("/Game/UI/Widgets/BP_DamageTextActor.BP_DamageTextActor_C");
 
     TSubclassOf<UMainMenuWidget> LoadedMainMenuClass = TSoftClassPtr<UMainMenuWidget>(FSoftObjectPath(MainMenuPath)).LoadSynchronous();
     TSubclassOf<UPauseMenuWidget> LoadedPauseMenuClass = TSoftClassPtr<UPauseMenuWidget>(FSoftObjectPath(PauseMenuPath)).LoadSynchronous();
     TSubclassOf<UHUDWidget> LoadedHUDClass = TSoftClassPtr<UHUDWidget>(FSoftObjectPath(HUDPath)).LoadSynchronous();
     TSubclassOf<UHUDWidget> LoadedLoadingClass = TSoftClassPtr<ULoadingScreenWidget>(FSoftObjectPath(HUDPath)).LoadSynchronous();
+    TSubclassOf<ADamageTextActor> LoadedDamageTextActorClass = TSoftClassPtr<ADamageTextActor>(FSoftObjectPath(DamageTextActorPath)).LoadSynchronous();
 
 
     if (LoadedMainMenuClass)
@@ -50,6 +53,10 @@ void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
     if (LoadedLoadingClass)
     {
         LoadingWidgetClass = LoadedLoadingClass;
+    }
+    if (LoadedDamageTextActorClass)
+    {
+        DamageTextActorClass = LoadedDamageTextActorClass;
     }
 }
 
@@ -196,5 +203,17 @@ void UUISubsystem::ShowKillMarkerOnHUD()
     if (HUDWidget.IsValid())
     {
         HUDWidget->ShowKillMarker();
+    }
+}
+
+void UUISubsystem::ShowDamageNumber(int32 Damage, FVector WorldLocation)
+{
+    if (GetWorld() && DamageTextActorClass)
+    {
+        ADamageTextActor* SpawnedActor = GetWorld()->SpawnActor<ADamageTextActor>(DamageTextActorClass, WorldLocation, FRotator::ZeroRotator);
+        if (SpawnedActor)
+        {
+            SpawnedActor->SetDamage(Damage);
+        }
     }
 }

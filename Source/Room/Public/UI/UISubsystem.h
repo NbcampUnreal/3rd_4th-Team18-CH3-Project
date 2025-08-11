@@ -50,6 +50,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowKillMarkerOnHUD();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowDamageNumber(int32 Damage, FVector WorldLocation);
+
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;
 	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
@@ -67,6 +70,9 @@ private:
 
 	UPROPERTY()
 	TSubclassOf<ULoadingScreenWidget> LoadingWidgetClass;
+
+	UPROPERTY()
+	TSubclassOf<class ADamageTextActor> DamageTextActorClass;
 
 	UPROPERTY(Transient)
 	UUserWidget* MainMenuInstance = nullptr;
