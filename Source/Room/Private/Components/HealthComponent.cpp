@@ -16,7 +16,6 @@ void UHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
-	SetCurrentHealth(CurrentHealth); 
     
     
 	if (AActor* Owner = GetOwner())
