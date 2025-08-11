@@ -190,3 +190,11 @@ void UUISubsystem::ShowHitMarkerOnHUD()
         HUDWidget->ShowCrosshairHitMarker();
     }
 }
+
+void UUISubsystem::ShowKillMarkerOnHUD()
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowKillMarker();
+    }
+}

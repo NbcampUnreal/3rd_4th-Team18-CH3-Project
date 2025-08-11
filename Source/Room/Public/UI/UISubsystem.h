@@ -47,6 +47,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowHitMarkerOnHUD();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowKillMarkerOnHUD();
 
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;

@@ -15,4 +15,7 @@ protected:
 public:
     UFUNCTION(BlueprintImplementableEvent, Category = "Crosshair")
     void ShowHitMarker();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Crosshair")
+    void ShowKillMarker();
 };

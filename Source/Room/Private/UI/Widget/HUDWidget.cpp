@@ -37,3 +37,11 @@ void UHUDWidget::ShowCrosshairHitMarker()
         CrosshairWidget->ShowHitMarker();
     }
 }
+
+void UHUDWidget::ShowKillMarker()
+{
+    if (CrosshairWidget)
+    {
+        CrosshairWidget->ShowKillMarker();
+	}
+}

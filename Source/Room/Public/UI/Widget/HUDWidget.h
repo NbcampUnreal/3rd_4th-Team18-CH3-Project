@@ -30,6 +30,8 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void ShowCrosshairHitMarker();
+    UFUNCTION(BlueprintCallable)
+    void ShowKillMarker();
 
 protected:
     
