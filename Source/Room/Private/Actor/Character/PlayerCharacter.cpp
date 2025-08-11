@@ -36,6 +36,7 @@ void APlayerCharacter::BeginPlay()
 			}
 		}
 	}
+	SpringArm->SocketOffset.Z = BaseEyeHeight;
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
