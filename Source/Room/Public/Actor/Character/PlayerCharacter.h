@@ -11,6 +11,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
@@ -22,7 +23,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	float Health = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	float Attack = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -37,7 +39,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPlayerAttackComponent> PlayerAttackComponent;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	TObjectPtr<UAnimMontage> FireMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	TObjectPtr<UAnimMontage> DeathMontage;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -46,4 +52,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void StartFire();
 	void StopFire();
+
+	UFUNCTION()
+	void PlayFireMontage();
 };
