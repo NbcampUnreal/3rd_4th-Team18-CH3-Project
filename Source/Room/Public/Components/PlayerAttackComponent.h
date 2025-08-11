@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "Subsystem/StaticDataSubsystem.h"
+#include "StaticData/StaticDataStruct.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
