@@ -45,12 +45,12 @@ EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeCompone
 		{
 			// 블랙보드에 찾은 랜덤 위치 벡터 값을 저장 (LocationKey는 블랙보드 키)
 			BlackboardComp->SetValueAsVector(LocationKey.SelectedKeyName, RandomLocation.Location);
-			UE_LOG(LogTemp, Log, TEXT("[AI][FindRandom] 새로운 목적지: %s"), *RandomLocation.Location.ToString());
+			//UE_LOG(LogTemp, Log, TEXT("[AI][FindRandom] Found new destination at: %s"), *RandomLocation.Location.ToString());
 			return EBTNodeResult::Succeeded; // 작업 성공 반환
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[AI][FindRandom] 갈 곳을 찾지 못했습니다"));
+	UE_LOG(LogTemp, Warning, TEXT("[AI][FindRandom] Failed to find a destination"));
 	// 찾기에 실패하거나 블랙보드가 없으면 실패 반환
 	return EBTNodeResult::Failed;
 }

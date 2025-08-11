@@ -35,7 +35,9 @@ private:
 	virtual void OnClearLevel();
 
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
+private:
 	void InitializeGame();
 	
 };

@@ -1,23 +1,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StaticData.h"
+#include "Engine/DataTable.h"
+#include "StaticData.h" // FStaticData를 포함하기 위해 추가
 #include "EnemySpawnData.generated.h"
 
-USTRUCT(BlueprintType)
-struct FEnemySpawnData : public FStaticData
+UENUM(BlueprintType)
+enum class ESpawnTriggerCondition : uint8
 {
-    GENERATED_BODY()
+	OnGameStart UMETA(DisplayName = "On Game Start"),
+	OnWaveClear UMETA(DisplayName = "On Wave Clear"),
+	OnPlayerEnterTrigger UMETA(DisplayName = "On Player Enter Trigger"),
+};
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    FVector Location = FVector::ZeroVector;
+USTRUCT(BlueprintType)
+struct FEnemySpawnData : public FStaticData // FTableRowBase 대신 FStaticData 상속
+{
+	GENERATED_BODY()
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    int32 EnemyID = 0;
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 EnemyID;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    int32 Count = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	ESpawnTriggerCondition SpawnTriggerCondition;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn")
-    float SpawnTime = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	float SpawnDelay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 Wave;
 };

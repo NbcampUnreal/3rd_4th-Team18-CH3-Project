@@ -16,7 +16,9 @@ void UHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
-	
+	SetCurrentHealth(CurrentHealth); 
+    
+    
 	if (AActor* Owner = GetOwner())
 	{
 		Owner->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
@@ -36,7 +38,7 @@ void UHealthComponent::SetCurrentHealth(float NewHealth)
 
 	if (CurrentHealth <= 0.0f)
 	{
-		OnDead.Execute();
+		OnDead.Broadcast();
 	}
 }
 

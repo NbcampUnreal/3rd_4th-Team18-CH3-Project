@@ -54,7 +54,7 @@ public:
             auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
             if (Manager.IsValid())
             {
-                return Manager->GetDataByKey<TKey>(IndexName, Key);
+                return Manager->template GetDataByKey<TKey>(IndexName, Key);
             }
         }
         return nullptr;
@@ -67,12 +67,17 @@ public:
     {
         //등록된 데이터 테이블을 찾고 없으면 종료
         TObjectPtr<UDataTable>* FoundTable = DataTables.Find(DataTableName);
-        if (!FoundTable || !*FoundTable) return;
-    
+        if (!FoundTable || !*FoundTable)
+        {
+            return;
+        }
         
         //구조체 이름을 키로 사용, 중복 방지
         FName StructName = TStruct::StaticStruct()->GetFName();
-        if (StaticDataManagers.Contains(StructName)) return;
+        if (StaticDataManagers.Contains(StructName))
+        {
+            return;
+        }
         
         //데이터 매니저 생성, 맵에 등록
         TSharedPtr<FDataManagerBase> NewManager = MakeShared<TStaticDataManager<TStruct>>(GetKeyFunc);
@@ -91,7 +96,7 @@ public:
             auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
             if (Manager.IsValid())
             {
-                Manager->AddIndex<TKey>(IndexName, GetKeyFunc);
+                Manager->template AddIndex<TKey>(IndexName, GetKeyFunc);
             }
         }
     }
@@ -101,7 +106,10 @@ public:
     FName GetDTName()
     {
         FString S = TStruct::StaticStruct()->GetFName().ToString();
-        if (S.StartsWith("F")) S.RemoveAt(0);
+        if (S.StartsWith("F"))
+        {
+            S.RemoveAt(0);
+        }
         return FName(*("DT_" + S + "Table"));
     }
 };

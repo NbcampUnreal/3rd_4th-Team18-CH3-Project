@@ -41,6 +41,13 @@ void ARoomGameMode::OnClearLevel()
 void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+}
+
+void ARoomGameMode::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
 	RoomGameState = GetGameState<ARoomGameState>();
 
 	InitializeGame();
