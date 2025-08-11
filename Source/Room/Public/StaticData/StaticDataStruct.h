@@ -12,3 +12,4 @@
 #include "MapSpawnData.h"
 #include "RoomData.h"
 #include "ClearCondition.h"
+#include "UIData.h"

@@ -22,11 +22,16 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable)
-    void UpdateWeaponInfo(int32 CurrentAmmo, int32 TotalAmmo);
+    void UpdateWeaponInfo(int32 CurrentAmmo,int32 MaxAmmo, int32 TotalAmmo);
     UFUNCTION(BlueprintCallable)
     void UpdateObjective(int32 RangedKills, int32 RangedTotal, int32 MeleeKills, int32 MeleeTotal);
     UFUNCTION(BlueprintCallable)
     void UpdateHealth(float HealthRatio);
+
+    UFUNCTION(BlueprintCallable)
+    void ShowCrosshairHitMarker();
+    UFUNCTION(BlueprintCallable)
+    void ShowKillMarker();
 
 protected:
     

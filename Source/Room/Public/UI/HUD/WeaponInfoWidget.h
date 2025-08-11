@@ -15,7 +15,7 @@ class ROOM_API UWeaponInfoWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void UpdateAmmo(int32 CurrentAmmo, int32 TotalAmmo);
+	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -27,5 +27,6 @@ protected:
 	UTextBlock* TotalAmmoText;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AmmoSegment")
-	void OnAmmoUpdated(int32 CurrentAmmo);
+	void OnAmmoUpdated(int32 CurrentAmmo, int32 MaxAmmo);
+
 };
