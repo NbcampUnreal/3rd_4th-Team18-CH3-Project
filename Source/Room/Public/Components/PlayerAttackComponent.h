@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "StaticData/StaticDataStruct.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
