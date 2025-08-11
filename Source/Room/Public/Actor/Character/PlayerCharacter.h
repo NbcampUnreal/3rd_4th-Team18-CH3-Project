@@ -20,12 +20,16 @@ class ROOM_API APlayerCharacter : public ABaseCharacter
 
 public:
 	APlayerCharacter();
-	
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnAttack OnAttack;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnAttackEnd OnAttackEnd;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	float Health = 0.0f;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	float Attack = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
