@@ -11,7 +11,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
