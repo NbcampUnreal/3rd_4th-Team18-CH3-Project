@@ -17,4 +17,8 @@ class ROOM_API IEquipper
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")
 	void Equip(UObject* Equipment);
+	UFUNCTION(BlueprintNativeEvent, Category = "Item")
+	void Unequip();
+	UFUNCTION(BlueprintNativeEvent, Category = "Item")
+	bool IsEquipping() const;
 };

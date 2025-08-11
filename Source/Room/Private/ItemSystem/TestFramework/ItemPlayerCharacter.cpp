@@ -20,11 +20,4 @@ AItemPlayerCharacter::AItemPlayerCharacter()
 
 }
 
-void AItemPlayerCharacter::Equip_Implementation(UObject* Equipment)
-{
-	IEquipper::Equip_Implementation(Equipment);
-
-	// TODO 아이템 장착.
-}
-
 

@@ -10,6 +10,7 @@
 
 AItemPlayerController::AItemPlayerController()
 {
+	
 }
 
 void AItemPlayerController::BeginPlay()
@@ -22,28 +23,18 @@ void AItemPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultInputMappingContext,0);
 	}
 
-	// 트레이스 위치를 위한 카메라 레퍼런스
-	CameraRef = GetPawn()->FindComponentByClass<UCameraComponent>();
-
 	// 허드 위젯 생성.
 	if (HUDClass)
 	{
 		HUDWidget = CreateWidget<URoomHUD>(GetWorld(),HUDClass);
 		HUDWidget->AddToViewport();
 	}
-
-	
 }
 
 
 void AItemPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	UpdateInteractableTarget();
-	UpdateFocus();
-
-	UpdateInteractableMessage();
 }
 void AItemPlayerController::SetupInputComponent()
 {
@@ -51,7 +42,6 @@ void AItemPlayerController::SetupInputComponent()
 	auto EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&ThisClass::MoveByInput);
 	EnhancedInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&ThisClass::LookByInput);
-	EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Started,this,&ThisClass::InteractByInput);
 	EnhancedInputComponent->BindAction(ToggleInventoryAction,ETriggerEvent::Started,this,&ThisClass::ToggleInventoryByInput);
 }
 void AItemPlayerController::MoveByInput(const FInputActionValue& Value)
@@ -81,17 +71,9 @@ void AItemPlayerController::LookByInput(const FInputActionValue& Value)
 	AddYawInput(InputVector.X);
 	AddPitchInput(InputVector.Y);
 }
-void AItemPlayerController::InteractByInput(const FInputActionValue& Value)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Interact Input"));
-	if (CurrentTargetActor.IsValid())
-	{
-		IInteractable::Execute_Interact(CurrentTargetActor.Get(),this);
-	}
-}
+
 void AItemPlayerController::ToggleInventoryByInput()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("ToggleInventory Input"));
 	bool bInventoryOn = HUDWidget->ToggleInventoryWidget();
 	if (bInventoryOn)
 	{
@@ -104,56 +86,3 @@ void AItemPlayerController::ToggleInventoryByInput()
 		bShowMouseCursor = false;
 	}
 }
-void AItemPlayerController::UpdateInteractableTarget()
-{
-	
-	FHitResult HitResult;
-	FVector Start = CameraRef->GetComponentLocation();
-	FVector End = Start + CameraRef->GetForwardVector() * InteractTraceLength;
-	GetWorld()->LineTraceSingleByChannel(OUT HitResult,Start,End,InteractTraceChannel);
-		
-	PreviousTargetActor = CurrentTargetActor;
-	if (HitResult.bBlockingHit && HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
-	{
-		CurrentTargetActor = HitResult.GetActor();
-	}
-	else
-	{
-		CurrentTargetActor = nullptr;	
-	}
-}
-void AItemPlayerController::UpdateFocus()
-{
-	if (PreviousTargetActor != CurrentTargetActor)
-	{
-		if (PreviousTargetActor != nullptr)
-		{
-			if (PreviousTargetActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
-			{
-				IInteractable::Execute_OutFocus(PreviousTargetActor.Get());
-			}
-		}
-
-		if (CurrentTargetActor != nullptr)
-		{
-			if (CurrentTargetActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
-			{
-				IInteractable::Execute_InFocus(CurrentTargetActor.Get());
-			}
-		}
-	}
-}
-
-void AItemPlayerController::UpdateInteractableMessage()
-{
-	if (CurrentTargetActor.Get())
-	{
-		HUDWidget->ShowInteractMessage(IInteractable::Execute_GetInteractableMessage(CurrentTargetActor.Get()));
-	}
-	else
-	{
-		HUDWidget->HideInteractMessage();
-	}
-}
-
-

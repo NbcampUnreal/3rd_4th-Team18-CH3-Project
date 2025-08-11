@@ -19,7 +19,6 @@ public:
 	bool ToggleInventoryWidget();
 	void ShowInteractMessage(const FText& MSG);
 	void HideInteractMessage();
-	
 protected:
 	virtual void NativeConstruct() override;
 	

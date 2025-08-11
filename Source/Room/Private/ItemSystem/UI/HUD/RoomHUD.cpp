@@ -42,6 +42,7 @@ void URoomHUD::HideInteractMessage()
 	Overlay_PickupMessage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+
 void URoomHUD::NativeConstruct()
 {
 	Super::NativeConstruct();

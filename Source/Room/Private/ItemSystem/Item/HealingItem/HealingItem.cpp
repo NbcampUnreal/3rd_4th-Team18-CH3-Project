@@ -9,6 +9,7 @@ void UHealingItem::Use_Implementation(AActor* User)
 {
 	Super::Use_Implementation(User);
 	UGameplayStatics::ApplyDamage(User,GetHealingAmount(),nullptr,nullptr,UDamageType::StaticClass());
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Healing %f"),GetHealingAmount()));
 }
 
 FName UHealingItem::GetItemID_Implementation() const

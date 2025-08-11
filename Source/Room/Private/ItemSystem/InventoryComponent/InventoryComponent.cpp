@@ -1,12 +1,22 @@
 
 #include "Room/Public/ItemSystem/InventoryComponent/InventoryComponent.h"
+
+#include "ItemSystem/Item/FieldItem/FieldItem.h"
 #include "ItemSystem/Structure/InventorySlot.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
+#include "Kismet/GameplayStatics.h"
+
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	InventorySlots.SetNum(InventorySize);
+}
+
+void UInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
 }
 
 int32 UInventoryComponent::AddItemToInventory(UItemBase* NewItem, int32 Quantity)
@@ -77,11 +87,17 @@ bool UInventoryComponent::DropItemFromInventory(int32 SlotIndex, int32 Quantity)
 	}
 }
 
+const FInventorySlot& UInventoryComponent::GetInventorySlotByIndex(int32 SlotIndex) const
+{
+	return InventorySlots[SlotIndex];
+}
+
 int32 UInventoryComponent::AddStackableItem(UItemBase* NewItem, int32 Quantity)
 {
 	int32 MaxStackCount = NewItem->GetMaxStackCount();
 
 	// 기존 스택 채우기
+	int SlotIndex = 0;
 	for (FInventorySlot& Slot : InventorySlots)
 	{
 		if (Slot.Item == nullptr) continue;
@@ -90,14 +106,17 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* NewItem, int32 Quantity)
 			int32 Addable = FMath::Min(MaxStackCount - Slot.Quantity, Quantity);
 			Slot.Quantity += Addable;
 			Quantity -= Addable;
-
+			OnSlotChanged.Broadcast();
+			
 			if (Quantity <= 0)
 			{
 				return 0;
 			}
 		}
+		SlotIndex++;
 	}
 
+	SlotIndex=0;
 	// 남은 수량은 빈 슬롯에 새로 추가
 	for (FInventorySlot& Slot : InventorySlots)
 	{
@@ -107,33 +126,33 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* NewItem, int32 Quantity)
 			Slot.Item = NewItem;
 			Slot.Quantity = Addable;
 			Quantity -= Addable;
+			OnSlotChanged.Broadcast();
 
 			if (Quantity <= 0)
 			{
-				return 0;
+				return Quantity;
 			}
 		}
+		SlotIndex++;
 	}
 
-	if (Quantity > 0)
-	{
-		return Quantity;
-	}
-
-	return 0;
+	return Quantity;
 
 }
 
 int32 UInventoryComponent::AddNonStackableItem(UItemBase* NewItem)
 {
+	int32 SlotIndex = 0;
 	for (FInventorySlot& Slot : InventorySlots)
 	{
 		if (Slot.Item == nullptr)
 		{
 			Slot.Item = NewItem;
 			Slot.Quantity = 1;
+			OnSlotChanged.Broadcast();
 			return 0;
 		}
+		SlotIndex++;
 	}
 
 	return 1;
@@ -154,12 +173,13 @@ bool UInventoryComponent::UseStackableItem(int32 SlotIndex)
 
 	Slot.Item->Use(GetOwner());
 	Slot.Quantity--;
-
+	
 	if (Slot.Quantity <= 0)
 	{
 		Slot.Item = nullptr;
 		Slot.Quantity = 0;
 	}
+	OnSlotChanged.Broadcast();
 
 	return true;
 }
@@ -180,7 +200,7 @@ bool UInventoryComponent::UseNonStackableItem(int32 SlotIndex)
 	Slot.Item->Use(GetOwner());
 	Slot.Item = nullptr;
 	Slot.Quantity = 0;
-
+	OnSlotChanged.Broadcast();
 	return true;
 }
 
@@ -199,6 +219,14 @@ bool UInventoryComponent::DropStackableItem(int32 SlotIndex, int32 Quantity)
 	}
 
 	int32 Dropped = FMath::Min(Quantity, Slot.Quantity);
+	
+	FVector SpawnLocation = UGameplayStatics::GetPlayerPawn(this, 0)->GetActorLocation();
+	AFieldItem* SpawnedItem = GetWorld()->SpawnActor<AFieldItem>(AFieldItem::StaticClass(),SpawnLocation,FRotator::ZeroRotator);
+	SpawnedItem->SetItem(Slot.Item);
+	SpawnedItem->SetQuantity(Dropped);
+	SpawnedItem->SetItemMesh(Slot.Item->GetItemMesh());
+
+	
 	Slot.Quantity -= Dropped;
 
 	if (Slot.Quantity <= 0)
@@ -206,11 +234,13 @@ bool UInventoryComponent::DropStackableItem(int32 SlotIndex, int32 Quantity)
 		Slot.Item = nullptr;
 		Slot.Quantity = 0;
 	}
+	OnSlotChanged.Broadcast();
 
-	//TODO: 드롭한 아이템 월드에 추가.
-
+	
+	
 	return true;
 }
+
 
 bool UInventoryComponent::DropNonStackableItem(int32 SlotIndex)
 {
@@ -225,10 +255,16 @@ bool UInventoryComponent::DropNonStackableItem(int32 SlotIndex)
 		return false;
 	}
 
+	FVector SpawnLocation = UGameplayStatics::GetPlayerPawn(this, 0)->GetActorLocation();
+	AFieldItem* SpawnedItem = GetWorld()->SpawnActor<AFieldItem>(AFieldItem::StaticClass(),SpawnLocation,FRotator::ZeroRotator);
+	SpawnedItem->SetItem(Slot.Item);
+	SpawnedItem->SetQuantity(1);
+	SpawnedItem->SetItemMesh(Slot.Item->GetItemMesh());
+
+	
 	Slot.Item = nullptr;
 	Slot.Quantity = 0;
-
-	//TODO: 드롭한 아이템 월드에 추가.
-	
+	OnSlotChanged.Broadcast();
 	return true;
 }
+

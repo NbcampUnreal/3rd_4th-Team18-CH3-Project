@@ -21,7 +21,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	FText GetInteractableMessage();
-
+	
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	void InFocus();
 	

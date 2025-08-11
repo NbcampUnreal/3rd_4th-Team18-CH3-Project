@@ -10,13 +10,12 @@ class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class ROOM_API AItemPlayerCharacter : public ACharacter, public IEquipper
+class ROOM_API AItemPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	AItemPlayerCharacter();
-	virtual void Equip_Implementation(UObject* Equipment) override;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;

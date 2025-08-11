@@ -6,18 +6,29 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
+class UInventoryComponent;
+class UUniformGridPanel;
 struct FInventorySlot;
 class UInventorySlotWidget;
-/**
- * 
- */
+
 UCLASS()
 class ROOM_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	UFUNCTION(BlueprintCallable)
 	void UpdateInventorySlotByIndex(int32 Index, const FInventorySlot& SlotInfo);
+protected:
+	virtual void NativeConstruct() override;
+
 private:
 	UPROPERTY(meta=(BindWidget))
-	TArray<TObjectPtr<UInventorySlotWidget>> SlotWidgets;
+	TObjectPtr<UUniformGridPanel> UniformGridPanel_Slots;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<UInventorySlotWidget> InventorySlotWidgetClass;
+
+	TArray<TObjectPtr<UInventorySlotWidget>> InventorySlotWidgets;
+	
+	TWeakObjectPtr<UInventoryComponent> InventoryComponent;
 };
