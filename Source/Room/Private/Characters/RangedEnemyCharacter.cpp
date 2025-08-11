@@ -61,5 +61,7 @@ void ARangedEnemyCharacter::SetMovementSpeed(float NewSpeed)
 void ARangedEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	ActorTag = GameDefine::EnemyTag;
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }

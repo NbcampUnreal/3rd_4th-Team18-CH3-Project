@@ -2,7 +2,7 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-	ActorTag = GameDefine::PlayerTag;
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(GetCapsuleComponent()); 
 	
@@ -25,6 +25,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	ActorTag = GameDefine::PlayerTag;
 	
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
