@@ -4,14 +4,15 @@ APlayerCharacter::APlayerCharacter()
 {
 	ActorTag = GameDefine::PlayerTag;
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(GetCapsuleComponent()); 
+	SpringArm->SetupAttachment(RootComponent); 
 	
-	SpringArm->TargetArmLength = 400.0f; 
-    
-
+	SpringArm->TargetArmLength = 300.0f; 
+    SpringArm->bUsePawnControlRotation = true;
+	SpringArm->SocketOffset = FVector(0.0f, 100.0f, 0.0f);
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-
+	Camera->bUsePawnControlRotation = false;
+	
 	PlayerAttackComponent = CreateDefaultSubobject<UPlayerAttackComponent>(TEXT("PlayerAttackComponent"));
 	PlayerAttackComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
