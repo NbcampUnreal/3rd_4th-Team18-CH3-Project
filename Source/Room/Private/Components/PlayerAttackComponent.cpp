@@ -75,11 +75,7 @@ void UPlayerAttackComponent::StopFire()
 
 void UPlayerAttackComponent::Fire()
 {
-
-	
-		UE_LOG(LogTemp, Log, TEXT("fire!"));
-		
-	
-
+	UE_LOG(LogTemp, Log, TEXT("Fire!"));
+	OnFire.Broadcast();
 	// TODO: 탄환 액터 발사 로직 추가 
 }
