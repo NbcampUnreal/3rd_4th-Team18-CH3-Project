@@ -19,7 +19,8 @@ public:
 };
 
 /**
- *
+ * 자주 생성되고, 제거 되는데 동일한 Actor를 사용하는 오브젝트들.
+ * 총알
  */
 UCLASS()
 class ROOM_API UObjectPoolSubsystem : public UWorldSubsystem

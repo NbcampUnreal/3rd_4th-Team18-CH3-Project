@@ -5,6 +5,7 @@
 
 #if WITH_EDITOR
 #include "Editor.h"
+#include "Room/Editor/EditorHelper.h"
 #endif
 
 // Sets default values
@@ -29,7 +30,7 @@ ASpawnPoint::ASpawnPoint()
 void ASpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    GetWorld()->SpawnActor(SpawnActor->GetClass());
 }
 
 void ASpawnPoint::Destroyed()
@@ -104,5 +105,35 @@ void ASpawnPoint::HandleEndPIE(const bool bIsSimulating)
     {
         EditorMeshComponent->SetVisibility(true);
     }
+}
+
+TArray<TSoftObjectPtr<UObject>> ASpawnPoint::GetPreloadAssetList_Implementation()
+{
+    return UEditorHelper::CollectSoftReferences(SpawnActor.Get());
+}
+#else
+void ASpawnPoint::UpdateEditorMesh()
+{
+}
+
+void ASpawnPoint::OnConstruction(const FTransform& Transform)
+{
+}
+
+void ASpawnPoint::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+}
+
+void ASpawnPoint::HandleBeginPIE(const bool bIsSimulating)
+{
+}
+
+void ASpawnPoint::HandleEndPIE(const bool bIsSimulating)
+{
+}
+
+TArray<TSoftObjectPtr<UObject>> ASpawnPoint::GetPreloadAssetList_Implementation()
+{
+    return IHasRoomDataInterface::GetPreloadAssetList_Implementation();
 }
 #endif

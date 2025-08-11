@@ -30,7 +30,8 @@ public class Room : ModuleRules
 			PrivateDependencyModuleNames.AddRange(new string[]
 			{
 				"UnrealEd", // 에디터 API
-				"EditorSubsystem"
+				"EditorSubsystem",
+				"AutomationController"
 			});
 		}
 

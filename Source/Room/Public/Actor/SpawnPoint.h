@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/HasRoomDataInterface.h"
 #include "SpawnPoint.generated.h"
 
 UCLASS()
-class ROOM_API ASpawnPoint : public AActor
+class ROOM_API ASpawnPoint : public AActor, public IHasRoomDataInterface
 {
 	GENERATED_BODY()
 	
@@ -24,25 +25,24 @@ protected:
 	void UpdateEditorMesh();
 
 	void HandleBeginPIE(const bool bIsSimulating);
-    void HandleEndPIE(const bool bIsSimulating);
-
-
+	void HandleEndPIE(const bool bIsSimulating);
+	
+	FDelegateHandle BeginPIEDelegateHandle;
+	FDelegateHandle EndPIEDelegateHandle;
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "Spawn|Editor")
+	TSoftObjectPtr<class UDataTable> EnemyDataTable;
+	UPROPERTY()
+	TObjectPtr<class USkeletalMeshComponent> EditorMeshComponent;
+#endif
+	
 #endif
 
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 SpawnDataID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSoftObjectPtr<AActor> SpawnActor;
 
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditAnywhere, Category = "Spawn|Editor")
-	TSoftObjectPtr<class UDataTable> EnemyDataTable;
-	FDelegateHandle BeginPIEDelegateHandle;
-	FDelegateHandle EndPIEDelegateHandle;
-#endif
-
-private:
-#if WITH_EDITORONLY_DATA
-	UPROPERTY()
-	TObjectPtr<class USkeletalMeshComponent> EditorMeshComponent;
-#endif
+	TArray<TSoftObjectPtr<UObject>> GetPreloadAssetList_Implementation() override;
 };
