@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAIStateType DummyState;
 
+	// 블랙보드에 저장된 타겟 액터 반환
+	AActor* GetTargetActor() const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
