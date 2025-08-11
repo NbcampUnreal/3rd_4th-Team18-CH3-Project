@@ -10,6 +10,7 @@
 #include "AI/Components/Attack/BaseAttackComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
+#include "Define/GameDefine.h"
 
 
 // StaticDataSubsystem 관련 포함은 팀 프로젝트에서만 존재하므로 조건부 include
@@ -196,9 +197,8 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 
 	// 플레이어 Pawn 가져오기 (플레이어 0번 인덱스 기준)
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
 	// 감지된 Actor가 플레이어가 아니면 무시
-	if (Actor != PlayerPawn || !Actor)
+	if (Actor->ActorHasTag(GameDefine::PlayerTag.GetTagName()))
 	{
 		return;
 	}
