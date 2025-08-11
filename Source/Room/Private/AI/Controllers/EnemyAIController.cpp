@@ -308,3 +308,28 @@ void AEnemyAIController::SetCombatTypeToBlackboard(ACharacter* EnemyCharacter)
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] No AttackComponent found on %s"), *EnemyCharacter->GetName());
 	}
 }
+
+AActor* AEnemyAIController::GetTargetActor() const
+{
+	if (!BlackboardComp)
+	{
+		return nullptr;
+	}
+
+	UObject* TargetObject = BlackboardComp->GetValueAsObject(BBKey_TargetActor);
+	return Cast<AActor>(TargetObject);
+
+	/*
+		GetTargetActor() 사용 예시
+
+		if (AIController)
+		{
+			AActor* Target = AIController->GetTargetActor();
+			if (Target)
+			{
+				FVector TargetLoc = Target->GetActorLocation();
+				// 공격 처리 등...
+			}
+		}
+	*/
+}
