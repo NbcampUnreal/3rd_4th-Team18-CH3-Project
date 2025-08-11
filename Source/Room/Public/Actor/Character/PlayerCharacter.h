@@ -40,10 +40,10 @@ public:
 	TObjectPtr<UPlayerAttackComponent> PlayerAttackComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
-	UAnimMontage* FireMontage;
+	TObjectPtr<UAnimMontage> FireMontage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
-	UAnimMontage* DeathMontage;
+	TObjectPtr<UAnimMontage> DeathMontage;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
