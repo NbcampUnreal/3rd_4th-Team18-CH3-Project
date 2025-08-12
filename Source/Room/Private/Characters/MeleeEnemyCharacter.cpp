@@ -60,6 +60,6 @@ void AMeleeEnemyCharacter::SetMovementSpeed(float NewSpeed)
 void AMeleeEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	ActorTag = GameDefine::EnemyTag;
+	OwnedGameplayTags.AddTag(GameDefine::EnemyTag);
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }
