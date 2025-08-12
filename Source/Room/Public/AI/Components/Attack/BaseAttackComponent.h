@@ -25,7 +25,7 @@ struct FEnemyAttackData
 
 	// 공격 반경 (전방 공격 범위의 넓이, ex: 좌우로 퍼지는 공격의 범위)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Enemy Attack Data")
-	float AttackRadius = 50.f;
+	float AttackRadius = 150.f;
 
 	// 공격이 대상에게 입히는 데미지 양
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Enemy Attack Data")

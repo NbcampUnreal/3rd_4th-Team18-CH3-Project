@@ -25,8 +25,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	ActorTag = GameDefine::PlayerTag;
-	
+	OwnedGameplayTags.AddTag(GameDefine::PlayerTag);
+
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
@@ -59,12 +59,18 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 void APlayerCharacter::HandleDeath()
 {
 	Super::HandleDeath();
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	RunMontage(ECharacterAnim::Dead);
+	
+	UE_LOG(LogTemp, Warning, TEXT("[Player] Player has been killed"));
+	OnDeathMontageEnded();
+}
+void APlayerCharacter::OnDeathMontageEnded()
+{
+	if (AController* MController = GetController())
 	{
-		PC->DisableInput(PC);  
+		MController->UnPossess();
 	}
 }
-
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
