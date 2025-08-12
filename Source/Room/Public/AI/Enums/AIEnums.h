@@ -58,3 +58,16 @@ enum class EAIAwarenessLevel : uint8
 	Alerted		UMETA(DisplayName = "Alerted"),		// 경계 상태 (명확한 징후 발견, 집중 감시)
 	Engaged		UMETA(DisplayName = "Engaged")		// 전투 상태 (타겟과 교전 중)
 };
+
+
+//--------------------------------------------------
+//캐릭터 애니메이션 몽타주 재생 상태를 나타내는 열거형
+//--------------------------------------------------
+UENUM()
+enum class ECharacterAnim : uint8
+{
+	GetHit,
+	Attacking,
+	Dead,
+	Idle
+};

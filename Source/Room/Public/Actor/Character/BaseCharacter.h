@@ -7,16 +7,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/HealthComponent.h"
 #include "ItemSystem/Interfaces/Equipper.h"
+#include "AI/Enums/AIEnums.h"
 #include "BaseCharacter.generated.h"
 
-UENUM()
-enum class ECharacterAnim
-{
-	GetHit,
-	Attacking,
-	Dead,
-	Idle
-};
+
 
 
 UCLASS()
