@@ -8,6 +8,7 @@
 #include "Components/HealthComponent.h"
 #include "ItemSystem/Interfaces/Equipper.h"
 #include "AI/Enums/AIEnums.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BaseCharacter.generated.h"
 
 
@@ -22,15 +23,16 @@ public:
 	ABaseCharacter();
 	//상속 받은 캐릭터에서 태그 설정
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
-    
+
+	UFUNCTION()
+	virtual void HandleDeath();
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UHealthComponent> HealthComponent;
     
 	UFUNCTION(BlueprintCallable, Category = "States")
 	FORCEINLINE bool IsDead() const { return bIsDead; }
-    
-	UFUNCTION()
-	virtual void HandleDeath();
+
 
 	// 애니메이션 몽타주를 담을 TMap 변수
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
@@ -43,6 +45,9 @@ public:
 	void RunMontage(ECharacterAnim Anim);
 	bool StopMontage();    
 	ECharacterAnim GetCurrentCharacterAnim() const;
+    
+
+
 
 protected:
 	virtual void BeginPlay() override;

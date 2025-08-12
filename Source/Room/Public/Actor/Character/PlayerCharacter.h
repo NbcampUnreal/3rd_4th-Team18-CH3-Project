@@ -49,10 +49,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
 	TObjectPtr<UAnimMontage> DeathMontage;
+
 protected:
+	
+	virtual void HandleDeath() override;
+	void OnDeathMontageEnded();
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void HandleDeath() override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void StartFire();
