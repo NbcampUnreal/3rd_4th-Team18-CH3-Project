@@ -63,7 +63,7 @@ enum class EAIAwarenessLevel : uint8
 //--------------------------------------------------
 //캐릭터 애니메이션 몽타주 재생 상태를 나타내는 열거형
 //--------------------------------------------------
-UENUM()
+UENUM(BlueprintType)
 enum class ECharacterAnim : uint8
 {
 	GetHit,
