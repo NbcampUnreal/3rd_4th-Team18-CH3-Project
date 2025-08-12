@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/PlayerAttackComponent.h"
+#include "ItemSystem/Interfaces/Equipper.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
