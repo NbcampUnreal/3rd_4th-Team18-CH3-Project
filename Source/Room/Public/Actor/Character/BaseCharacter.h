@@ -45,9 +45,7 @@ public:
 	void RunMontage(ECharacterAnim Anim);
 	bool StopMontage();    
 	ECharacterAnim GetCurrentCharacterAnim() const;
-    
-
-
+	float GetMontagePlayLength(ECharacterAnim AnimType) const;
 
 protected:
 	virtual void BeginPlay() override;
