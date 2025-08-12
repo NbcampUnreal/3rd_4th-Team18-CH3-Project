@@ -1,11 +1,18 @@
 #include "Subsystem/LoadingSubsystem.h"
 
+#include "Algo/ForEach.h"
 #include "Core/GameManager.h"
 #include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "StaticData/EnemyData.h"
 #include "StaticData/GameConfigData.h"
+#include "StaticData/ItemData.h"
+#include "StaticData/RoomData.h"
+#include "Subsystem/StaticDataSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingSubsystem)
+
+struct FRoomData;
 
 void ULoadingSubsystem::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
 {
@@ -179,19 +186,44 @@ float ULoadingSubsystem::GetLoadingProgress() const
     return TotalProgress / ActiveHandles.Num();
 }
 
-void ULoadingSubsystem::LoadLevelWithLoadingScreen(
-    const TSoftObjectPtr<UWorld>& TargetLevel,
-    const TArray<TSoftObjectPtr<UObject>>& ResourcesToLoad
-    )
+TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomData& NewRoomData)
 {
-    if (TargetLevel.ToSoftObjectPath().IsNull())
+    TArray<FSoftObjectPath> Array;
+    Array.Reserve(
+        (NewRoomData.PreloadAssets.IsEmpty() ? 0 : NewRoomData.PreloadAssets.Num()) +
+        (NewRoomData.Monsters.IsEmpty() ? 0 : NewRoomData.Monsters.Num() * 3)
+        //(NewRoomData.Items.IsEmpty() ? 0 : NewRoomData.Items.Num())
+        );
+    
+    for (const TSoftObjectPtr<UObject>& Path : NewRoomData.PreloadAssets)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Target level is invalid."));
-        return;
+        Array.Add(Path.ToSoftObjectPath());
+    }
+    // 몬스터 데이터 추가.
+    UStaticDataSubsystem& StaticSys = *GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
+
+    for (const FDataTableRowHandle MonsterDataHandle : NewRoomData.Monsters)
+    {
+        FEnemyData* EnemyData = MonsterDataHandle.GetRow<FEnemyData>(TEXT("Not Found"));
+        Array.Add(EnemyData->Behavior.ToSoftObjectPath());
+        Array.Add(EnemyData->EnemyClass.ToSoftObjectPath());
+        Array.Add(EnemyData->ControllerClass.ToSoftObjectPath());
     }
 
-    PendingTargetLevel = TargetLevel;
-    PendingResources = ResourcesToLoad;
+    // for (const FDataTableRowHandle ItemHandle : NewRoomData.Items)
+    // {
+    //     FItemData* ItemData = ItemHandle.GetRow<FItemData>(TEXT("Not Found"));
+    //     Array.Add(ItemData->ItemBPClass.ToSoftObjectPath());
+    // }
+
+    return Array;
+}
+
+void ULoadingSubsystem::LoadLevelWithLoadingScreen(const FRoomData& NewRoomData)
+{
+    PendingTargetLevel = NewRoomData.Level;
+    PendingResourcesPath.Empty();
+    PendingResourcesPath = GetRoomDataNeedSoftPaths(NewRoomData);
     
     // 1. GameConfig에서 로딩 레벨 경로 가져오기
     const auto GameConfig = UGameConfigData::Get();
@@ -214,17 +246,16 @@ void ULoadingSubsystem::StartLoadingAssets()
     FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
 
     // 4. 리소스 목록 로드
-    for (const auto& Asset : PendingResources)
+    for (const auto& AssetPath : PendingResourcesPath)
     {
-        if (!Asset.ToSoftObjectPath().IsNull())
+        if (!AssetPath.IsNull())
         {
-            auto SoftPath = Asset.ToSoftObjectPath();
             auto Handle = Streamable.RequestAsyncLoad(
-                SoftPath,
+                AssetPath,
                 FStreamableDelegate(),
                 FStreamableManager::AsyncLoadHighPriority
             );
-            ActiveHandles.Add(SoftPath , Handle);
+            ActiveHandles.Add(AssetPath , Handle);
         }
     }
 
@@ -257,4 +288,9 @@ void ULoadingSubsystem::Deinitialize()
     {
         RequestUnload(Path);
     }
+}
+
+ULoadingSubsystem::ULoadingSubsystem()
+{
+    
 }

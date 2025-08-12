@@ -43,12 +43,13 @@ public:
 		if (DataTable)
 		{
 			TArray<FName> RowNames = DataTable->GetRowNames();
-			for (const FName& RowName : RowNames)
+			for (int i = 0; i < RowNames.Num(); ++i)
 			{
+				const FName& RowName = RowNames[i];
 				TStruct* Row = DataTable->FindRow<TStruct>(RowName, TEXT(""));
 				if (Row)
 				{
-					DataStore.Add(GetPrimaryKeyFunc(*Row), *Row);
+					DataStore.Add(i + 1, *Row);
 				}
 			}
 		}
@@ -89,7 +90,7 @@ public:
 		// 지정된 타입의 키와 데이터 포인터를 매핑하는 새로운 맵을 생성합니다.
 		auto NewIndexMap = MakeShared<TMap<TKey, const TStruct*>>();
 		// DataStore를 순회하며 인덱스 맵을 채웁니다.
-		for (const auto& Pair : DataStore)
+		for (const TPair<int, TStruct>& Pair : DataStore)
 		{
 			NewIndexMap->Add(GetKeyFunc(Pair.Value), &Pair.Value);
 		}

@@ -35,6 +35,6 @@ struct FRoomData : public FStaticData
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Monsters")
 	TArray<FDataTableRowHandle>	Monsters; 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Item")
-	TArray<FDataTableRowHandle>	Items;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Item")
+	// TArray<FDataTableRowHandle>	Items;
 };
