@@ -1,7 +1,10 @@
 ﻿// MeleeAttackComponent.cpp
 #include "AI/Components/Attack/MeleeAttackComponent.h"
+
+#include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
 #include "Animation/AnimInstance.h"
+#include "Define/GameDefine.h"
 #include "Kismet/GameplayStatics.h"
 
 UMeleeAttackComponent::UMeleeAttackComponent()
@@ -69,6 +72,10 @@ void UMeleeAttackComponent::StartAttack()
 	{// Owner 또는 AttackMontage가 유효하지 않은 경우 경고 로그
 		UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack] Cannot play montage: Owner or Montage invalid"));
 	}
+
+	//추후 notify로 호출
+	PerformMeleeAttack();
+
 }
 
 void UMeleeAttackComponent::StopAttack()
@@ -100,19 +107,19 @@ float UMeleeAttackComponent::GetAttackDuration() const
 
 void UMeleeAttackComponent::PerformMeleeAttack()
 {
-	// TODO: 공격 로직 구현
 
 	// 공격자 유효성 확인
 	if (!GetOwner()) return;
 
 	// 공격 시작 위치와 방향 계산
 	FVector Start = GetComponentLocation();
-	FVector End = Start + GetForwardVector() * AttackData.AttackRange;
-
+	FVector Forward = GetForwardVector();
+	FVector End = Start + Forward * AttackData.AttackRange;
 	// 구형 히트 박스 생성
 	TArray<FHitResult> HitResults;
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(AttackData.AttackRadius);
-
+	
+	
 	// 충돌 판정 (멀티 히트 가능)
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		HitResults,
@@ -131,7 +138,16 @@ void UMeleeAttackComponent::PerformMeleeAttack()
 			AActor* HitActor = Hit.GetActor();
 			if (HitActor && HitActor != GetOwner())
 			{
-				UGameplayStatics::ApplyDamage(HitActor, AttackData.AttackDamage, nullptr, GetOwner(), UDamageType::StaticClass());
+				// IGameplayTagAssetInterface를 사용하여 태그 감지
+				if (IGameplayTagAssetInterface* TagInterface = Cast<IGameplayTagAssetInterface>(HitActor))
+				{
+					// HitActor가 플레이어 태그를 가지고 있는지 확인
+					if (TagInterface->HasMatchingGameplayTag(GameDefine::PlayerTag))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[MeleeAttack] Applying damage to Player: %s"), *HitActor->GetName());
+						UGameplayStatics::ApplyDamage(HitActor, AttackData.AttackDamage, nullptr, GetOwner(), UDamageType::StaticClass());
+					}
+				}
 			}
 		}
 	}
