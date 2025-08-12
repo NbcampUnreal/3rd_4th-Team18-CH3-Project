@@ -33,7 +33,7 @@ void USoundSubsystem::Deinitialize()
 const FSoundData* USoundSubsystem::GetSoundData(FName SoundID) const
 {
 	if (!SoundDataTable) return nullptr;
-	return SoundDataTable->FindRow<FSoundData>(SoundID, TEXT("ID"));
+	return SoundDataTable->FindRow<FSoundData>(SoundID, TEXT(""));
 }
 
 void USoundSubsystem::PlayBGM(FName SoundID, float FadeInDuration)
