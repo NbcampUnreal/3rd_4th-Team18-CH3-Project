@@ -41,7 +41,7 @@ void ARoomGameMode::OnClearLevel()
 void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
@@ -57,9 +57,11 @@ void ARoomGameMode::InitializeGame()
 {
 	UStaticDataSubsystem* StaticDataSubsystem = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
 	UObjectPoolSubsystem* ObjectPoolSubsystem = GetWorld()->GetSubsystem<UObjectPoolSubsystem>();
-	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
+	UUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UUISubsystem>();
 
-	if (!StaticDataSubsystem || !ObjectPoolSubsystem || !RoomGameState)
+	UE_LOG(LogTemp, Warning, TEXT("UISubsystem pointer valid: %s"), (UISubsystem ? TEXT("true") : TEXT("false")));
+
+	if (!StaticDataSubsystem || !ObjectPoolSubsystem || !RoomGameState || !UISubsystem)
 	{
 		return;
 	}
