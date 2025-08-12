@@ -6,13 +6,15 @@ ABaseCharacter::ABaseCharacter()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
+void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer.AppendTags(OwnedGameplayTags);
+}
+
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (HealthComponent)
-	{
-		HealthComponent->OnDead.AddDynamic(this, &ABaseCharacter::HandleDeath);
-	}
+
 }
 
 void ABaseCharacter::HandleDeath()
@@ -23,7 +25,7 @@ void ABaseCharacter::HandleDeath()
 	//컨트롤러 해제 등은 상속받은 캐릭터에서 처리
 }
 
-void ABaseCharacter::RunMontage(ECharacterAnim Anim, float delay, float duration, float speed)
+void ABaseCharacter::RunMontage(ECharacterAnim Anim)
 {
 	if (AnimMontages.Contains(Anim))
 	{
@@ -33,7 +35,7 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim, float delay, float duration
 		if (MontageToPlay && GetMesh()->GetAnimInstance() && !GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 		{
 			// 애니메이션 몽타주를 재생
-			GetMesh()->GetAnimInstance()->Montage_Play(MontageToPlay, speed);
+			GetMesh()->GetAnimInstance()->Montage_Play(MontageToPlay);
 
 			// 현재 애니메이션 상태를 업데이트
 			CurrentAnimState = Anim;
@@ -41,23 +43,24 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim, float delay, float duration
 		}
 	}
 }
+
 bool ABaseCharacter::StopMontage()
 {
-		if (GetMesh()->GetAnimInstance() && GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
-		{
-			// 모든 몽타주를 중지
-			GetMesh()->GetAnimInstance()->Montage_Stop(0.2f);
+	if (GetMesh()->GetAnimInstance() && GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+	{
+		// 모든 몽타주를 중지
+		GetMesh()->GetAnimInstance()->Montage_Stop(0.2f);
         
-			// 애니메이션 상태를 초기화
-			CurrentAnimState = ECharacterAnim::Idle; 
-        
-			return true;
-		}
+		// 애니메이션 상태 초기화
+		CurrentAnimState = ECharacterAnim::Idle; 
+
+		return true;
+	}
 	return false;
 }
 
 ECharacterAnim ABaseCharacter::GetCurrentCharacterAnim() const
 {
-		return CurrentAnimState;
+	return CurrentAnimState;
 }
 
