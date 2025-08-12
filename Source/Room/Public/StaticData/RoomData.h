@@ -32,4 +32,9 @@ struct FRoomData : public FStaticData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Preload")
 	TArray<TSoftObjectPtr<UObject>> PreloadAssets;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Monsters")
+	TArray<FDataTableRowHandle>	Monsters; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "Preload|Item")
+	TArray<FDataTableRowHandle>	Items;
 };

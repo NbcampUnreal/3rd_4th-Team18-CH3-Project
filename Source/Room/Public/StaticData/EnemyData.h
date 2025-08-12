@@ -15,12 +15,10 @@ struct FEnemyData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
     FStatData Stat;
 
+	
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftObjectPtr<USkeletalMesh> Mesh = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-     TSoftClassPtr<UAnimInstance> AnimBP = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftClassPtr<UBehaviorTree> Behavior = nullptr;
+    TSoftObjectPtr<UBehaviorTree> Behavior = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+	TSoftClassPtr<AActor> EnemyClass = nullptr;
 };
