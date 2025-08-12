@@ -1,114 +1,134 @@
 #include "Subsystem/SoundSubsystem.h"
-
-#include "Kismet/GameplayStatics.h"
-
-#include "Core/RoomGameMode.h"
-#include "Core/RoomGameState.h"
-
-#include "Components/AudioComponent.h"
-#include "Subsystem/StaticDataSubsystem.h"
-
 #include "StaticData/SoundData.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 
 void USoundSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	FWorldDelegates::OnPostWorldCreation.AddUObject(this, &USoundSubsystem::OnWorldCreated);
+	const FString SoundDataTablePath = TEXT("/Game/Data/DT_SoundDataTable.DT_SoundDataTable");
+	SoundDataTable = LoadObject<UDataTable>(nullptr, *SoundDataTablePath);
+
+	if (!SoundDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DT_SoundDataTable not found at path: %s"), *SoundDataTablePath);
+	}
 }
 
 void USoundSubsystem::Deinitialize()
 {
-	if (BGM_Component)
+	if (BGMComponent)
 	{
-		BGM_Component->DestroyComponent();
-		BGM_Component = nullptr;
+		BGMComponent->Stop();
+		BGMComponent->DestroyComponent();
+		BGMComponent = nullptr;
 	}
+
 	Super::Deinitialize();
 }
 
-void USoundSubsystem::OnWorldCreated(UWorld* World)
+const FSoundData* USoundSubsystem::GetSoundData(FName SoundID) const
 {
-	if (!World || !World->GetAuthGameMode())
+	if (!SoundDataTable) return nullptr;
+	return SoundDataTable->FindRow<FSoundData>(SoundID, TEXT("ID"));
+}
+
+void USoundSubsystem::PlayBGM(FName SoundID, float FadeInDuration)
+{
+	if (SoundID == CurrentBGM_ID && BGMComponent && BGMComponent->IsPlaying())
 	{
 		return;
 	}
 
-	ARoomGameMode* GameMode = Cast<ARoomGameMode>(World->GetAuthGameMode());
-	if (GameMode)
+	const FSoundData* SoundData = GetSoundData(SoundID);
+	if (!SoundData || SoundData->Sound.IsNull())
 	{
-		GameMode->OnStartRoom.AddDynamic(this, &USoundSubsystem::HandleRoomStart);
-		ARoomGameState* GameState = World->GetGameState<ARoomGameState>();
+		UE_LOG(LogTemp, Warning, TEXT("PlayBGM: invalid SoundID: %s"), *SoundID.ToString());
+		return;
+	}
 
-		if (GameState && GameState->bIsRoomStarted)
+	CurrentBGM_ID = SoundID;
+
+	FStreamableManager& Streamable = UAssetManager::Get().GetStreamableManager();
+	Streamable.RequestAsyncLoad(SoundData->Sound.ToSoftObjectPath(),
+		FStreamableDelegate::CreateUObject(
+			this, &USoundSubsystem::OnBGM_Loaded, SoundData, FadeInDuration));
+}
+
+void USoundSubsystem::OnBGM_Loaded(const FSoundData* SoundData, float FadeInDuration)
+{
+	if (BGMComponent)
+	{
+		BGMComponent->Stop();
+		BGMComponent->DestroyComponent();
+		BGMComponent = nullptr;
+	}
+
+	BGMComponent = UGameplayStatics::CreateSound2D(
+		GetWorld(), SoundData->Sound.Get(), SoundData->DefaultVolume, SoundData->DefaultPitch, 0.0f, nullptr, true, false); 
+
+	if (BGMComponent)
+	{
+		BGMComponent->bIsUISound = true;
+		BGMComponent->FadeIn(FadeInDuration, SoundData->DefaultVolume);
+	}
+}
+
+void USoundSubsystem::StopBGM(float FadeOutDuration)
+{
+	if (BGMComponent && BGMComponent->IsPlaying())
+	{
+		BGMComponent->FadeOut(FadeOutDuration, 0.0f);
+		CurrentBGM_ID = NAME_None;
+	}
+}
+
+void USoundSubsystem::PlaySound2D(FName SoundID, float VolumeMultiplier, float PitchMultiplier)
+{
+	const FSoundData* SoundData = GetSoundData(SoundID);
+	if (!SoundData || SoundData->Sound.IsNull())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlaySound2D: Invalid SoundID: %s"), *SoundID.ToString());
+		return;
+	}
+
+	FStreamableManager& Streamable = UAssetManager::Get().GetStreamableManager();
+	Streamable.RequestAsyncLoad(SoundData->Sound.ToSoftObjectPath(),
+		[this, SoundData, VolumeMultiplier, PitchMultiplier]()
+	{
+		if (SoundData && SoundData->Sound.Get())
 		{
-			HandleRoomStart();
+			UGameplayStatics::PlaySound2D(
+				GetWorld(), SoundData->Sound.Get(),
+				SoundData->DefaultVolume * VolumeMultiplier,
+				SoundData->DefaultPitch * PitchMultiplier);
 		}
-	}
+	});
 }
 
-void USoundSubsystem::HandleRoomStart()
+void USoundSubsystem::PlaySoundAtLocation(FName SoundID, const FVector& Location, float VolumeMultiplier, float PitchMultiplier)
 {
-	if (BGM_Component && BGM_Component->IsPlaying())
+	const FSoundData* SoundData = GetSoundData(SoundID);
+	if (!SoundData || SoundData->Sound.IsNull())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("PlaySoundAtLocation: Invalid SoundID: %s"), *SoundID.ToString());
 		return;
 	}
 
-	PlayBGM(FName("DefaultBGM"));
-}
-
-void USoundSubsystem::PlayBGM(const FName& BGM_ID)
-{
-	UStaticDataSubsystem* StaticData = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
-
-	if (!StaticData)
+	FStreamableManager& Streamable = UAssetManager::Get().GetStreamableManager();
+	Streamable.RequestAsyncLoad(SoundData->Sound.ToSoftObjectPath(),
+		[this, SoundData, Location, VolumeMultiplier, PitchMultiplier]()
 	{
-		return;
-	}
-
-	const FBGMData* BGMData = StaticData->GetDataByKey<FBGMData>(BGM_ID);
-
-	if (!BGMData || !BGMData->Sound)
-	{
-		return;
-	}
-
-	if (BGM_Component && BGM_Component->IsPlaying())
-	{
-		StopBGM();
-	}
-
-	if (!BGM_Component)
-	{
-		BGM_Component = UGameplayStatics::CreateSound2D(GetWorld(), BGMData->Sound, 1.0f, 1.0f, 0.0f, nullptr, true);
-	}
-
-	if (BGM_Component)
-	{
-		BGM_Component->SetSound(BGMData->Sound);
-		BGM_Component->FadeIn(BGMData->FadeInDuration);
-	}
-}
-
-void USoundSubsystem::StopBGM()
-{
-	if (BGM_Component && BGM_Component->IsPlaying())
-	{
-		BGM_Component->FadeOut(1.0f, 0.0f);
-	}
-}
-
-void USoundSubsystem::PlaySound2D(const FName& Sound_ID)
-{
-	UStaticDataSubsystem* StaticData = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
-	if (!StaticData)
-	{
-		return;
-	}
-
-	const FSoundData* SoundData = StaticData->GetDataByKey<FSoundData, FName>(Sound_ID);
-	if (!SoundData || !SoundData->Sound)
-	{
-		return;
-	}
+		if (SoundData && SoundData->Sound.Get())
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(), SoundData->Sound.Get(),
+			Location,
+			SoundData->DefaultVolume * VolumeMultiplier,
+			SoundData->DefaultPitch * PitchMultiplier);
+		}
+	});
 }

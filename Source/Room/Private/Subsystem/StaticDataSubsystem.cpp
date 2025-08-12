@@ -26,7 +26,6 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
     RegisterDataManager<FUIData>(GetDTName<FUIData>());
     RegisterDataManager<FSoundData>(GetDTName<FSoundData>());
-    RegisterDataManager<FBGMData>(GetDTName<FBGMData>());
 
     // FRoomData에 대한 보조 인덱스 등록 예시 (LevelName을 키로 사용)
     RegisterExtraKey<FRoomData, FName>([](const FRoomData& Data) {
