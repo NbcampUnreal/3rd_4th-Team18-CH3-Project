@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/Character/BaseCharacter.h"
 #include "GameFramework/Character.h"
 #include "AI/Interface/BaseAICharacterInterface.h"		// AI 캐릭터 인터페이스 포함
 #include "AI/Components/Attack/BaseAttackComponent.h"	// 기본 공격 컴포넌트 포함
@@ -10,7 +11,7 @@
 #include "RangedEnemyCharacter.generated.h"
 
 UCLASS()
-class ROOM_API ARangedEnemyCharacter : public ACharacter, public IBaseAICharacterInterface
+class ROOM_API ARangedEnemyCharacter : public ABaseCharacter, public IBaseAICharacterInterface
 {
 	GENERATED_BODY()
 
@@ -25,18 +26,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float RunSpeed = 600.0f;
 
-	// 최대 체력
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-	float MaxHP = 100.0f;
-
-	// 현재 체력
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	float CurrentHP = 100.0f;
-
-	// 사망 여부
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	bool bIsDead = false;
-
+	//사망 애니메이션 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UAnimMontage* DeathMontage;
+	
 	// 현재 장착된 공격 컴포넌트 반환 (원거리 공격 컴포넌트 캐스팅)
 	virtual UBaseAttackComponent* GetAttackComponent() const override { return Cast<UBaseAttackComponent>(AttackComponent); }
 
@@ -52,20 +45,8 @@ public:
 	// 달리기 속도 반환
 	virtual float GetRunSpeed() const override { return RunSpeed; }
 
-	// 현재 체력 반환
-	virtual float GetCurrentHP() const override { return CurrentHP; }
-
-	// 최대 체력 반환
-	virtual float GetMaxHP() const override { return MaxHP; }
-
-	// 사망 여부 반환
-	virtual bool IsDead() const override { return bIsDead; }
-
-	// 데미지 처리 함수 (데미지를 입었을 때 호출, DamageCauser는 데미지를 준 액터)
-	virtual void TakeDamage(float DamageAmount, AActor* DamageCauser = nullptr) override;
-
 	// 사망 처리 함수 (죽음 발생 시 호출, Killer는 죽인 액터)
-	virtual void HandleDeath(AActor* Killer = nullptr) override;
+	virtual void HandleDeath() override;
 
 	// 사망 애니메이션 재생 함수
 	virtual void PlayDeathAnimation() override;
@@ -73,6 +54,7 @@ public:
 	// 이동 속도 변경 함수
 	void SetMovementSpeed(float NewSpeed);
 
+	
 protected:
 	// 원거리 공격 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")

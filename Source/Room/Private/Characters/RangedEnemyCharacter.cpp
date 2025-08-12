@@ -27,16 +27,27 @@ ARangedEnemyCharacter::ARangedEnemyCharacter()
 	Movement->AirControl = 0.2f;
 }
 
-void ARangedEnemyCharacter::TakeDamage(float DamageAmount, AActor* DamageCauser)
-{
-}
 
-void ARangedEnemyCharacter::HandleDeath(AActor* Killer)
+void ARangedEnemyCharacter::HandleDeath()
 {
+	bIsDead = true;
+	//AI 컨트롤러 비활성화
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+		AIController->StopMovement();
+		AIController->UnPossess();
+	}
 }
 
 void ARangedEnemyCharacter::PlayDeathAnimation()
 {
+	if (DeathMontage)
+	{
+		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(DeathMontage);
+		}
+	}
 }
 
 void ARangedEnemyCharacter::SetMovementSpeed(float NewSpeed)
@@ -50,5 +61,7 @@ void ARangedEnemyCharacter::SetMovementSpeed(float NewSpeed)
 void ARangedEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	ActorTag = GameDefine::EnemyTag;
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }

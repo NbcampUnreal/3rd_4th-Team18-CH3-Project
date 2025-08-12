@@ -75,14 +75,14 @@ void ULoadingSubsystem::RequestLoadBatch(const TArray<TSoftObjectPtr<UObject>>& 
     TSharedPtr<FStreamableHandle> Handle = StreamableManager.RequestAsyncLoad(
         PathsToLoad,
         FStreamableDelegate::CreateLambda([this, PathsToLoad, OnComplete]()
-    {
-        for (const FSoftObjectPath& Path : PathsToLoad)
         {
-            LoadedAssets.Add(Path);
-            ActiveHandles.Remove(Path);
-        }
-        OnComplete.ExecuteIfBound();
-    })
+            for (const FSoftObjectPath& Path : PathsToLoad)
+            {
+                LoadedAssets.Add(Path);
+                ActiveHandles.Remove(Path);
+            }
+            OnComplete.ExecuteIfBound();
+        })
     );
 
     for (const FSoftObjectPath& Path : PathsToLoad)

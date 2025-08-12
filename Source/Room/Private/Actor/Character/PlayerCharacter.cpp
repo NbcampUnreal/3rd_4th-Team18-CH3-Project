@@ -2,16 +2,16 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-	ActorTag = GameDefine::PlayerTag;
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(GetCapsuleComponent()); 
 	
 	SpringArm->TargetArmLength = 400.0f; 
-    
+    SpringArm->SocketOffset = FVector(0.0f, 150.0f, 0.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
-
+	
 	PlayerAttackComponent = CreateDefaultSubobject<UPlayerAttackComponent>(TEXT("PlayerAttackComponent"));
 	PlayerAttackComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
@@ -25,7 +25,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//IMC 연결
+	ActorTag = GameDefine::PlayerTag;
+	
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
@@ -36,11 +37,7 @@ void APlayerCharacter::BeginPlay()
 			}
 		}
 	}
-	
-	if (PlayerAttackComponent)
-	{
-		PlayerAttackComponent->OnFire.AddDynamic(this, &APlayerCharacter::PlayFireMontage);
-	}
+	SpringArm->SocketOffset.Z = BaseEyeHeight;
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -55,28 +52,20 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 		EnhancedInput->BindAction(InputConfig.LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInput->BindAction(InputConfig.FireAction,  ETriggerEvent::Started, this, &APlayerCharacter::StartFire);
 		EnhancedInput->BindAction(InputConfig.FireAction,ETriggerEvent::Completed, this, &APlayerCharacter::StopFire);
+		EnhancedInput->BindAction(InputConfig.InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Interact);
 	}
 }
 
 void APlayerCharacter::HandleDeath()
 {
 	Super::HandleDeath();
-	//사망 시 컨트롤러 해제
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		PC->DisableInput(PC);  
 	}
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	if (MeshComp)
-	{
-		
-		UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
-		if (AnimInstance)
-		{
-			AnimInstance->Montage_Play(DeathMontage); 
-		}
-	}
 }
+
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -118,15 +107,6 @@ void APlayerCharacter::StopFire()
 	}
 }
 
-void APlayerCharacter::PlayFireMontage()
+void APlayerCharacter::Interact()
 {
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	if (MeshComp)
-	{
-		UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
-		if (AnimInstance && FireMontage)
-		{
-			AnimInstance->Montage_Play(FireMontage);
-		}
-	}
 }
