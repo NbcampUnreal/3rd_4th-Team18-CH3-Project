@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "StaticData/StaticDataStruct.h"
 #include "UI/UISubsystem.h"
+#include "Subsystem/SoundSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RoomGameMode)
 
