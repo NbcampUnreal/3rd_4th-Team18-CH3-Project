@@ -12,11 +12,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
-
 class UUISubsystem;
-
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
@@ -25,11 +21,7 @@ class ROOM_API APlayerCharacter : public ABaseCharacter
 public:
 	APlayerCharacter();
 
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnAttack OnAttack;
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnAttackEnd OnAttackEnd;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
@@ -52,6 +44,9 @@ public:
 	TObjectPtr<UAnimMontage> FireMontage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	TObjectPtr<UAnimMontage> HitMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
 	TObjectPtr<UAnimMontage> DeathMontage;
 
 protected:
@@ -70,5 +65,4 @@ private:
 	UFUNCTION()
 	void OnPlayerHealthChanged(float CurrentHealth, float MaxHealth);
 	TObjectPtr<UUISubsystem> UISubsystem;
-	
 };

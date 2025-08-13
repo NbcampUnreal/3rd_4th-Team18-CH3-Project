@@ -1,18 +1,15 @@
 #include "Subsystem/LoadingSubsystem.h"
 
-#include "Algo/ForEach.h"
 #include "Core/GameManager.h"
 #include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "StaticData/EnemyData.h"
 #include "StaticData/GameConfigData.h"
-#include "StaticData/ItemData.h"
 #include "StaticData/RoomData.h"
 #include "Subsystem/StaticDataSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingSubsystem)
 
-struct FRoomData;
 
 void ULoadingSubsystem::RequestLoad(const TSoftObjectPtr<UObject>& Asset, FOnAssetLoadComplete OnComplete)
 {
@@ -186,7 +183,7 @@ float ULoadingSubsystem::GetLoadingProgress() const
     return TotalProgress / ActiveHandles.Num();
 }
 
-TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomData& NewRoomData)
+TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomData& NewRoomData) const
 {
     TArray<FSoftObjectPath> Array;
     Array.Reserve(
@@ -200,7 +197,7 @@ TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomD
         Array.Add(Path.ToSoftObjectPath());
     }
     // 몬스터 데이터 추가.
-    UStaticDataSubsystem& StaticSys = *GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
+    UStaticDataSubsystem* StaticSys = GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
 
     for (const FDataTableRowHandle MonsterDataHandle : NewRoomData.Monsters)
     {

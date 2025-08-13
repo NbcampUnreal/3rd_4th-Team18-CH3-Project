@@ -5,10 +5,11 @@
 #include "StatData.h"
 #include "Animation/AnimInstance.h" 
 #include "BehaviorTree/BehaviorTree.h" 
+#include "Interface/SpawnActorStaticDataInterface.h"
 #include "EnemyData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FEnemyData : public FStaticData
+struct FEnemyData : public FStaticData, public ISpawnActorStaticDataInterface
 {
     GENERATED_BODY()
 
@@ -25,4 +26,6 @@ struct FEnemyData : public FStaticData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSoftClassPtr<AController> ControllerClass;
 	// 소리나 파티클 등 리소스를 사용하면 추가 정의
+
+	virtual TSubclassOf<AActor> SpawnActorClass() override { return EnemyClass.Get(); }
 };

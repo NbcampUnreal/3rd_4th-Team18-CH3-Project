@@ -5,7 +5,6 @@
 
 #include "GameMapsSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "StaticData/RoomData.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/LoadingSubsystem.h"
 
@@ -39,7 +38,7 @@ void UGameManager::StartGame()
 	// if (StaticData && LoadingSubsystem)
 	// {
 	// 	// 0 번 키 = 첫번 째 레벨.
-	// 	const FRoomData* RoomData = StaticData->GetData<FRoomData>(0);}
+	// 	const FRoomData* RoomData = StaticData->GetData<FRoomData>(0;)}
 	
 	// 로딩 서브시스템을 통해 로딩 화면과 함께 첫 레벨을 로드합니다.
 	if (ULoadingSubsystem* LoadingSubsystem = GetSubsystem<ULoadingSubsystem>())

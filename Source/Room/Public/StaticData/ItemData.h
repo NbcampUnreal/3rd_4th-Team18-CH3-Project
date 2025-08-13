@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "StaticData.h"
 #include "GameFramework/Actor.h"
+#include "Interface/SpawnActorStaticDataInterface.h"
 #include "ItemData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FItemData : public FStaticData
+struct FItemData : public FStaticData, public ISpawnActorStaticDataInterface
 {
     GENERATED_BODY()
 
@@ -18,4 +19,6 @@ struct FItemData : public FStaticData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
     int32 ItemCount = 0;
+    
+    virtual TSubclassOf<AActor> SpawnActorClass() override { return ItemBPClass.Get(); }
 };

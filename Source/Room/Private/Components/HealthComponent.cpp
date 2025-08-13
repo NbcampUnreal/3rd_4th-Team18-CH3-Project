@@ -31,7 +31,11 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s took damage: %f from %s"), *DamagedActor->GetName(), Damage, *DamageCauser->GetName());
 	SetCurrentHealth(CurrentHealth - Damage);
-
+	
+	if (CurrentHealth > 0.0f)
+	{
+		OnHit.Broadcast();
+	}
 }
 
 

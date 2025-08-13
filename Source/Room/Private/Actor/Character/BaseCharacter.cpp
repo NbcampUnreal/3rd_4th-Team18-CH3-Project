@@ -1,4 +1,9 @@
-﻿#include "Actor/Character/BaseCharacter.h"
+#include "Actor/Character/BaseCharacter.h"
+#include "StaticData/EnemyData.h"
+#include "AIController.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -12,6 +17,7 @@ void ABaseCharacter::BeginPlay()
 	if (HealthComponent)
 	{
 		HealthComponent->OnDead.AddDynamic(this, &ABaseCharacter::HandleDeath);
+		HealthComponent->OnHit.AddDynamic(this, &ABaseCharacter::HandleHit);
 	}
 }
 
@@ -23,10 +29,14 @@ void ABaseCharacter::HandleDeath()
 	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
 	{
 		MovementComp->DisableMovement();   // 이동 정지
-		MovementComp->StopMovementImmediately(); // 현재 속도 즉시 정지
-		MovementComp->GravityScale = 1.f; // 중력 적용
 	}
+	
 	//컨트롤러 해제 등은 상속받은 캐릭터에서 처리
+}
+
+void ABaseCharacter::HandleHit()
+{
+	RunMontage(ECharacterAnim::GetHit);
 }
 
 void ABaseCharacter::RunMontage(ECharacterAnim Anim)
@@ -35,7 +45,7 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim)
 	{
 		UAnimMontage* MontageToPlay = AnimMontages[Anim];
 
-		// 애니메이션 몽타주가 유효하고, 이미 재생 중인 애니메이션이 아닐 경우
+		// 애니메이션 몽타주가 유효 시
 		if (MontageToPlay && GetMesh()->GetAnimInstance())
 		{
 			// 애니메이션 몽타주를 재생
@@ -43,7 +53,6 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim)
 
 			// 현재 애니메이션 상태를 업데이트
 			CurrentAnimState = Anim;
-
 		}
 	}
 }
@@ -80,8 +89,32 @@ float ABaseCharacter::GetMontagePlayLength(ECharacterAnim AnimType) const
 	return 1.0f; // 기본 fallback 값
 }
 
-
 void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
 	TagContainer.AppendTags(OwnedGameplayTags);
+}
+
+void ABaseCharacter::InitializeFromStaticData(const FStaticData* InStaticData)
+{
+	const FEnemyData* EnemyData = static_cast<const FEnemyData*>(InStaticData);
+	if (!EnemyData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ABaseCharacter::InitializeFromStaticData: Failed to cast to FEnemyData."));
+		return;
+	}
+
+	if (HealthComponent)
+	{
+		HealthComponent->SetMaxHealth(EnemyData->Stat.HP);
+		//HealthComponent->SetCurrentHealth(EnemyData->Stat.HP); // ????
+	}
+
+	// Set other properties from EnemyData->Stat as needed (Attack, Defense, etc.)
+
+	// AI Controller setup
+	AAIController* AIController = GetController<AAIController>();
+	if (AIController && EnemyData->Behavior)
+	{
+		AIController->RunBehaviorTree(EnemyData->Behavior.Get());
+	}
 }

@@ -28,20 +28,20 @@ public:
 
     
 
+    const FStaticData* GetData(FName StructName, int32 Key) const
+    {
+        if (const TSharedPtr<FDataManagerBase>* FoundManager = StaticDataManagers.Find(StructName))
+        {
+            return FoundManager->Get()->GetData(Key);
+        }
+        return nullptr;
+    }
+    
     template<typename TStruct>
     const TStruct* GetData(int32 Key) const
     {
         FName StructName = TStruct::StaticStruct()->GetFName();
-        if (const TSharedPtr<FDataManagerBase>* FoundManager = StaticDataManagers.Find(StructName))
-        {
-            // TStaticDataManager로 캐스팅하여 GetTypedData 함수를 호출합니다.
-            auto Manager = StaticCastSharedPtr<TStaticDataManager<TStruct>>(*FoundManager);
-            if (Manager.IsValid())
-            {
-                return Manager->GetTypedData(Key);
-            }
-        }
-        return nullptr;
+        return static_cast<const TStruct*>( GetData(StructName, Key));
     }
 
     // 보조 키로 데이터를 조회하는 템플릿 함수

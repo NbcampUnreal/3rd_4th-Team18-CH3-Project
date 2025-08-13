@@ -1,4 +1,5 @@
 #include "Actor/Character/PlayerCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "UI/UISubsystem.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -17,9 +18,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerAttackComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
 	bUseControllerRotationYaw = true;
-	
-
-	
 }
 
 
@@ -71,18 +69,13 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 void APlayerCharacter::HandleDeath()
 {
 	Super::HandleDeath();
-	RunMontage(ECharacterAnim::Dead);
-	
-	UE_LOG(LogTemp, Warning, TEXT("[Player] Player has been killed"));
-	OnDeathMontageEnded();
-}
-void APlayerCharacter::OnDeathMontageEnded()
-{
 	if (AController* MController = GetController())
 	{
 		MController->UnPossess();
 	}
 }
+
+
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -115,6 +108,7 @@ void APlayerCharacter::StartFire()
 	if (PlayerAttackComponent)
 	{
 		PlayerAttackComponent->StartFire();
+		RunMontage(ECharacterAnim::Attacking);
 	}
 }
 void APlayerCharacter::StopFire()

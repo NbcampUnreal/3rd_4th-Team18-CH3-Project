@@ -2,14 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "StaticData/StaticData.h"
 
 //데이터 테이블에서 구조체 데이터를 로드하고 키를 사용하여 데이터를 조회하는 매니저
 struct FDataManagerBase
 {
 	virtual ~FDataManagerBase() = default;
 	virtual void Load(const UDataTable* DataTable) = 0;
-	virtual const FTableRowBase* GetData(int32 Key) const = 0;
-	virtual const TMap<int32, const FTableRowBase*>& GetAllData() const = 0;
+	virtual const FStaticData* GetData(int32 Key) const = 0;
+	virtual const TMap<int32, const FStaticData*>& GetAllData() const = 0;
 };
 
 template<typename TStruct>
@@ -25,7 +26,7 @@ private:
 	TMap<FName, TSharedPtr<void>> SecondaryIndexMaps;
 
 	// GetAllData() 호출 시 반환할 맵. 캐시하여 사용합니다.
-	mutable TMap<int32, const FTableRowBase*> AllDataMap;
+	mutable TMap<int32, const FStaticData*> AllDataMap;
 	// 캐시가 유효한지 나타내는 플래그
 	mutable bool bIsAllDataMapDirty = true;
 
@@ -43,13 +44,12 @@ public:
 		if (DataTable)
 		{
 			TArray<FName> RowNames = DataTable->GetRowNames();
-			for (int i = 0; i < RowNames.Num(); ++i)
+			for (const FName& RowName : RowNames)
 			{
-				const FName& RowName = RowNames[i];
 				TStruct* Row = DataTable->FindRow<TStruct>(RowName, TEXT(""));
 				if (Row)
 				{
-					DataStore.Add(i + 1, *Row);
+					DataStore.Add(GetPrimaryKeyFunc(*Row), *Row);
 				}
 			}
 		}
@@ -57,7 +57,7 @@ public:
 	}
 
 	// 기본 키(int32)로 데이터를 조회합니다.
-	virtual const FTableRowBase* GetData(int32 Key) const override
+	virtual const FStaticData* GetData(int32 Key) const override
 	{
 		// DataStore에서 직접 찾아 반환합니다.
 		return DataStore.Find(Key);
@@ -69,7 +69,7 @@ public:
 	}
 
 	// 모든 데이터를 조회합니다. 캐시된 맵을 사용하여 성능을 최적화합니다.
-	virtual const TMap<int32, const FTableRowBase*>& GetAllData() const override
+	virtual const TMap<int32, const FStaticData*>& GetAllData() const override
 	{
 		if (bIsAllDataMapDirty)
 		{
@@ -90,7 +90,7 @@ public:
 		// 지정된 타입의 키와 데이터 포인터를 매핑하는 새로운 맵을 생성합니다.
 		auto NewIndexMap = MakeShared<TMap<TKey, const TStruct*>>();
 		// DataStore를 순회하며 인덱스 맵을 채웁니다.
-		for (const TPair<int, TStruct>& Pair : DataStore)
+		for (const auto& Pair : DataStore)
 		{
 			NewIndexMap->Add(GetKeyFunc(Pair.Value), &Pair.Value);
 		}
