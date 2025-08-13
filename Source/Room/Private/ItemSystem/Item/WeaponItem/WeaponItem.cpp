@@ -3,14 +3,19 @@
 
 #include "ItemSystem/Item/WeaponItem/WeaponItem.h"
 
+#include "Components/WeaponComponent.h"
 #include "ItemSystem/Interfaces/Equipper.h"
 
 void UWeaponItem::Use_Implementation(AActor* User)
 {
 	Super::Use_Implementation(User);
-	if (User->GetClass()->ImplementsInterface(UEquipper::StaticClass()))
+	// if (User->GetClass()->ImplementsInterface(UEquipper::StaticClass()))
+	// {
+	// 	IEquipper::Execute_Equip(User, this);
+	// }
+	if (UWeaponComponent* WeaponComponent = User->FindComponentByClass<UWeaponComponent>())
 	{
-		IEquipper::Execute_Equip(User, this);
+		WeaponComponent->Equip(this);
 	}
 }
 
@@ -67,6 +72,11 @@ float UWeaponItem::GetWeaponAttackRecoil() const
 float UWeaponItem::GetWeaponAttackRange() const
 {
 	return WeaponItemInfo.WeaponAttackRange;
+}
+
+int32 UWeaponItem::GetrWeaponBulletID() const
+{
+	return WeaponItemInfo.WeaponBulletID;
 }
 
 void UWeaponItem::SetWeaponItemInfo(const FWeaponItemInfo& WeaponInfo)

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "StaticData/StaticData.h"
 #include "HealingItemInfo.generated.h"
 
 USTRUCT(BlueprintType)
-struct FHealingItemInfo : public FTableRowBase
+struct FHealingItemInfo : public FStaticData
 {
 	GENERATED_BODY()
 

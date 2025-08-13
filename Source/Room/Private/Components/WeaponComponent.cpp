@@ -1,36 +1,35 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Components/WeaponComponent.h"
 
+#include "GameFramework/PlayerState.h"
+#include "ItemSystem/InventoryComponent/InventoryComponent.h"
+#include "ItemSystem/Item/WeaponItem/WeaponItem.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
+
 }
 
-
-// Called when the game starts
-void UWeaponComponent::BeginPlay()
+void UWeaponComponent::Equip(UWeaponItem* NewItem)
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	Weapon = NewItem;
 }
 
-
-// Called every frame
-void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                     FActorComponentTickFunction* ThisTickFunction)
+void UWeaponComponent::UnEquip()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if (GetOwner() == UGameplayStatics::GetPlayerPawn(this,0))
+	{
+		auto PlayerState = UGameplayStatics::GetPlayerState(this,0);
+		auto Inventory = PlayerState->FindComponentByClass<UInventoryComponent>();
+		Inventory->AddItemToInventory(Weapon,1);
+	}
+	Weapon = nullptr;
 }
 
+void UWeaponComponent::Fire()
+{
+	// 스폰 프로젝타일.
+}

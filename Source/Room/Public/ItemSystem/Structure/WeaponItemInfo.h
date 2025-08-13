@@ -1,10 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "StaticData/StaticData.h"
 #include "WeaponItemInfo.generated.h"
 
 USTRUCT(BlueprintType)
-struct FWeaponItemInfo : public FTableRowBase
+struct FWeaponItemInfo : public FStaticData
 {
 	GENERATED_BODY()
 
@@ -30,4 +31,6 @@ struct FWeaponItemInfo : public FTableRowBase
 	float WeaponRecoil;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapon")
 	float WeaponAttackRange;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapon")
+	int32 WeaponBulletID = 0;
 };
