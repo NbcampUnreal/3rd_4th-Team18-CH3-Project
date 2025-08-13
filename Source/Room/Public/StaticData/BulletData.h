@@ -18,8 +18,10 @@ struct FBulletData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
     float AutoDestroyTime = 0.0f;
 
+    // UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
+    // TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
-    TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
+    TSoftClassPtr<AActor> ProjectileClass;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bullet")
     TSoftObjectPtr<UTexture2D> Icon = nullptr;

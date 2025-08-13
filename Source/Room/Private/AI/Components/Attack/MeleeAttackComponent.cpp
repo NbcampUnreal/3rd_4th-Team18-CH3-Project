@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "Define/GameDefine.h"
 #include "Kismet/GameplayStatics.h"
+#include "Characters/MeleeEnemyCharacter.h"
 
 UMeleeAttackComponent::UMeleeAttackComponent()
 {
@@ -38,76 +39,32 @@ void UMeleeAttackComponent::StartAttack()
 	// - LastAttackTime = 현재 시간
 	Super::StartAttack();
 
-	// 소유한 캐릭터의 애니메이션 인스턴스 가져오기
+	// Owner를 ACharacter로 캐스팅
 	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter && AttackMontage)
-	{
-		// 메시에서 AnimInstance 가져오기
-		UAnimInstance* AnimInstance = OwnerCharacter->GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-		{
-			// DEBUG : 애니메이션 인스턴스 및 몽타주 정보
-			//UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack][DEBUG] %s: AnimInstance Address=%p, Montage=%s"),
-			//	*GetOwner()->GetName(), AnimInstance, *AttackMontage->GetName());
+	if (!OwnerCharacter) return;
 
-			if (AnimInstance->IsAnyMontagePlaying())
-			{// 다른 몽타주가 재생 중이라면 로그 출력
-				UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack][DEBUG] %s: Other montage already playing!"), *GetOwner()->GetName());
-			}
-			/*
-				Montage_Play : 내부적으로 기본 슬롯(DefaultSlot)로 재생
-				슬롯을 따로 구성해도 반영되지 않을 수 있음.
-			*/
-			// 애니메이션 몽타주 재생(슬롯 설정 무시 가능성 있음)
-			AnimInstance->Montage_Play(AttackMontage);
-
-			if (AnimInstance->Montage_IsPlaying(AttackMontage))
-			{// 재생 성공 여부 확인
-				//UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack][DEBUG] %s: Montage successfully started"), *GetOwner()->GetName());
-			}
-			//UE_LOG(LogTemp, Log, TEXT("[AI][MeleeAttack] Montage Played for %s"), *GetOwner()->GetName());
-		}
+	// Owner가 근접 AI 캐릭터인 경우
+	AMeleeEnemyCharacter* MeleeCharacter = Cast<AMeleeEnemyCharacter>(OwnerCharacter);
+	if (MeleeCharacter)
+	{// 공격 애니메이션 몽타주 실행
+		MeleeCharacter->RunMontage(ECharacterAnim::Attacking);
 	}
-	else
-	{// Owner 또는 AttackMontage가 유효하지 않은 경우 경고 로그
-		UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack] Cannot play montage: Owner or Montage invalid"));
-	}
-
-	//추후 notify로 호출
-	PerformMeleeAttack();
-
 }
 
 void UMeleeAttackComponent::StopAttack()
 {
-	// 공격 상태 종료
+	// 공격 상태 비활성화
 	bIsAttacking = false;
 
-	// 애니메이션 정지 처리
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter && AttackMontage)
-	{
-		UAnimInstance* AnimInstance = OwnerCharacter->GetMesh()->GetAnimInstance();
-		if (AnimInstance && AnimInstance->Montage_IsPlaying(AttackMontage))
-		{
-			// 부드럽게 정지 (0.25초 페이드 아웃)
-			AnimInstance->Montage_Stop(0.25f, AttackMontage);
-			//UE_LOG(LogTemp, Log, TEXT("[AI][MeleeAttack] Montage stopped for %s"), *GetOwner()->GetName());
-		}
+	AMeleeEnemyCharacter* OwnerCharacter = Cast<AMeleeEnemyCharacter>(GetOwner());
+	if (OwnerCharacter)
+	{// 재생 중인 애니메이션 몽타주 중지
+		OwnerCharacter->StopMontage();
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("[AI][MeleeAttack] StopAttack called for %s"), *GetOwner()->GetName());
-}
-
-float UMeleeAttackComponent::GetAttackDuration() const
-{
-	// 애니메이션 몽타주가 유효하면 길이 반환, 없으면 기본 1초
-	return AttackMontage ? AttackMontage->GetPlayLength() : 1.0f;
 }
 
 void UMeleeAttackComponent::PerformMeleeAttack()
 {
-
 	// 공격자 유효성 확인
 	if (!GetOwner()) return;
 
@@ -144,7 +101,7 @@ void UMeleeAttackComponent::PerformMeleeAttack()
 					// HitActor가 플레이어 태그를 가지고 있는지 확인
 					if (TagInterface->HasMatchingGameplayTag(GameDefine::PlayerTag))
 					{
-						UE_LOG(LogTemp, Warning, TEXT("[MeleeAttack] Applying damage to Player: %s"), *HitActor->GetName());
+						UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeAttack] Applying damage to Player: %s"), *HitActor->GetName());
 						UGameplayStatics::ApplyDamage(HitActor, AttackData.AttackDamage, nullptr, GetOwner(), UDamageType::StaticClass());
 					}
 				}

@@ -20,14 +20,14 @@ struct FEnemySpawnData : public FStaticData // FTableRowBase 대신 FStaticData 
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	int32 EnemyID;
+	FDataTableRowHandle EnemyID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	ESpawnTriggerCondition SpawnTriggerCondition;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	float SpawnDelay;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	int32 Wave;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	// float SpawnDelay;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	// int32 Wave;
 };

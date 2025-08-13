@@ -42,6 +42,7 @@ enum class EAIStateType : uint8
 	Chase		UMETA(DisplayName = "Chase"),		// 추적 상태 (타겟을 발견하여 따라가는 중)
 	Attack		UMETA(DisplayName = "Attack"),		// 공격 상태 (타겟에게 공격을 가하는 중)
 	Investigate UMETA(DisplayName = "Investigate"),	// 조사 상태 (의심스러운 소리나 흔적을 조사하는 중)
+	Hit			UMETA(DisplayName = "Hit"),			// 피격 상태 (데미지를 받았지만 죽지는 않음)
 	Dead		UMETA(DisplayName = "Dead")			// 사망 상태 (죽은 상태, 행동 불가)
 };
 

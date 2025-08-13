@@ -9,6 +9,7 @@ void UHealthComponent::SetMaxHealth(float NewMaxHealth)
 {
 	if (NewMaxHealth<=0.0f) NewMaxHealth = 1.0f;
 	MaxHealth = NewMaxHealth;
+	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 }
 
 void UHealthComponent::BeginPlay()
@@ -22,6 +23,8 @@ void UHealthComponent::BeginPlay()
 	{
 		Owner->OnTakeAnyDamage.AddDynamic(this,&ThisClass::DamageTaken);
 	}
+
+	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 }
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -41,9 +44,12 @@ void UHealthComponent::SetCurrentHealth(float NewHealth)
 	CurrentHealth = NewHealth;
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
 
+	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+
 	if (CurrentHealth <= 0.0f)
 	{
 		OnDead.Broadcast();
+		GetOwner()->SetLifeSpan(DestroyDelay);
 	}
 }
 

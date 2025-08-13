@@ -157,6 +157,14 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 //		RunBehaviorTree(EnemyData->BehaviorTree);
 //	}
 //#else
+
+	// TODO: 캐릭터에서 OnDead 구현되면 적용
+	// 델리게이트 바인딩 추가
+	//if (EnemyCharacter)
+	//{
+	//	EnemyCharacter->OnDead.AddDynamic(this, &AEnemyAIController::HandleCharacterDead);
+	//}
+
 	if (BehaviorTreeAsset)
 	{
 		UBlackboardComponent* RawBlackboardComp = BlackboardComp.Get();
@@ -184,6 +192,31 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] BehaviorTreeAsset is null"));
 	}
 //#endif
+}
+
+void AEnemyAIController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	// 블랙보드 정리
+	if (BlackboardComp)
+	{
+		// 각 키를 수동으로 초기화
+		BlackboardComp->ClearValue(BBKey_TargetActor);
+		BlackboardComp->ClearValue(BBKey_TargetLastKnownLocation);
+		BlackboardComp->SetValueAsBool(BBKey_IsPlayerVisible, false);
+		BlackboardComp->SetValueAsEnum(BBKey_AIState, static_cast<uint8>(EAIStateType::Idle));
+		BlackboardComp->SetValueAsEnum(BBKey_CombatType, static_cast<uint8>(EAICombatType::None));
+	}
+
+	// Perception Delegate 제거
+	if (AIPerception)
+	{
+		AIPerception->OnTargetPerceptionUpdated.RemoveAll(this);
+	}
+
+	// 디버그 로그
+	// UE_LOG(LogTemp, Log, TEXT("[AI][EnemyAIController] UnPossess called for %s"), *GetName());
 }
 
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -332,4 +365,8 @@ AActor* AEnemyAIController::GetTargetActor() const
 			}
 		}
 	*/
+}
+
+void AEnemyAIController::SetAIState(EAIStateType NewState)
+{
 }

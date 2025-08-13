@@ -15,12 +15,14 @@ struct FEnemyData : public FStaticData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
     FStatData Stat;
 
+	
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftObjectPtr<USkeletalMesh> Mesh = nullptr;
+    TSoftObjectPtr<UBehaviorTree> Behavior = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+	TSoftClassPtr<AActor> EnemyClass = nullptr;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-     TSoftClassPtr<UAnimInstance> AnimBP = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
-    TSoftClassPtr<UBehaviorTree> Behavior = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSoftClassPtr<AController> ControllerClass;
+	// 소리나 파티클 등 리소스를 사용하면 추가 정의
 };

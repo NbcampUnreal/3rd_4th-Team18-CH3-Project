@@ -140,6 +140,7 @@ void UUISubsystem::ShowHUD()
 
     if (HUDWidget.IsValid())
         HUDWidget->AddToViewport();
+    SetGameInputMode();
 }
 
 void UUISubsystem::HideHUD()

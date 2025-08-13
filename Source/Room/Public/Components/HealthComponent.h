@@ -5,7 +5,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedDelegate, float, CurrentHealth, float, MaxHealth);
 class ACharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -17,12 +17,11 @@ public:
 	UHealthComponent();
 
 	void SetMaxHealth(float NewMaxHealth);
-	void SetCurrentHealth(float NewHealth);
-	
 	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
 	FORCEINLINE float GetCurrentHealth() const {return CurrentHealth; }
 	FDeathDelegate OnDead;
-	FOnHit OnHit;
+	FOnHealthChangedDelegate OnHealthChanged;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -37,6 +36,6 @@ protected:
 private:
 	UFUNCTION()
 	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
-	
+	void SetCurrentHealth(float NewHealth);
 
 };

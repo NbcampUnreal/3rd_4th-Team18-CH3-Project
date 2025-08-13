@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerPreLoadData.h"
 #include "Engine/DataAsset.h"
 #include "GameConfigData.generated.h"
 
@@ -27,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> TitleLevel;
 
+	UPROPERTY(editAnywhere, BlueprintReadOnly)
+	FPlayerPreLoadData PlayerPreLoadData;
+	
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 
 	// 전역 접근 함수

@@ -4,6 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Characters/RangedEnemyCharacter.h"
 
 URangedAttackComponent::URangedAttackComponent()
 {
@@ -28,24 +29,21 @@ void URangedAttackComponent::StartAttack()
 	// 공격이 가능한 상태인지 확인
 	if (!CanAttack()) return;
 
-	// 공격 상태 활성화 + 마지막 공격 시간 기록
-	bIsAttacking = true;
-	LastAttackTime = GetWorld()->GetTimeSeconds();
 
-	// 애니메이션 몽타주 실행
+	// Base 클래스의 공통 처리 (상태 활성화, 타이머 기록 등)
+	// - bIsAttacking = true
+	// - LastAttackTime = 현재 시간
+	Super::StartAttack();
+
+	// Owner를 ACharacter로 캐스팅
 	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter && AttackMontage)
+	if (!OwnerCharacter) return;
+
+	// Owner가 원거리 AI 캐릭터인 경우
+	ARangedEnemyCharacter* RangedCharacter = Cast<ARangedEnemyCharacter>(OwnerCharacter);
+	if (RangedCharacter)
 	{
-		UAnimInstance* AnimInstance = OwnerCharacter->GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-		{
-			AnimInstance->Montage_Play(AttackMontage);
-			//UE_LOG(LogTemp, Log, TEXT("[AI][RangedAttack] Montage Played for %s"), *GetOwner()->GetName());
-		}
-	}
-	else
-	{// Owner 또는 AttackMontage가 유효하지 않은 경우 경고 로그
-		UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] Cannot play montage: Owner or Montage invalid"));
+		RangedCharacter->RunMontage(ECharacterAnim::Attacking);
 	}
 }
 
@@ -54,26 +52,11 @@ void URangedAttackComponent::StopAttack()
 	// 공격 상태 비활성화
 	bIsAttacking = false;
 
-	// 현재 재생 중인 몽타주가 있다면 정지
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter && AttackMontage)
-	{
-		UAnimInstance* AnimInstance = OwnerCharacter->GetMesh()->GetAnimInstance();
-		if (AnimInstance && AnimInstance->Montage_IsPlaying(AttackMontage))
-		{
-			// 부드럽게 정지 (페이드 아웃 포함)
-			AnimInstance->Montage_Stop(0.25f, AttackMontage);
-			//UE_LOG(LogTemp, Log, TEXT("[AI][RangedAttack] Montage stopped for %s"), *GetOwner()->GetName());
-		}
+	ARangedEnemyCharacter* OwnerCharacter = Cast<ARangedEnemyCharacter>(GetOwner());
+	if (OwnerCharacter)
+	{// 재생 중인 애니메이션 몽타주 중지
+		OwnerCharacter->StopMontage();
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("[AI][RangedAttack] StopAttack called for %s"), *GetOwner()->GetName());
-}
-
-float URangedAttackComponent::GetAttackDuration() const
-{
-	// 애니메이션 몽타주가 유효할 경우 길이 반환, 없으면 기본값 사용
-	return AttackMontage ? AttackMontage->GetPlayLength() : AttackData.AttackCooldown;
 }
 
 void URangedAttackComponent::PerformRangedAttack()
@@ -110,7 +93,7 @@ void URangedAttackComponent::PerformRangedAttack()
 	}
 	*/
 
-	UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] PerformRangedAttack called, but ProjectileClass is not set yet."));
+	UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called, but ProjectileClass is not set yet."));
 
 	// 공격 종료 처리 (애니메이션 종료 시 호출할 수도 있음)
 	StopAttack();
