@@ -12,6 +12,7 @@ void ABaseCharacter::BeginPlay()
 	if (HealthComponent)
 	{
 		HealthComponent->OnDead.AddDynamic(this, &ABaseCharacter::HandleDeath);
+		HealthComponent->OnHit.AddDynamic(this, &ABaseCharacter::HandleHit);
 	}
 }
 
@@ -23,10 +24,14 @@ void ABaseCharacter::HandleDeath()
 	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
 	{
 		MovementComp->DisableMovement();   // 이동 정지
-		MovementComp->StopMovementImmediately(); // 현재 속도 즉시 정지
-		MovementComp->GravityScale = 1.f; // 중력 적용
 	}
+	
 	//컨트롤러 해제 등은 상속받은 캐릭터에서 처리
+}
+
+void ABaseCharacter::HandleHit()
+{
+	RunMontage(ECharacterAnim::GetHit);
 }
 
 void ABaseCharacter::RunMontage(ECharacterAnim Anim)
@@ -35,7 +40,7 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim)
 	{
 		UAnimMontage* MontageToPlay = AnimMontages[Anim];
 
-		// 애니메이션 몽타주가 유효하고, 이미 재생 중인 애니메이션이 아닐 경우
+		// 애니메이션 몽타주가 유효 시
 		if (MontageToPlay && GetMesh()->GetAnimInstance())
 		{
 			// 애니메이션 몽타주를 재생

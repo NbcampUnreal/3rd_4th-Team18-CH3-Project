@@ -26,8 +26,10 @@ public:
 
 	UFUNCTION()
 	virtual void HandleDeath();
+	UFUNCTION()
+	void HandleHit();
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	TObjectPtr<UHealthComponent> HealthComponent;
     
 	UFUNCTION(BlueprintCallable, Category = "States")
