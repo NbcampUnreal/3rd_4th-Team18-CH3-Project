@@ -13,6 +13,8 @@
 #include "Actor/Character/BaseCharacter.h"
 #include "Define/GameDefine.h"
 
+#include "Subsystem/StaticDataSubsystem.h"  // UStaticDataSubsystem, GetDataByKey 함수
+#include "StaticData/RoomData.h"
 
 // StaticDataSubsystem 관련 포함은 팀 프로젝트에서만 존재하므로 조건부 include
 //#if __has_include("Room/StaticData/StaticDataSubsystem.h")
@@ -90,6 +92,39 @@ AEnemyAIController::AEnemyAIController()
 void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 현재 월드에서 레벨 이름 얻기
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this, true);
+	//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] Cleaned CurrentLevelName: %s"), *CurrentLevelName);
+
+	UStaticDataSubsystem* SDS = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+	if (!SDS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] StaticDataSubsystem not found"));
+		return;
+	}
+
+	// RoomData 검색
+	const FRoomData* RoomData = SDS->GetDataByKey<FRoomData, FName>(FName(*CurrentLevelName));
+	if (!RoomData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData not found for level: %s"), *CurrentLevelName);
+		return;
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData found for level: %s"), *CurrentLevelName);
+		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData SightRadius: %f, LoseSightRadius: %f"),
+			RoomData->AISightRadius, RoomData->AILoseSightRadius);
+	}
+
+	if (SightConfig)
+	{
+		SightConfig->SightRadius = RoomData->AISightRadius;
+		SightConfig->LoseSightRadius = RoomData->AILoseSightRadius;
+
+		AIPerception->ConfigureSense(*SightConfig);
+	}
 }
 
 void AEnemyAIController::Tick(float DeltaTime)
@@ -105,17 +140,33 @@ void AEnemyAIController::Tick(float DeltaTime)
 	APawn* ControlledPawn = GetPawn();
 	if (!ControlledPawn) return;
 
+	// 컨트롤 중인 AI Pawn에서 캡슐 컴포넌트 찾기 (충돌 크기나 위치를 얻기 위해)
 	UCapsuleComponent* MyCapsule = ControlledPawn->FindComponentByClass<UCapsuleComponent>();
+
+	// 타겟 액터에서 캡슐 컴포넌트 찾기 (주로 플레이어나 적 NPC)
 	UCapsuleComponent* TargetCapsule = TargetActor->FindComponentByClass<UCapsuleComponent>();
 
+	// 캡슐 컴포넌트가 있으면 해당 컴포넌트의 위치를 사용하고, 없으면 액터의 위치 사용
 	FVector MyLocation = MyCapsule ? MyCapsule->GetComponentLocation() : ControlledPawn->GetActorLocation();
 	FVector TargetLocation = TargetCapsule ? TargetCapsule->GetComponentLocation() : TargetActor->GetActorLocation();
 
 	//MyLocation.Z = 0.f;
 	//TargetLocation.Z = 0.f;
 
+	// 시야 감지 범위 디버그 시각화 (Green = SightRadius, Yellow = LoseSightRadius)
+	if (SightConfig)
+	{
+		DrawDebugSphere(GetWorld(), MyLocation, SightConfig->SightRadius, 32, FColor::Green, false, -1.f, 0, 1.5f);
+		DrawDebugSphere(GetWorld(), MyLocation, SightConfig->LoseSightRadius, 32, FColor::Yellow, false, -1.f, 0, 1.0f);
+	}
+
+	// AI 위치에서 타겟 위치까지 빨간 선 그리기 (적색 추적선)
 	DrawDebugLine(GetWorld(), MyLocation, TargetLocation, FColor::Red, false, -1.f, 0, 2.0f);
+
+	// AI 자신의 위치에 녹색 구체 그리기 (AI 위치 표시용)
 	DrawDebugSphere(GetWorld(), MyLocation, 30.f, 12, FColor::Green, false, -1.f);
+
+	// 타겟 위치에 파란 구체 그리기 (타겟 위치 표시용)
 	DrawDebugSphere(GetWorld(), TargetLocation, 30.f, 12, FColor::Blue, false, -1.f);
 
 	// 공격 사거리 표시 (빨간색 스피어)
