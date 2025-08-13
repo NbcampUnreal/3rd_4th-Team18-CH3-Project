@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Core/RoomGameMode.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -19,6 +20,12 @@ void ABaseCharacter::BeginPlay()
 		HealthComponent->OnDead.AddDynamic(this, &ABaseCharacter::HandleDeath);
 		HealthComponent->OnHit.AddDynamic(this, &ABaseCharacter::HandleHit);
 	}
+
+	ARoomGameMode* RoomGameMode = Cast<ARoomGameMode>( GetWorld()->GetAuthGameMode());
+	if (RoomGameMode)
+	{
+		RoomGameMode->NotifyActorSpawn(this);
+	}
 }
 
 void ABaseCharacter::HandleDeath()
@@ -32,6 +39,11 @@ void ABaseCharacter::HandleDeath()
 	}
 	
 	//컨트롤러 해제 등은 상속받은 캐릭터에서 처리
+	ARoomGameMode* RoomGameMode = Cast<ARoomGameMode>( GetWorld()->GetAuthGameMode());
+	if (RoomGameMode)
+	{
+		RoomGameMode->NotifyActorDead(this);
+	}
 }
 
 void ABaseCharacter::HandleHit()
