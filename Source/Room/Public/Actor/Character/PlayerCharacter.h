@@ -14,6 +14,9 @@ class UCameraComponent;
 class USpringArmComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
+
+class UUISubsystem;
+
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
@@ -62,5 +65,10 @@ protected:
 	void StartFire();
 	void StopFire();
 	void Interact();
+
+private:
+	UFUNCTION()
+	void OnPlayerHealthChanged(float CurrentHealth, float MaxHealth);
+	TObjectPtr<UUISubsystem> UISubsystem;
 	
 };

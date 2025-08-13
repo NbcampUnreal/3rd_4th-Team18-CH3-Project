@@ -5,6 +5,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedDelegate, float, CurrentHealth, float, MaxHealth);
 class ACharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,6 +20,7 @@ public:
 	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
 	FORCEINLINE float GetCurrentHealth() const {return CurrentHealth; }
 	FDeathDelegate OnDead;
+	FOnHealthChangedDelegate OnHealthChanged;
 	
 protected:
 	virtual void BeginPlay() override;
