@@ -51,7 +51,6 @@ public:
 protected:
 	
 	virtual void HandleDeath() override;
-	void OnDeathMontageEnded();
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void Move(const FInputActionValue& Value);
