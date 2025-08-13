@@ -6,6 +6,7 @@
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "StaticData/StaticDataStruct.h"
+#include "UI/UISubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RoomGameMode)
 
@@ -40,7 +41,7 @@ void ARoomGameMode::OnClearLevel()
 void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
