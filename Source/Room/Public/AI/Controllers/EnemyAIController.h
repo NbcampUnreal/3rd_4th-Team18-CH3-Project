@@ -31,12 +31,18 @@ public:
 	// 블랙보드에 저장된 타겟 액터 반환
 	AActor* GetTargetActor() const;
 
+	// AI의 상태를 외부에서 변경할 때 사용하는 함수
+	void SetAIState(EAIStateType NewState);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	// Pawn이 Possess 되었을 때 호출됨
 	virtual void OnPossess(APawn* InPawn) override;
+
+	// 컨트롤러가 Pawn을 잃었을 때 호출되는 후처리 함수
+	virtual void OnUnPossess() override;
 
 	// 감지된 타겟에 대한 정보가 업데이트되었을 때 호출됨
 	UFUNCTION()

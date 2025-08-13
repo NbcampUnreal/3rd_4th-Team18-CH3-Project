@@ -1,4 +1,4 @@
-#include "Actor/Character/BaseCharacter.h"
+﻿#include "Actor/Character/BaseCharacter.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -66,6 +66,18 @@ bool ABaseCharacter::StopMontage()
 ECharacterAnim ABaseCharacter::GetCurrentCharacterAnim() const
 {
 	return CurrentAnimState;
+}
+
+float ABaseCharacter::GetMontagePlayLength(ECharacterAnim AnimType) const
+{
+	if (const TObjectPtr<UAnimMontage>* MontagePtr = AnimMontages.Find(AnimType))
+	{
+		if (*MontagePtr)
+		{
+			return (*MontagePtr)->GetPlayLength();
+		}
+	}
+	return 1.0f; // 기본 fallback 값
 }
 
 

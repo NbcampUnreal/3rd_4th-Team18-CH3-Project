@@ -17,8 +17,8 @@ void URangedAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAn
     URangedAttackComponent* RangedAttackComp = Owner->FindComponentByClass<URangedAttackComponent>();
     if (RangedAttackComp)
     {
-        RangedAttackComp->PerformRangedAttack();
         //UE_LOG(LogTemp, Log, TEXT("[AI][RangedAttackNotifyState] PerformRangedAttack called on %s"), *Owner->GetName());
+        RangedAttackComp->PerformRangedAttack();
     }
     else
     {

@@ -17,8 +17,8 @@ void UMeleeAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	UMeleeAttackComponent* MeleeAttackComp = Owner->FindComponentByClass<UMeleeAttackComponent>();
 	if (MeleeAttackComp)
 	{
-		MeleeAttackComp->PerformMeleeAttack();
 		//UE_LOG(LogTemp, Log, TEXT("[AI][MeleeAttackNotifyState] PerformMeleeAttack called on %s"), *Owner->GetName());
+		MeleeAttackComp->PerformMeleeAttack();
 	}
 	else
 	{

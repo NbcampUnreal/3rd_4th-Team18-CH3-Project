@@ -3,6 +3,8 @@
 #include "AI/Components/Attack/BaseAttackComponent.h"
 #include "AI/Components/Attack/MeleeAttackComponent.h"
 #include "AI/Components/Attack/RangedAttackComponent.h"
+#include "Characters/RangedEnemyCharacter.h"
+#include "Characters/MeleeEnemyCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "GameFramework/Pawn.h"
@@ -63,13 +65,21 @@ EBTNodeResult::Type UBTTask_PerformAttack::ExecuteTask(UBehaviorTreeComponent& O
     if (MeleeAttackComponent && MeleeAttackComponent->CanAttack())
     {// 근접 공격이 가능할 경우 실행
         MeleeAttackComponent->StartAttack();
-        AttackDuration = MeleeAttackComponent->GetAttackDuration();
+
+        if (AMeleeEnemyCharacter* MeleeCharacter = Cast<AMeleeEnemyCharacter>(Pawn))
+        {
+            AttackDuration = MeleeCharacter->GetMontagePlayLength(ECharacterAnim::Attacking);
+        }
         //UE_LOG(LogTemp, Log, TEXT("[AI][BTTask_PerformAttack] Melee Attack started on %s (%.2fs)"), *Pawn->GetName(), AttackDuration);
     }
     else if (RangedAttackComponent && RangedAttackComponent->CanAttack())
     {// 원거리 공격이 가능할 경우 실행
         RangedAttackComponent->StartAttack();
-        AttackDuration = RangedAttackComponent->GetAttackDuration();
+
+        if (ARangedEnemyCharacter* RangedCharacter = Cast<ARangedEnemyCharacter>(Pawn))
+        {
+            AttackDuration = RangedCharacter->GetMontagePlayLength(ECharacterAnim::Attacking);
+        }
         //UE_LOG(LogTemp, Log, TEXT("[AI][BTTask_PerformAttack] Ranged Attack started on %s (%.2fs)"), *Pawn->GetName(), AttackDuration);
     }
     else

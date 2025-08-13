@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -47,6 +47,9 @@ public:
 	ECharacterAnim GetCurrentCharacterAnim() const;
     
 
+	// TODO: 반드시 진권님이 구현한 함수로 변경 필요
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	float GetMontagePlayLength(ECharacterAnim AnimType) const;
 
 
 protected:
