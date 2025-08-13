@@ -1,4 +1,5 @@
 #include "Actor/Character/PlayerCharacter.h"
+#include "UI/UISubsystem.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -27,6 +28,11 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	OwnedGameplayTags.AddTag(GameDefine::PlayerTag);
 
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		UISubsystem = GameInstance->GetSubsystem<UUISubsystem>();
+	}
+
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
@@ -35,6 +41,12 @@ void APlayerCharacter::BeginPlay()
 			{
 				Subsystem->AddMappingContext(InputConfig.DefaultMappingContext, 0);
 			}
+		}
+
+		if (HealthComponent)
+		{
+			HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnPlayerHealthChanged);
+			OnPlayerHealthChanged(HealthComponent->GetCurrentHealth(), HealthComponent->GetMaxHealth());
 		}
 	}
 	SpringArm->SocketOffset.Z = BaseEyeHeight;
@@ -115,4 +127,12 @@ void APlayerCharacter::StopFire()
 
 void APlayerCharacter::Interact()
 {
+}
+
+void APlayerCharacter::OnPlayerHealthChanged(float CurrentHealth, float MaxHealth)
+{
+	if (UISubsystem)
+	{
+		UISubsystem->UpdateHealth(CurrentHealth / MaxHealth);
+	}
 }

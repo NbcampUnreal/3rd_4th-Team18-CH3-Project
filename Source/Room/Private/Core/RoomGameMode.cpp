@@ -59,8 +59,6 @@ void ARoomGameMode::InitializeGame()
 	UObjectPoolSubsystem* ObjectPoolSubsystem = GetWorld()->GetSubsystem<UObjectPoolSubsystem>();
 	UUISubsystem* UISubsystem = GetGameInstance()->GetSubsystem<UUISubsystem>();
 
-	UE_LOG(LogTemp, Warning, TEXT("UISubsystem pointer valid: %s"), (UISubsystem ? TEXT("true") : TEXT("false")));
-
 	if (!StaticDataSubsystem || !ObjectPoolSubsystem || !RoomGameState || !UISubsystem)
 	{
 		return;
