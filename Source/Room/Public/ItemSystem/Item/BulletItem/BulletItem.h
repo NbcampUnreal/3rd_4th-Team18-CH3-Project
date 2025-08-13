@@ -3,13 +3,11 @@
 
 #include "CoreMinimal.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
-#include "StaticData/WeaponItemData.h"
-#include "WeaponItem.generated.h"
-
-struct FWeaponItemData;
+#include "StaticData/BulletItemData.h"
+#include "BulletItem.generated.h"
 
 UCLASS(Blueprintable)
-class ROOM_API UWeaponItem : public UItemBase
+class ROOM_API UBulletItem : public UItemBase
 {
 	GENERATED_BODY()
 public:
@@ -21,16 +19,18 @@ public:
 	virtual UStaticMesh* GetItemMesh_Implementation() const override;
 	virtual bool IsConsumable_Implementation() const override;
 	virtual int32 GetMaxStackCount_Implementation() const override;
-	float GetWeaponAttackDamage() const;
-	float GetWeaponAttackSpeed() const;
-	float GetWeaponAttackRecoil() const;
-	float GetWeaponAttackRange() const;
-	int32 GetWeaponBulletID() const;
+	virtual bool IsUsable_Implementation() const override;
 	
+	int32 GetBulletID() const;
+	float GetBulletInitialSpeed() const;
+	float GetBulletMaxSpeed() const;
+	float GetBulletAutoDestroyTime() const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
-	FWeaponItemData WeaponItemInfo;
+	FBulletItemData BulletItemInfo;
+	
 private:
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponItemInfo(const FWeaponItemData& WeaponInfo);
+	void SetBulletItemInfo(const FBulletItemData& _BulletItemInfo);
 };

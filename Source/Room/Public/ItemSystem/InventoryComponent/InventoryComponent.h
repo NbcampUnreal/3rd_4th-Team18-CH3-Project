@@ -29,6 +29,9 @@ public:
 	const FInventorySlot& GetInventorySlotByIndex(int32 SlotIndex) const;
 	int32 GetInventorySize() const { return InventorySize;}
 
+	int GetBulletCount(int32 BulletID);
+	bool UseBulletForWeaponFire(int32 BulletID);
+	
 	FOnSlotChanged OnSlotChanged;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")

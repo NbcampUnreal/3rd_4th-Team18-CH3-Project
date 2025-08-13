@@ -5,9 +5,8 @@
 #include "Input/InputConfig.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/PlayerAttackComponent.h"
-#include "ItemSystem/Interfaces/Equipper.h"
+#include "ItemSystem/InteractionComponent/InteractionComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
@@ -65,4 +64,5 @@ private:
 	UFUNCTION()
 	void OnPlayerHealthChanged(float CurrentHealth, float MaxHealth);
 	TObjectPtr<UUISubsystem> UISubsystem;
+	UInteractionComponent* InteractionComponent;
 };

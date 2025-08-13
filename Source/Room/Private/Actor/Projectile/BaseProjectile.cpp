@@ -3,7 +3,9 @@
 
 #include "Actor/Projectile/BaseProjectile.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 
 // Sets default values
@@ -11,10 +13,9 @@ ABaseProjectile::ABaseProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);
-	SphereComponent->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnComponentHit);
-
+	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
@@ -22,11 +23,21 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->bShouldBounce = true;
 }
 
+void ABaseProjectile::SetProjectileMoveData_Implementation(const FBulletItemData& BulletInfo)
+{
+	IProjectileDataReciever::SetProjectileMoveData_Implementation(BulletInfo);
+
+	ProjectileMovement->InitialSpeed = BulletInfo.BulletInitialSpeed;
+	ProjectileMovement->MaxSpeed = BulletInfo.BulletMaxSpeed;
+	ReturnToPoolTime = BulletInfo.BulletAutoDestroyTime;
+	
+}
+
 // Called when the game starts or when spawned
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnSphereOverlap);
 }
 
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
@@ -35,7 +46,7 @@ void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransfor
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	USphereComponent* SphereComponent = GetComponentByClass<USphereComponent>();
+	 SphereComponent = GetComponentByClass<USphereComponent>();
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
 	ProjectileMovement->Activate();
@@ -45,7 +56,7 @@ void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransfor
 	GetWorldTimerManager().SetTimer(ReturnTimer, FTimerDelegate::CreateLambda([this]()
 	{
 		GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
-	}), 5.f, false);
+	}), ReturnToPoolTime, false);
 }
 
 void ABaseProjectile::OnPoolEnd_Implementation()
@@ -53,15 +64,23 @@ void ABaseProjectile::OnPoolEnd_Implementation()
 	SetActorTickEnabled(false);
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
-	USphereComponent* SphereComponent = GetComponentByClass<USphereComponent>();
+	SphereComponent = GetComponentByClass<USphereComponent>();
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	ProjectileMovement->Deactivate();
 	ProjectileMovement->Velocity = FVector::ZeroVector;
 }
 
-void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// 월드 이벤트 호출
 	GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
+
+	ACharacter* TargetChar = Cast<ACharacter>(OtherActor);
+	if (TargetChar)
+	{
+		
+		UGameplayStatics::ApplyDamage(TargetChar,FinalDamage,nullptr,nullptr,UDamageType::StaticClass());
+
+	}
 }

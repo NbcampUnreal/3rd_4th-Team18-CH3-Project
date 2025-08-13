@@ -25,8 +25,8 @@ public:
 
 	int32 SlotIndex;
 
-	void HideActionMenu();
-	void HideDropMenu();
+	// void HideActionMenu();
+	// void HideDropMenu();
 
 protected:
 

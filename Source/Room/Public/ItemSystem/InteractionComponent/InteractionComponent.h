@@ -12,7 +12,8 @@ class ROOM_API UInteractionComponent : public UActorComponent
 
 public:
 	UInteractionComponent();
-
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void Interact();	
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
@@ -24,8 +25,6 @@ protected:
 	TEnumAsByte<ECollisionChannel> InteractTraceChannel = ECC_GameTraceChannel1;
 
 private:
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void Interact();
 	void UpdateInteractableTarget();
 	void UpdateFocus();
 	void UpdateInteractableMessage();

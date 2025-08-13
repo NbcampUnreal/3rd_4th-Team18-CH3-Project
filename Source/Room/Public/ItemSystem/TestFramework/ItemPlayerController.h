@@ -32,7 +32,9 @@ protected:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> ToggleInventoryAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> FireAction;
+	
 	// UI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<URoomHUD> HUDClass;
@@ -44,6 +46,7 @@ private:
 	void MoveByInput(const FInputActionValue& Value);
 	void LookByInput(const FInputActionValue& Value);
 	void ToggleInventoryByInput();
+	void FireByInput();
 
 	
 };

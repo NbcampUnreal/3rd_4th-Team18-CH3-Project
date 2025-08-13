@@ -5,6 +5,7 @@
 
 #include "GameMapsSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "StaticData/RoomData.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/LoadingSubsystem.h"
 

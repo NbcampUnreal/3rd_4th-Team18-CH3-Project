@@ -16,7 +16,6 @@ class UGameConfigData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
-	
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
