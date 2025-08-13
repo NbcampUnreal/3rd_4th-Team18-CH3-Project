@@ -7,12 +7,9 @@
 class USoundBase;
 
 USTRUCT(BlueprintType)
-struct FSoundData : public FTableRowBase
+struct FSoundData : public FStaticData
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
-	int32 ID = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TSoftObjectPtr<USoundBase> Sound;

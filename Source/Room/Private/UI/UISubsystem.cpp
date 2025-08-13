@@ -6,6 +6,7 @@
 #include "UI/Widget/DamageTextActor.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Core/GameManager.h"
 #include "Engine/Engine.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -17,17 +18,21 @@
 void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
+}
 
+void UUISubsystem::InitUIResources()
+{
     UGameInstance* GameInstance = GetGameInstance();
     if (!GameInstance) return;
 
-    UStaticDataSubsystem* StaticDataSubsystem = GameInstance->GetSubsystem<UStaticDataSubsystem>();
+    UStaticDataSubsystem* StaticDataSubsystem =GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
+    check(StaticDataSubsystem);
     if (!StaticDataSubsystem) return;
 
     const FUIData* UIData = StaticDataSubsystem->GetData<FUIData>(UIDataID);
     if (!UIData) return;
 
-	MainMenuWidgetClass = UIData->MainMenuWidgetClass.LoadSynchronous();
+    MainMenuWidgetClass = UIData->MainMenuWidgetClass.LoadSynchronous();
     PauseMenuWidgetClass = UIData->PauseMenuWidgetClass.LoadSynchronous();
     HUDWidgetClass = UIData->HUDWidgetClass.LoadSynchronous();
     LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
@@ -41,7 +46,6 @@ void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
     {
         UE_LOG(LogTemp, Error, TEXT("FATAL ERROR: MainMenu Class FAILED to load from DataTable. Check Path in DT_UIDataTable!"));
     }
-
 }
 
 void UUISubsystem::Deinitialize()

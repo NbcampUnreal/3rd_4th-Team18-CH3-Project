@@ -20,7 +20,9 @@ class ROOM_API UUISubsystem : public URoomSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
-
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void InitUIResources();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetUIInputMode();
 	UFUNCTION(BlueprintCallable, Category = "UI")

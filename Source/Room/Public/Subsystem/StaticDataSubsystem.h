@@ -40,8 +40,11 @@ public:
     template<typename TStruct>
     const TStruct* GetData(int32 Key) const
     {
-        FName StructName = TStruct::StaticStruct()->GetFName();
-        return static_cast<const TStruct*>( GetData(StructName, Key));
+        auto StructStatic = StaticStruct<TStruct>();
+        check(StructStatic);
+        FName StructName = StructStatic->GetFName();
+        auto Data  = GetData(StructName, Key);
+        return static_cast<const TStruct*>(Data);
     }
 
     // 보조 키로 데이터를 조회하는 템플릿 함수
