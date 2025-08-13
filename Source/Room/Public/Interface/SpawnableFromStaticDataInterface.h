@@ -3,17 +3,17 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "SpawnableFromStaticData.generated.h"
+#include "SpawnableFromStaticDataInterface.generated.h"
 
 struct FStaticData;
 
 UINTERFACE(MinimalAPI, Blueprintable)
-class USpawnableFromStaticData : public UInterface
+class USpawnableFromStaticDataInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class ROOM_API ISpawnableFromStaticData
+class ROOM_API ISpawnableFromStaticDataInterface
 {
 	GENERATED_BODY()
 

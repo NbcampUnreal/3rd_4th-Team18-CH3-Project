@@ -7,14 +7,14 @@
 #include "Components/HealthComponent.h"
 #include "ItemSystem/Interfaces/Equipper.h"
 #include "AI/Enums/AIEnums.h"
-#include "Interface/SpawnableFromStaticData.h"
+#include "Interface/SpawnableFromStaticDataInterface.h"
 #include "BaseCharacter.generated.h"
 
 
 
 
 UCLASS()
-class ROOM_API ABaseCharacter : public ACharacter, public IEquipper, public IGameplayTagAssetInterface, public ISpawnableFromStaticData
+class ROOM_API ABaseCharacter : public ACharacter, public IEquipper, public IGameplayTagAssetInterface, public ISpawnableFromStaticDataInterface
 {
 	GENERATED_BODY()
 

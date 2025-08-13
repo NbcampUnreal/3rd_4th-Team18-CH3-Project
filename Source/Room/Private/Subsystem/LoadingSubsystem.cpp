@@ -188,7 +188,7 @@ TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomD
     TArray<FSoftObjectPath> Array;
     Array.Reserve(
         (NewRoomData.PreloadAssets.IsEmpty() ? 0 : NewRoomData.PreloadAssets.Num()) +
-        (NewRoomData.Monsters.IsEmpty() ? 0 : NewRoomData.Monsters.Num() * 3)
+        (NewRoomData.Monsters.IsEmpty() ? 0 : NewRoomData.Monsters.Num() * 2)
         //(NewRoomData.Items.IsEmpty() ? 0 : NewRoomData.Items.Num())
         );
     
@@ -204,7 +204,6 @@ TArray<FSoftObjectPath> ULoadingSubsystem::GetRoomDataNeedSoftPaths(const FRoomD
         FEnemyData* EnemyData = MonsterDataHandle.GetRow<FEnemyData>(TEXT("Not Found"));
         Array.Add(EnemyData->Behavior.ToSoftObjectPath());
         Array.Add(EnemyData->EnemyClass.ToSoftObjectPath());
-        Array.Add(EnemyData->ControllerClass.ToSoftObjectPath());
     }
 
     // for (const FDataTableRowHandle ItemHandle : NewRoomData.Items)

@@ -1,10 +1,15 @@
 #include "Actor/SpawnPoint.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DataTable.h"
-#include "StaticData/EnemyData.h"
+#include "StaticData/StaticDataManager.h"
+#include "StaticData/StaticData.h"
+#include "Interface/SpawnableFromStaticDataInterface.h"
+#include "Interface/SpawnActorStaticDataInterface.h"
+#include "Subsystem/StaticDataSubsystem.h"
 
 #if WITH_EDITOR
 #include "Editor.h"
+#include "Room/Editor/EditorHelper.h"
 #endif
 
 // Sets default values
@@ -14,8 +19,8 @@ ASpawnPoint::ASpawnPoint()
 	PrimaryActorTick.bCanEverTick = false;
 
 #if WITH_EDITOR
-	// EditorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("EditorMeshComponent"));
-	// SetRootComponent(EditorMeshComponent);
+	EditorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("EditorMeshComponent"));
+	SetRootComponent(EditorMeshComponent);
 
 	if (!IsTemplate() && !IsRunningCommandlet())
     {
@@ -29,7 +34,7 @@ ASpawnPoint::ASpawnPoint()
 void ASpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    PerformSpawnActor();
 }
 
 void ASpawnPoint::Destroyed()
@@ -43,6 +48,70 @@ void ASpawnPoint::Destroyed()
     }
 #endif
 }
+
+template <typename T>
+concept ActorWithSpawnableStatic =
+	TIsDerivedFrom<T, AActor>::Value &&
+	TIsDerivedFrom<T, ISpawnableFromStaticDataInterface>::Value;
+
+AActor* ASpawnPoint::PerformSpawnActor()
+{
+	if (!DataType)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: DataType is not set."));
+		return nullptr;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	if (!GameInstance)
+	{
+		return nullptr;
+	}
+
+	UStaticDataSubsystem* StaticDataManager = GameInstance->GetSubsystem<UStaticDataSubsystem>();
+	if (!StaticDataManager)
+	{
+		return nullptr;
+	}
+
+	const FName TypeName = FName(*DataType->GetName());
+	const FStaticData* StaticData = StaticDataManager->GetData<FStaticData>(SpawnDataID);
+
+	if (!StaticData)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("ASpawnPoint::PerformSpawnActor: Could not find StaticData with DataType '%s' and DataID %d."),
+			*TypeName.ToString(), SpawnDataID);
+		return nullptr;
+	}
+	TSoftClassPtr<AActor> SpawnActorClass = nullptr;
+	// UScriptStruct* StructType = FStaticData::StaticStruct();
+	// bool bImplements = StructType->IsChildOf(ISpawnActorStaticDataInterface::UClassType::StaticClass());
+	SpawnActorClass = reinterpret_cast<ISpawnActorStaticDataInterface&>(StaticData).SpawnActorClass();
+	// if (bImplements)
+	// {
+	// }
+	
+	FActorSpawnParameters SpawnParams;
+	FTransform SpawnTransform = FTransform(GetActorRotation(), GetActorLocation());
+	AActor* SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnActorClass.Get(), SpawnTransform);
+
+	if (SpawnedActor)
+	{
+		if (ISpawnableFromStaticDataInterface* Spawnable = Cast<ISpawnableFromStaticDataInterface>(SpawnedActor))
+		{
+			Spawnable->InitializeFromStaticData(StaticData);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: Spawned actor does not implement ISpawnableFromStaticData."));
+		}
+		SpawnedActor->FinishSpawning(SpawnTransform);
+	}
+
+	return SpawnedActor;
+}
+
 
 #if WITH_EDITOR
 void ASpawnPoint::UpdateEditorMesh()
@@ -104,5 +173,35 @@ void ASpawnPoint::HandleEndPIE(const bool bIsSimulating)
     {
         EditorMeshComponent->SetVisibility(true);
     }
+}
+
+TArray<TSoftObjectPtr<UObject>> ASpawnPoint::GetPreloadAssetList_Implementation()
+{
+    return UEditorHelper::CollectSoftReferences(SpawnActor.Get());
+}
+#else
+void ASpawnPoint::UpdateEditorMesh()
+{
+}
+
+void ASpawnPoint::OnConstruction(const FTransform& Transform)
+{
+}
+
+void ASpawnPoint::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+}
+
+void ASpawnPoint::HandleBeginPIE(const bool bIsSimulating)
+{
+}
+
+void ASpawnPoint::HandleEndPIE(const bool bIsSimulating)
+{
+}
+
+TArray<TSoftObjectPtr<UObject>> ASpawnPoint::GetPreloadAssetList_Implementation()
+{
+    return IHasRoomDataInterface::GetPreloadAssetList_Implementation();
 }
 #endif
