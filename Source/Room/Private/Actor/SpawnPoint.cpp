@@ -14,8 +14,8 @@ ASpawnPoint::ASpawnPoint()
 	PrimaryActorTick.bCanEverTick = false;
 
 #if WITH_EDITOR
-	EditorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("EditorMeshComponent"));
-	SetRootComponent(EditorMeshComponent);
+	// EditorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("EditorMeshComponent"));
+	// SetRootComponent(EditorMeshComponent);
 
 	if (!IsTemplate() && !IsRunningCommandlet())
     {
@@ -59,19 +59,19 @@ void ASpawnPoint::UpdateEditorMesh()
         return;
     }
 
-    const FEnemyData* EnemyData = DataTable->FindRow<FEnemyData>(*FString::FromInt(SpawnDataID), TEXT(""));
-    if (!EnemyData)
-    {
-        EditorMeshComponent->SetSkeletalMesh(nullptr);
-        return;
-    }
-
-    if (EnemyData->Mesh.IsPending())
-    {
-        EnemyData->Mesh.LoadSynchronous();
-    }
-    
-    EditorMeshComponent->SetSkeletalMesh(EnemyData->Mesh.Get());
+    // const FEnemyData* EnemyData = DataTable->FindRow<FEnemyData>(*FString::FromInt(SpawnDataID), TEXT(""));
+    // if (!EnemyData)
+    // {
+    //     EditorMeshComponent->SetSkeletalMesh(nullptr);
+    //     return;
+    // }
+    //
+    // if (EnemyData->Mesh.IsPending())
+    // {
+    //     EnemyData->Mesh.LoadSynchronous();
+    // }
+    //
+    // EditorMeshComponent->SetSkeletalMesh(EnemyData->Mesh.Get());
 }
 
 void ASpawnPoint::OnConstruction(const FTransform& Transform)
