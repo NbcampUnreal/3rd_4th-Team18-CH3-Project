@@ -13,6 +13,8 @@ class USpawnActorStaticDataInterface : public UInterface
 
 class ISpawnActorStaticDataInterface
 {
+	GENERATED_BODY()
+	
 public:
 	virtual TSubclassOf<AActor> SpawnActorClass() = 0;
 };

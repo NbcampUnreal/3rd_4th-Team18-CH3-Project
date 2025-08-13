@@ -1,7 +1,10 @@
 #include "Actor/SpawnPoint.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DataTable.h"
-#include "StaticData/EnemyData.h"
+#include "StaticData/StaticDataManager.h"
+#include "StaticData/StaticData.h"
+#include "Interface/SpawnableFromStaticData.h"
+#include "Subsystem/StaticDataSubsystem.h"
 
 #if WITH_EDITOR
 #include "Editor.h"
@@ -30,9 +33,7 @@ ASpawnPoint::ASpawnPoint()
 void ASpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
-
-    if (SpawnActor)
-        GetWorld()->SpawnActor(SpawnActor->GetClass());
+    PerformSpawnActor();
 }
 
 void ASpawnPoint::Destroyed()
@@ -46,6 +47,64 @@ void ASpawnPoint::Destroyed()
     }
 #endif
 }
+
+AActor* ASpawnPoint::PerformSpawnActor()
+{
+	if (!ActorToSpawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: ActorToSpawn is not set."));
+		return nullptr;
+	}
+	if (!DataType)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: DataType is not set."));
+		return nullptr;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	if (!GameInstance)
+	{
+		return nullptr;
+	}
+
+	UStaticDataSubsystem* StaticDataManager = GameInstance->GetSubsystem<UStaticDataSubsystem>();
+	if (!StaticDataManager)
+	{
+		return nullptr;
+	}
+
+	const FName TypeName = FName(*DataType->GetName());
+	const FStaticData* StaticData = StaticDataManager->GetData<FStaticData>(SpawnDataID);
+
+	if (!StaticData)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("ASpawnPoint::PerformSpawnActor: Could not find StaticData with DataType '%s' and DataID %d."),
+			*TypeName.ToString(), SpawnDataID);
+		return nullptr;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+	
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorLocation(), GetActorRotation(), SpawnParams);
+
+	if (SpawnedActor)
+	{
+		if (ISpawnableFromStaticData* Spawnable = Cast<ISpawnableFromStaticData>(SpawnedActor))
+		{
+			Spawnable->InitializeFromStaticData(StaticData);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: Spawned actor does not implement ISpawnableFromStaticData."));
+		}
+	}
+
+	return SpawnedActor;
+}
+
 
 #if WITH_EDITOR
 void ASpawnPoint::UpdateEditorMesh()

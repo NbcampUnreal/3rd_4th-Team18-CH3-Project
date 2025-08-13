@@ -4,18 +4,17 @@
 #include "GameFramework/Character.h"
 #include "GameplayTagAssetInterface.h" 
 #include "Define/GameDefine.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/HealthComponent.h"
 #include "ItemSystem/Interfaces/Equipper.h"
 #include "AI/Enums/AIEnums.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Interface/SpawnableFromStaticData.h"
 #include "BaseCharacter.generated.h"
 
 
 
 
 UCLASS()
-class ROOM_API ABaseCharacter : public ACharacter, public IEquipper, public IGameplayTagAssetInterface
+class ROOM_API ABaseCharacter : public ACharacter, public IEquipper, public IGameplayTagAssetInterface, public ISpawnableFromStaticData
 {
 	GENERATED_BODY()
 
@@ -23,6 +22,9 @@ public:
 	ABaseCharacter();
 	//상속 받은 캐릭터에서 태그 설정
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+
+	// ISpawnableFromStaticData interface
+	virtual void InitializeFromStaticData(const FStaticData* InStaticData) override;
 
 	UFUNCTION()
 	virtual void HandleDeath();

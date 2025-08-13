@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interface/HasRoomDataInterface.h"
+#include "Interface/SpawnableFromStaticData.h"
 #include "SpawnPoint.generated.h"
 
 UCLASS()
@@ -38,7 +39,18 @@ protected:
 	
 #endif
 
-public:	
+public:
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	virtual AActor* PerformSpawnActor();
+
+	// New properties for data-driven spawning
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (MustImplement = "SpawnableFromStaticData"))
+	TSubclassOf<AActor> ActorToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (MetaClass = "StaticData"))
+	TObjectPtr<UScriptStruct> DataType;
+
+	// Existing properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 SpawnDataID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")

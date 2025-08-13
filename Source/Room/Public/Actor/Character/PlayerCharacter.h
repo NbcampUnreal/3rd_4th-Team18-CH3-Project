@@ -12,7 +12,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-
+class UUISubsystem;
 UCLASS()
 class ROOM_API APlayerCharacter : public ABaseCharacter
 {
@@ -60,5 +60,9 @@ protected:
 	void StartFire();
 	void StopFire();
 	void Interact();
-	
+
+private:
+	UFUNCTION()
+	void OnPlayerHealthChanged(float CurrentHealth, float MaxHealth);
+	TObjectPtr<UUISubsystem> UISubsystem;
 };

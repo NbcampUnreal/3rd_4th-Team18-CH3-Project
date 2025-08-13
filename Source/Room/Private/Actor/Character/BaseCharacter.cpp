@@ -1,4 +1,9 @@
 #include "Actor/Character/BaseCharacter.h"
+#include "StaticData/EnemyData.h"
+#include "AIController.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -48,7 +53,6 @@ void ABaseCharacter::RunMontage(ECharacterAnim Anim)
 
 			// 현재 애니메이션 상태를 업데이트
 			CurrentAnimState = Anim;
-
 		}
 	}
 }
@@ -88,4 +92,29 @@ float ABaseCharacter::GetMontagePlayLength(ECharacterAnim AnimType) const
 void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
 	TagContainer.AppendTags(OwnedGameplayTags);
+}
+
+void ABaseCharacter::InitializeFromStaticData(const FStaticData* InStaticData)
+{
+	const FEnemyData* EnemyData = static_cast<const FEnemyData*>(InStaticData);
+	if (!EnemyData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ABaseCharacter::InitializeFromStaticData: Failed to cast to FEnemyData."));
+		return;
+	}
+
+	if (HealthComponent)
+	{
+		HealthComponent->SetMaxHealth(EnemyData->Stat.HP);
+		//HealthComponent->SetCurrentHealth(EnemyData->Stat.HP); // ????
+	}
+
+	// Set other properties from EnemyData->Stat as needed (Attack, Defense, etc.)
+
+	// AI Controller setup
+	AAIController* AIController = GetController<AAIController>();
+	if (AIController && EnemyData->Behavior)
+	{
+		AIController->RunBehaviorTree(EnemyData->Behavior.Get());
+	}
 }

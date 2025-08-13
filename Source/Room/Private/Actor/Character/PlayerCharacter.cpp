@@ -1,4 +1,5 @@
 #include "Actor/Character/PlayerCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "UI/UISubsystem.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -17,9 +18,6 @@ APlayerCharacter::APlayerCharacter()
 	PlayerAttackComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
 	bUseControllerRotationYaw = true;
-	
-
-	
 }
 
 
