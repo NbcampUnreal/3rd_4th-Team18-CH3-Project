@@ -15,9 +15,11 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UISubsystem)
 
+
 void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
+    //auto Data = Collection.InitializeDependency<UStaticDataSubsystem>();
 }
 
 void UUISubsystem::InitUIResources()
@@ -25,7 +27,7 @@ void UUISubsystem::InitUIResources()
     UGameInstance* GameInstance = GetGameInstance();
     if (!GameInstance) return;
 
-    UStaticDataSubsystem* StaticDataSubsystem =GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
+    UStaticDataSubsystem* StaticDataSubsystem = GetGameManager()->GetSubsystem<UStaticDataSubsystem>();
     check(StaticDataSubsystem);
     if (!StaticDataSubsystem) return;
 
