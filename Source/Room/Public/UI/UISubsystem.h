@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Subsystem/RoomSubsystem.h"
+#include "Engine/DataTable.h"
 
 #include "UISubsystem.generated.h"
 
@@ -82,4 +83,7 @@ private:
 
 	UPROPERTY(Transient)
 	UUserWidget* HUDInstance = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI Data")
+	int32 UIDataID = 1;
 };
