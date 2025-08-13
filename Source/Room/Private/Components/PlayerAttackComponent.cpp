@@ -33,17 +33,17 @@ void UPlayerAttackComponent::BeginPlay()
 		return;
 	}
 
-	const FWeaponData* WeaponData = StaticData->GetData<FWeaponData>(CurrentWeaponID);
+	const FWeaponItemData* WeaponData = StaticData->GetData<FWeaponItemData>(CurrentWeaponID);
 	if (!WeaponData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WeaponData not found for ID %d"), CurrentWeaponID);
 		return;
 	}
 
-	Damage = WeaponData->Damage;
-	FireRate = WeaponData->FireRate;
-	Spread = WeaponData->Spread;
-	BulletID = WeaponData->BulletID;
+	Damage = WeaponData->WeaponAttackDamage;
+	FireRate = WeaponData->WeaponAttackSpeed;
+	Spread = WeaponData->WeaponRecoil;
+	BulletID = WeaponData->WeaponBulletID;
 
 
 	UE_LOG(LogTemp, Warning, TEXT("Weapon ID: %d, Damage: %f, FireRate: %f"), CurrentWeaponID, Damage, FireRate);
@@ -75,7 +75,11 @@ void UPlayerAttackComponent::StopFire()
 
 void UPlayerAttackComponent::Fire()
 {
-	UE_LOG(LogTemp, Log, TEXT("Fire!"));
-	OnFire.Broadcast();
+
+	
+		UE_LOG(LogTemp, Log, TEXT("fire!"));
+		
+	
+
 	// TODO: 탄환 액터 발사 로직 추가 
 }

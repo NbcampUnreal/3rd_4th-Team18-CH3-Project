@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
-#include "ItemSystem/Structure/BulletItemInfo.h"
+#include "StaticData/BulletItemData.h"
 #include "BulletItem.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class ROOM_API UBulletItem : public UItemBase
 {
 	GENERATED_BODY()
@@ -19,6 +19,7 @@ public:
 	virtual UStaticMesh* GetItemMesh_Implementation() const override;
 	virtual bool IsConsumable_Implementation() const override;
 	virtual int32 GetMaxStackCount_Implementation() const override;
+	virtual bool IsUsable_Implementation() const override;
 	
 	int32 GetBulletID() const;
 	float GetBulletInitialSpeed() const;
@@ -27,9 +28,9 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
-	FBulletItemInfo BulletItemInfo;
+	FBulletItemData BulletItemInfo;
 	
 private:
 	UFUNCTION(BlueprintCallable)
-	void SetBulletItemInfo(const FBulletItemInfo& _BulletItemInfo);
+	void SetBulletItemInfo(const FBulletItemData& _BulletItemInfo);
 };

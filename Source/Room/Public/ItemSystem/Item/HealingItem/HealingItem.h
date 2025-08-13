@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
-#include "ItemSystem/Structure/HealingItemInfo.h"
+#include "StaticData/HealingItemData.h"
 #include "HealingItem.generated.h"
 
 UCLASS(Blueprintable)
@@ -23,8 +23,8 @@ public:
 	float GetHealingAmount() const;
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
-	FHealingItemInfo HealingItemInfo;
+	FHealingItemData HealingItemInfo;
 private:
 	UFUNCTION(BlueprintCallable)
-	void SetHealingItemInfo(const FHealingItemInfo& HealingInfo);
+	void SetHealingItemInfo(const FHealingItemData& HealingInfo);
 };

@@ -76,6 +76,16 @@ void UInventorySlotWidget::NativeConstruct()
 void UInventorySlotWidget::OnSlotClicked()
 {
 	VB_ActionMenu->SetVisibility(ESlateVisibility::Visible);
+
+	auto ItemSlot = InventoryComponent->GetInventorySlotByIndex(SlotIndex);
+	if (ItemSlot.Item->IsUsable())
+	{
+		Button_ItemUse->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		Button_ItemUse->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UInventorySlotWidget::OnItemUseClicked()

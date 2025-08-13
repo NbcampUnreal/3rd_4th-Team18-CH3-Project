@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ItemSystem/Interfaces/Equipper.h"
 #include "ItemPlayerCharacter.generated.h"
 
 class UCameraComponent;

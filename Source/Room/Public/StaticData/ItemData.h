@@ -11,13 +11,7 @@ struct FItemData : public FStaticData
     GENERATED_BODY()
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftObjectPtr<UStaticMesh> Mesh = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftObjectPtr<UMaterialInterface> Material = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-    TSoftClassPtr<AActor> EffectClass = nullptr;
+    TSoftClassPtr<AActor> ItemBPClass = nullptr;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
     int32 MaxStack = 0;

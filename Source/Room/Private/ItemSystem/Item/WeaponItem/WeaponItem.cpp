@@ -4,18 +4,15 @@
 #include "ItemSystem/Item/WeaponItem/WeaponItem.h"
 
 #include "Components/WeaponComponent.h"
-#include "ItemSystem/Interfaces/Equipper.h"
 
 void UWeaponItem::Use_Implementation(AActor* User)
 {
 	Super::Use_Implementation(User);
-	// if (User->GetClass()->ImplementsInterface(UEquipper::StaticClass()))
-	// {
-	// 	IEquipper::Execute_Equip(User, this);
-	// }
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Try Equip %s"), *GetItemName().ToString()));
 	if (UWeaponComponent* WeaponComponent = User->FindComponentByClass<UWeaponComponent>())
 	{
 		WeaponComponent->Equip(this);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Equip %s"), *GetItemName().ToString()));
 	}
 }
 
@@ -74,12 +71,12 @@ float UWeaponItem::GetWeaponAttackRange() const
 	return WeaponItemInfo.WeaponAttackRange;
 }
 
-int32 UWeaponItem::GetrWeaponBulletID() const
+int32 UWeaponItem::GetWeaponBulletID() const
 {
 	return WeaponItemInfo.WeaponBulletID;
 }
 
-void UWeaponItem::SetWeaponItemInfo(const FWeaponItemInfo& WeaponInfo)
+void UWeaponItem::SetWeaponItemInfo(const FWeaponItemData& WeaponInfo)
 {
 	WeaponItemInfo = WeaponInfo;
 }

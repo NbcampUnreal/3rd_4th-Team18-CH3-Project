@@ -5,6 +5,7 @@
 
 #include "GameMapsSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "StaticData/RoomData.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/LoadingSubsystem.h"
 
@@ -44,7 +45,9 @@ void UGameManager::StartGame()
 	if (ULoadingSubsystem* LoadingSubsystem = GetSubsystem<ULoadingSubsystem>())
 	{
 		// 추가적으로 미리 로드할 리소스가 있다면 두 번째 인자에 배열로 전달할 수 있습니다.
-		LoadingSubsystem->LoadLevelWithLoadingScreen(Config->StartLevel, {});
+		FString LevelName = Config->StartLevel.ToSoftObjectPath().GetAssetName();
+		const FRoomData* RoomData = GetSubsystem<UStaticDataSubsystem>()->GetDataByKey<FRoomData, FName>(FName(LevelName));
+		LoadingSubsystem->LoadLevelWithLoadingScreen(*RoomData);
 	}
 }
 

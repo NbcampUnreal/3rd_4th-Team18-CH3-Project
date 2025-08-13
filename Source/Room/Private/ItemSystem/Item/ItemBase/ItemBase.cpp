@@ -42,3 +42,8 @@ int32 UItemBase::GetMaxStackCount_Implementation() const
 {
 	return 9;
 }
+
+bool UItemBase::IsUsable_Implementation() const
+{
+	return true;
+}

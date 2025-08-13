@@ -31,5 +31,6 @@ public:
 	bool IsConsumable() const;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable,Category = "Item")
 	int32 GetMaxStackCount() const;
-	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable,Category = "Item")
+	bool IsUsable() const;
 };

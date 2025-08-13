@@ -16,7 +16,6 @@ void UHealthComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
-	SetCurrentHealth(CurrentHealth); 
     
     
 	if (AActor* Owner = GetOwner())
@@ -27,7 +26,9 @@ void UHealthComponent::BeginPlay()
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s took damage: %f from %s"), *DamagedActor->GetName(), Damage, *DamageCauser->GetName());
 	SetCurrentHealth(CurrentHealth - Damage);
+
 }
 
 

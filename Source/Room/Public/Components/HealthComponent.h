@@ -17,14 +17,13 @@ public:
 
 	void SetMaxHealth(float NewMaxHealth);
 	FORCEINLINE float GetMaxHealth() const {return MaxHealth; }
-
+	FORCEINLINE float GetCurrentHealth() const {return CurrentHealth; }
 	FDeathDelegate OnDead;
 	
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-	TObjectPtr<ACharacter> CharacterRef = nullptr;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Health")
 	float CurrentHealth = 100.0;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Health")

@@ -13,10 +13,12 @@ AFieldItem::AFieldItem()
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetupAttachment(RootComponent);
-	ItemMesh->SetCollisionProfileName(TEXT("InteractobaleActor"));
+	ItemMesh->SetCollisionProfileName(TEXT("InteractableActor"));
 
 	RotatingMovementComponent = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovementComponent"));
 	RotatingMovementComponent->RotationRate=FRotator(0.0f, 90.0f, 0.0f);
+
+	
 }
 
 void AFieldItem::SetItem(UItemBase* NewItem)

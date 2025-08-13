@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "ItemSystem/Structure/BulletItemInfo.h"
+#include "StaticData/BulletItemData.h"
 #include "ProjectileDataReciever.generated.h"
 
 UINTERFACE()
@@ -18,5 +18,5 @@ class ROOM_API IProjectileDataReciever
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void SetProjectileMoveData(const FBulletItemInfo& BulletInfo);
+	void SetProjectileMoveData(const FBulletItemData& BulletInfo);
 };

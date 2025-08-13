@@ -52,7 +52,7 @@ float UHealingItem::GetHealingAmount() const
 	return HealingItemInfo.HealingAmount;
 }
 
-void UHealingItem::SetHealingItemInfo(const FHealingItemInfo& HealingInfo)
+void UHealingItem::SetHealingItemInfo(const FHealingItemData& HealingInfo)
 {
 	HealingItemInfo = HealingInfo;
 }

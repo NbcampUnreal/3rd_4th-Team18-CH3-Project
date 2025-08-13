@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WeaponComponent.h"
 #include "ItemSystem/Interfaces/Interactable.h"
 #include "ItemSystem/UI/HUD/RoomHUD.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -43,6 +44,7 @@ void AItemPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&ThisClass::MoveByInput);
 	EnhancedInputComponent->BindAction(LookAction,ETriggerEvent::Triggered,this,&ThisClass::LookByInput);
 	EnhancedInputComponent->BindAction(ToggleInventoryAction,ETriggerEvent::Started,this,&ThisClass::ToggleInventoryByInput);
+	EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Started,this,&ThisClass::FireByInput);
 }
 void AItemPlayerController::MoveByInput(const FInputActionValue& Value)
 {
@@ -84,5 +86,14 @@ void AItemPlayerController::ToggleInventoryByInput()
 	{
 		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
+	}
+}
+
+void AItemPlayerController::FireByInput()
+{
+	auto WeaponComp = GetPawn()->FindComponentByClass<UWeaponComponent>();
+	if (WeaponComp)
+	{
+		WeaponComp->Fire();
 	}
 }

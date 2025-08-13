@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
-#include "ItemSystem/Structure/WeaponItemInfo.h"
+#include "StaticData/WeaponItemData.h"
 #include "WeaponItem.generated.h"
 
-struct FWeaponItemInfo;
+struct FWeaponItemData;
 
 UCLASS(Blueprintable)
 class ROOM_API UWeaponItem : public UItemBase
@@ -25,12 +25,12 @@ public:
 	float GetWeaponAttackSpeed() const;
 	float GetWeaponAttackRecoil() const;
 	float GetWeaponAttackRange() const;
-	int32 GetrWeaponBulletID() const;
+	int32 GetWeaponBulletID() const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
-	FWeaponItemInfo WeaponItemInfo;
+	FWeaponItemData WeaponItemInfo;
 private:
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponItemInfo(const FWeaponItemInfo& WeaponInfo);
+	void SetWeaponItemInfo(const FWeaponItemData& WeaponInfo);
 };

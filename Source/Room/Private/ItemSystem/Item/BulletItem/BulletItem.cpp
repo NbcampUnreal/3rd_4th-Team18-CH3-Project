@@ -43,6 +43,11 @@ int32 UBulletItem::GetMaxStackCount_Implementation() const
 	return BulletItemInfo.MaxStackCount;
 }
 
+bool UBulletItem::IsUsable_Implementation() const
+{
+	return BulletItemInfo.bUsable;
+}
+
 int32 UBulletItem::GetBulletID() const
 {
 	return BulletItemInfo.BulletID;
@@ -63,7 +68,7 @@ float UBulletItem::GetBulletAutoDestroyTime() const
 	return BulletItemInfo.BulletAutoDestroyTime;
 }
 
-void UBulletItem::SetBulletItemInfo(const FBulletItemInfo& _BulletItemInfo)
+void UBulletItem::SetBulletItemInfo(const FBulletItemData& _BulletItemInfo)
 {
 	BulletItemInfo = _BulletItemInfo;
 }

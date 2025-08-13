@@ -29,5 +29,5 @@ struct FInputConfig
 	TObjectPtr<UInputAction> LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> ToggleViewAction;
+	TObjectPtr<UInputAction> InteractAction;
 };
