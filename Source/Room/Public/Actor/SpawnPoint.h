@@ -47,7 +47,7 @@ public:
 	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (MustImplement = "SpawnableFromStaticData"))
 	// TSubclassOf<AActor> ActorToSpawn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning", meta=(MustImplement="SpawnActorStaticDataInterface"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	TObjectPtr<UScriptStruct> DataType;
 
 	// Existing properties

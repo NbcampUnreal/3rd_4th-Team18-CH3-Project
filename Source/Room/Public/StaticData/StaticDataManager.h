@@ -44,12 +44,13 @@ public:
 		if (DataTable)
 		{
 			TArray<FName> RowNames = DataTable->GetRowNames();
-			for (const FName& RowName : RowNames)
+			for (int i = 0; i < RowNames.Num(); ++i)
 			{
+				const FName& RowName = RowNames[i];
 				TStruct* Row = DataTable->FindRow<TStruct>(RowName, TEXT(""));
 				if (Row)
 				{
-					DataStore.Add(GetPrimaryKeyFunc(*Row), *Row);
+					DataStore.Add(i + 1, *Row);
 				}
 			}
 		}

@@ -14,3 +14,12 @@ struct FStaticData : public FTableRowBase
     int32 ID = 0;
 
 };
+
+USTRUCT(BlueprintType)
+struct FSpawnableStaticData : public FStaticData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    TSoftClassPtr<AActor> SpawnActorClass;
+};

@@ -4,7 +4,6 @@
 #include "StaticData/StaticDataManager.h"
 #include "StaticData/StaticData.h"
 #include "Interface/SpawnableFromStaticDataInterface.h"
-#include "Interface/SpawnActorStaticDataInterface.h"
 #include "Subsystem/StaticDataSubsystem.h"
 
 #if WITH_EDITOR
@@ -56,12 +55,17 @@ concept ActorWithSpawnableStatic =
 
 AActor* ASpawnPoint::PerformSpawnActor()
 {
-	if (!DataType)
+	if (!DataType )
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: DataType is not set."));
 		return nullptr;
 	}
-
+	
+	if (DataType->IsChildOf(FSpawnableStaticData::StaticStruct()) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASpawnPoint::PerformSpawnActor: DataType is must Implements FSpawnableStaticData."));
+		return nullptr;
+	}
 	UGameInstance* GameInstance = GetGameInstance();
 	if (!GameInstance)
 	{
@@ -75,7 +79,7 @@ AActor* ASpawnPoint::PerformSpawnActor()
 	}
 
 	const FName TypeName = FName(*DataType->GetName());
-	const FStaticData* StaticData = StaticDataManager->GetData<FStaticData>(SpawnDataID);
+	const FStaticData* StaticData = StaticDataManager->GetData(TypeName, SpawnDataID);
 
 	if (!StaticData)
 	{
@@ -84,13 +88,8 @@ AActor* ASpawnPoint::PerformSpawnActor()
 			*TypeName.ToString(), SpawnDataID);
 		return nullptr;
 	}
-	TSoftClassPtr<AActor> SpawnActorClass = nullptr;
-	// UScriptStruct* StructType = FStaticData::StaticStruct();
-	// bool bImplements = StructType->IsChildOf(ISpawnActorStaticDataInterface::UClassType::StaticClass());
-	SpawnActorClass = reinterpret_cast<ISpawnActorStaticDataInterface&>(StaticData).SpawnActorClass();
-	// if (bImplements)
-	// {
-	// }
+	const FSpawnableStaticData* SpawnableStaticData = static_cast<const FSpawnableStaticData*>(StaticData);
+	TSoftClassPtr<AActor> SpawnActorClass = SpawnableStaticData->SpawnActorClass;
 	
 	FActorSpawnParameters SpawnParams;
 	FTransform SpawnTransform = FTransform(GetActorRotation(), GetActorLocation());
