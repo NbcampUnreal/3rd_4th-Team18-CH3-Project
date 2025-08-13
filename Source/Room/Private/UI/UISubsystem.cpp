@@ -18,46 +18,21 @@ void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
 
-    const FString MainMenuPath = TEXT("/Game/UI/WBP_MainMenu.WBP_MainMenu_C");
-    const FString PauseMenuPath = TEXT("/Game/UI/WBP_PauseMenu.WBP_PauseMenu_C");
-    const FString HUDPath = TEXT("/Game/UI/WBP_HUD.WBP_HUD_C");
-    const FString LoadingScreentPath = TEXT("/Game/UI/WBP_LoadingScreen.WBP_LoadingScreen_C");
-    const FString DamageTextActorPath = TEXT("/Game/UI/Widgets/BP_DamageTextActor.BP_DamageTextActor_C");
+    UGameInstance* GameInstance = GetGameInstance();
+    if (!GameInstance) return;
 
-    TSubclassOf<UMainMenuWidget> LoadedMainMenuClass = TSoftClassPtr<UMainMenuWidget>(FSoftObjectPath(MainMenuPath)).LoadSynchronous();
-    TSubclassOf<UPauseMenuWidget> LoadedPauseMenuClass = TSoftClassPtr<UPauseMenuWidget>(FSoftObjectPath(PauseMenuPath)).LoadSynchronous();
-    TSubclassOf<UHUDWidget> LoadedHUDClass = TSoftClassPtr<UHUDWidget>(FSoftObjectPath(HUDPath)).LoadSynchronous();
-    TSubclassOf<UHUDWidget> LoadedLoadingClass = TSoftClassPtr<ULoadingScreenWidget>(FSoftObjectPath(HUDPath)).LoadSynchronous();
-    TSubclassOf<ADamageTextActor> LoadedDamageTextActorClass = TSoftClassPtr<ADamageTextActor>(FSoftObjectPath(DamageTextActorPath)).LoadSynchronous();
+    UStaticDataSubsystem* StaticDataSubsystem = GameInstance->GetSubsystem<UStaticDataSubsystem>();
+    if (!StaticDataSubsystem) return;
 
+    const FUIData* UIData = StaticDataSubsystem->GetData<FUIData>(UIDataID);
+    if (!UIData) return;
 
-    if (LoadedMainMenuClass)
-    {
-        MainMenuWidgetClass = LoadedMainMenuClass;
-        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("SUCCESS: MainMenu Class Loaded via C++ Hardcode."));
-    }
-    else
-    {
-        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("FATAL ERROR: MainMenu Class FAILED to load from C++ Hardcode. Check Path!"));
-    }
+	MainMenuWidgetClass = UIData->MainMenuWidgetClass.LoadSynchronous();
+    PauseMenuWidgetClass = UIData->PauseMenuWidgetClass.LoadSynchronous();
+    HUDWidgetClass = UIData->HUDWidgetClass.LoadSynchronous();
+    LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
+    DamageTextActorClass = UIData->DamageTextActorClass.LoadSynchronous();
 
-    if (LoadedPauseMenuClass)
-    {
-        PauseMenuWidgetClass = LoadedPauseMenuClass;
-    }
-
-    if (LoadedHUDClass)
-    {
-        HUDWidgetClass = LoadedHUDClass;
-    }
-    if (LoadedLoadingClass)
-    {
-        LoadingWidgetClass = LoadedLoadingClass;
-    }
-    if (LoadedDamageTextActorClass)
-    {
-        DamageTextActorClass = LoadedDamageTextActorClass;
-    }
 }
 
 void UUISubsystem::Deinitialize()

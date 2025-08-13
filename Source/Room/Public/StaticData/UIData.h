@@ -11,5 +11,17 @@ struct FUIData : public FStaticData
     GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-    TSoftClassPtr<UUserWidget> WidgetClass;
+	TSoftClassPtr<UUserWidget> MainMenuWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<UUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<UUserWidget> LoadingScreenWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<class ADamageTextActor> DamageTextActorClass;
 };

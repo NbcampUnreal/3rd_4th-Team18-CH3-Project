@@ -82,4 +82,7 @@ private:
 
 	UPROPERTY(Transient)
 	UUserWidget* HUDInstance = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI Data")
+	int32 UIDataID = 1;
 };
