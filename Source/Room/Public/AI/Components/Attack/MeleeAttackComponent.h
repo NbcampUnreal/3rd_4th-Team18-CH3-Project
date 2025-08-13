@@ -23,15 +23,7 @@ public:
 	// 근접 공격 후 상태 초기화 등
 	virtual void StopAttack() override;
 
-	// 공격 애니메이션 길이 반환
-	float GetAttackDuration() const;
-
 	// 실제 공격 로직 수행 (노티파이에서 호출됨)
 	void PerformMeleeAttack();
-
-protected:
-	// 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
-	TObjectPtr<UAnimMontage> AttackMontage;
 };
 

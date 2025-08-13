@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -47,6 +47,16 @@ public:
 	ECharacterAnim GetCurrentCharacterAnim() const;
     
 
+	/*
+		[NOTE]
+		해당 클래스는 캐릭터 담당 영역이지만,
+		캐릭터 담당자와 협의하여 AI 담당자가 이 함수를 추가했습니다.
+		AI 로직에서 몽타주 재생 시간을 얻기 위해 사용됩니다.
+
+		[TODO] 추후 캐릭터 담당자가 이 함수 리팩터링 또는 위치 변경할 수 있습니다.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	float GetMontagePlayLength(ECharacterAnim AnimType) const;
 
 
 protected:

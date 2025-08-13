@@ -17,6 +17,4 @@ class ROOM_API URangedAttackNotifyState : public UAnimNotifyState
 public:
 	// 애니메이션 노티파이 시작 시 호출
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
-
-	// 필요하면 NotifyTick, NotifyEnd도 오버라이드 가능
 };

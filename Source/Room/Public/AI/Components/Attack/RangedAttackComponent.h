@@ -25,9 +25,6 @@ public:
 	// 공격 종료 처리 (상태 초기화 등)
 	virtual void StopAttack() override;
 
-	// 공격 애니메이션 또는 투사체 발사 후 총 공격 지속 시간 반환
-	float GetAttackDuration() const;
-
 	// 총알 발사 (노티파이에서 호출)
 	void PerformRangedAttack();
 
@@ -35,10 +32,6 @@ public:
 	TSubclassOf<AActor> GetProjectileClass() const { return ProjectileClass; }
 
 protected:
-	// 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
-	TObjectPtr<UAnimMontage> AttackMontage;
-
 	// 발사체 클래스 (화살, 총알 등)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;

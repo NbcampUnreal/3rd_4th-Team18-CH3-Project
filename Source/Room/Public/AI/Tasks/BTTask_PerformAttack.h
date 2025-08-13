@@ -26,16 +26,6 @@ public:
     virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
 
 protected:
-    //// 공격 컴포넌트 캐시 (BaseAttackComponent 또는 파생 컴포넌트)
-    //UPROPERTY()
-    //TObjectPtr<UBaseAttackComponent> AttackComponent = nullptr;
-    //// 근접 공격 컴포넌트 캐시
-    //UPROPERTY()
-    //TObjectPtr<UMeleeAttackComponent> MeleeAttackComponent = nullptr; 
-    //// 원거리 공격 컴포넌트 캐시
-    //UPROPERTY()
-    //TObjectPtr<URangedAttackComponent> RangedAttackComponent = nullptr;
-
     // 공격 중 상태 플래그
     bool bIsAttacking = false;
 
