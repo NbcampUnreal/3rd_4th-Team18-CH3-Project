@@ -10,6 +10,7 @@
 #include "AI/Components/Attack/BaseAttackComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
+#include "Actor/Character/BaseCharacter.h"
 #include "Define/GameDefine.h"
 
 
@@ -227,13 +228,16 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController][%s] BlackboardComp is null!"), *GetName());
 		return;
 	}
-
-	// 플레이어 Pawn 가져오기 (플레이어 0번 인덱스 기준)
-	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	
 	// 감지된 Actor가 플레이어가 아니면 무시
-	if (Actor->ActorHasTag(GameDefine::PlayerTag.GetTagName()))
+	if (ABaseCharacter* PerceptionCharacter = Cast<ABaseCharacter>(Actor))
 	{
-		return;
+		FGameplayTagContainer TagResult;
+		PerceptionCharacter->GetOwnedGameplayTags(TagResult);
+		if (TagResult.HasTag(GameDefine::PlayerTag) == false)
+		{
+			return;
+		}
 	}
 
 	// 감지 성공 여부
