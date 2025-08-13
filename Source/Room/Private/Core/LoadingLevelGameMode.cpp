@@ -4,12 +4,15 @@
 #include "Core/LoadingLevelGameMode.h"
 #include "SubSystem/LoadingSubsystem.h"
 #include "Engine/GameInstance.h"
+#include "UI/UISubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingLevelGameMode)
 
 void ALoadingLevelGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowLoadingScreen();
 
 	if (UGameInstance* GI = GetGameInstance())
 	{
