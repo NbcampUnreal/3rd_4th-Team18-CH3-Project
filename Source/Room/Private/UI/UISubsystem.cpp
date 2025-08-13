@@ -33,6 +33,15 @@ void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
     LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
     DamageTextActorClass = UIData->DamageTextActorClass.LoadSynchronous();
 
+    if (MainMenuWidgetClass)
+    {
+        UE_LOG(LogTemp, Log, TEXT("SUCCESS: MainMenu Class Loaded from DataTable."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("FATAL ERROR: MainMenu Class FAILED to load from DataTable. Check Path in DT_UIDataTable!"));
+    }
+
 }
 
 void UUISubsystem::Deinitialize()

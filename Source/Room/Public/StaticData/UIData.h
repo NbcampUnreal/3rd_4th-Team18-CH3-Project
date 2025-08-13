@@ -6,22 +6,25 @@
 #include "UIData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FUIData : public FStaticData
+struct FUIData : public FTableRowBase
 {
     GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	int32 ID = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<UUserWidget> MainMenuWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<UUserWidget> PauseMenuWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<UUserWidget> HUDWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<UUserWidget> LoadingScreenWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<class ADamageTextActor> DamageTextActorClass;
 };
