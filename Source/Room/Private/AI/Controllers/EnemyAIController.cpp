@@ -369,4 +369,8 @@ AActor* AEnemyAIController::GetTargetActor() const
 
 void AEnemyAIController::SetAIState(EAIStateType NewState)
 {
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsEnum(BBKey_AIState, static_cast<uint8>(NewState));
+	}
 }
