@@ -26,11 +26,11 @@ public:
 	float GetBulletMaxSpeed() const;
 	float GetBulletAutoDestroyTime() const;
 
+	UFUNCTION(BlueprintCallable)
+	void SetBulletItemInfo(const FBulletItemData& _BulletItemInfo);
+
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
 	FBulletItemData BulletItemInfo;
-	
-private:
-	UFUNCTION(BlueprintCallable)
-	void SetBulletItemInfo(const FBulletItemData& _BulletItemInfo);
+
 };

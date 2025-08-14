@@ -59,6 +59,7 @@ protected:
 	void StartFire();
 	void StopFire();
 	void Interact();
+	void InventoryToggle();
 
 private:
 	UFUNCTION()

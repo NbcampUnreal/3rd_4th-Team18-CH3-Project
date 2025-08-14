@@ -3,7 +3,12 @@
 
 #include "Core/RoomGameMode.h"
 
+#include "Components/WeaponComponent.h"
 #include "Core/GameManager.h"
+#include "GameFramework/PlayerState.h"
+#include "ItemSystem/InventoryComponent/InventoryComponent.h"
+#include "ItemSystem/Item/BulletItem/BulletItem.h"
+#include "ItemSystem/Item/WeaponItem/WeaponItem.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Kismet/GameplayStatics.h"
@@ -189,7 +194,7 @@ void ARoomGameMode::BeginPlay()
 	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
 	RoomGameState = GetGameState<ARoomGameState>();
 	InitializeGame();
-	// TODO : 플레이어 캐릭터에게 장비 지급.
+	InitializeStartingItem();
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
@@ -227,4 +232,40 @@ void ARoomGameMode::InitializeGame()
 
 	RoomGameState->bIsRoomStarted = true;
 	OnStartRoom.Broadcast();
+}
+
+void ARoomGameMode::InitializeStartingItem()
+{
+	const int WeaponIndex = 1;
+	
+	// 무기 생성 및 데이터 적용.
+	auto StartingWeapon = NewObject<UWeaponItem>();
+	auto WeaponData = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>()->GetData<FWeaponItemData>(WeaponIndex);
+	if (WeaponData)
+	{
+		StartingWeapon->SetWeaponItemInfo(*WeaponData);
+		FString ItemName = WeaponData->ItemName.ToString();
+	}
+
+	// 무기 장착.
+	APawn* PlayerCharacter = UGameplayStatics::GetPlayerPawn(this,0);
+	PlayerCharacter->FindComponentByClass<UWeaponComponent>()->Equip(StartingWeapon);
+
+
+	// 탄 생성 및 데이터 적용.
+	auto StartingBullet = NewObject<UBulletItem>();
+	auto BulletData = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>()->GetDataByKey<FBulletItemData, int32>(WeaponData->WeaponBulletID);
+	// auto BulletData = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>()->GetData<FBulletItemData>(WeaponIndex);
+	if (BulletData)
+	{
+		StartingBullet->SetBulletItemInfo(*BulletData);
+	}
+	
+	// 인벤 토리에 추가.
+	auto Inventory = UGameplayStatics::GetPlayerState(this,0)->FindComponentByClass<UInventoryComponent>();
+	if (Inventory)
+	{
+		Inventory->AddItemToInventory(StartingBullet, 100);
+	}
+	
 }
