@@ -2,8 +2,9 @@
 
 
 #include "Actor/Projectile/BaseProjectile.h"
+#include "Actor/Character/BaseCharacter.h" 
+#include "GameplayTagAssetInterface.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
@@ -40,11 +41,6 @@ void ABaseProjectile::BeginPlay()
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnSphereOverlap);
 }
 
-void ABaseProjectile::SetFinalDamage(float NewDamage)
-{
-	
-}
-
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
 {
 	SetActorTransform(SpawnTransform);
@@ -79,13 +75,35 @@ void ABaseProjectile::OnPoolEnd_Implementation()
 void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
+	if (!OtherActor || OtherActor == Shooter)
+		return;
 
-	ACharacter* TargetChar = Cast<ACharacter>(OtherActor);
-	if (TargetChar)
+	// 발사자 태그 가져오기
+	FGameplayTag OwnerTag;
+	if (ABaseCharacter* ShooterChar = Cast<ABaseCharacter>(Shooter))
 	{
-		
-		UGameplayStatics::ApplyDamage(TargetChar,FinalDamage,nullptr,nullptr,UDamageType::StaticClass());
+		FGameplayTagContainer OwnerTags;
+		ShooterChar->GetOwnedGameplayTags(OwnerTags); // 인터페이스 직접 호출
+		if (OwnerTags.Num() > 0)
+			OwnerTag = OwnerTags.GetByIndex(0);
+	}
+	// 피격 대상 태그 가져오기
+	FGameplayTag TargetTag;
+	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
+	{
+		FGameplayTagContainer TargetTags;
+		TargetChar->GetOwnedGameplayTags(TargetTags); // 인터페이스 직접 호출
+		if (TargetTags.Num() > 0)
+			TargetTag = TargetTags.GetByIndex(0);
+	}
 
+	// 태그가 다르면 데미지 적용
+	if (OwnerTag != TargetTag)
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, FinalDamage, nullptr, Shooter, UDamageType::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("Damage : %f"), FinalDamage);
+		if (GetWorld())
+			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
 	}
 }
+
