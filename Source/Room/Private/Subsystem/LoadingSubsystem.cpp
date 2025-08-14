@@ -254,7 +254,7 @@ void ULoadingSubsystem::StartLoadingAssets(FStreamableDelegate OnEnd)
     for (const auto& AssetPath : PendingResourcesPath)
     {
         if (!AssetPath.IsNull())
-        {
+        { 
             auto Handle = Streamable.RequestAsyncLoad(
                 AssetPath,
                 FStreamableDelegate(),
@@ -263,7 +263,7 @@ void ULoadingSubsystem::StartLoadingAssets(FStreamableDelegate OnEnd)
             ActiveHandles.Add(AssetPath , Handle);
         }
     }
-
+    //TODO: AssetPath 핸들과의 종속성 연결을 한 후 둘 다 완료될 때 OnEnd 를 호출해야함.
     auto LevelSoftPath = PendingTargetLevel.ToSoftObjectPath();
     // 타겟 레벨 로드 (비동기, 하지만 Visible 상태로는 안 띄움)
     auto LevelHandle = Streamable.RequestAsyncLoad(

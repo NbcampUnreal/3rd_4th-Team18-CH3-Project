@@ -214,7 +214,7 @@ void ARoomGameMode::OnClearLevel()
 	ALevelConnector* TargetConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
 	
 	// 델리게이트: 로드 완료 후 호출할 람다
-	FStreamableDelegate OnLoadComplete = FStreamableDelegate::CreateLambda([this, RoomData, &TargetConnector]()
+	FStreamableDelegate OnLoadComplete = FStreamableDelegate::CreateLambda([this, RoomData, TargetConnector]()
 	{
 		AlignLoadedLevelToConnector(RoomData->Level, TargetConnector);
 	});
@@ -327,7 +327,7 @@ void ARoomGameMode::FindSomeTargetConnector(ULevel* SubLevel, TArray<ALevelConne
 
 void ARoomGameMode::AlignLoadedLevelToConnector(
 	TSoftObjectPtr<UWorld> LevelAsset,
-	AActor* TargetConnector
+	ALevelConnector* TargetConnector
 )
 {
 	UWorld* World = GetWorld();
@@ -345,14 +345,22 @@ void ARoomGameMode::AlignLoadedLevelToConnector(
 		FRotator::ZeroRotator,
 		bSuccess
 	);
-
 	if (!bSuccess || !LoadedLevel)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load streaming level from asset: %s"), *LevelAsset.ToString());
 		return;
 	}
+	LoadedLevel->SetShouldBeVisible(false);
+	
+	NextLoadedLevel = LoadedLevel;
+	PrevLevelConnector = TargetConnector;
 
-	ULevel* SubLevel = LoadedLevel->GetLoadedLevel();
+	LoadedLevel->OnLevelLoaded.AddDynamic(this, &ARoomGameMode::OnStreamedLevelLoadedHelper);
+}
+
+void ARoomGameMode::OnStreamedLevelLoadedHelper()
+{
+	ULevel* SubLevel = NextLoadedLevel->GetLoadedLevel();
 	if (!SubLevel)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AlignLoadedLevelToConnector: LoadedLevel has no ULevel"));
@@ -365,29 +373,29 @@ void ARoomGameMode::AlignLoadedLevelToConnector(
 	if (Connectors.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AlignLoadedLevelToConnector: No connectors found in %s"),
-			*LoadedLevel->GetWorldAssetPackageName());
+			*NextLoadedLevel->GetWorldAssetPackageName());
 		return;
 	}
 
 	// 랜덤으로 하나 선택
 	ALevelConnector* NewConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
+	
+	//FTransform NewTransform = NewConnector->GetActorTransform() *  NextLoadedLevel->LevelTransform; 
+	FTransform NewTransform = NewConnector->TransformCache;// *  NextLoadedLevel->LevelTransform; 
+	// TargetConnector의 월드 트랜스폼
+	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(), PrevLevelConnector->GetActorLocation());
 
-	// TargetConnector 위치/회전
-	FVector TargetPos = TargetConnector->GetActorLocation();
-	FRotator TargetRot = TargetConnector->GetActorRotation();
+	// NewConnector의 월드 트랜스폼
 
-	// 새 커넥터를 TargetConnector에 맞추는 Transform 보정
-	FTransform Delta = UKismetMathLibrary::MakeRelativeTransform(
-		FTransform(TargetRot, TargetPos),
-		NewConnector->GetActorTransform()
-	);
+	// Delta = Target * New⁻¹
+	FTransform Delta = TargetTransform * NewTransform.Inverse();
 
-	LoadedLevel->LevelTransform = Delta * LoadedLevel->LevelTransform;
+	// LoadedLevel 전체 트랜스폼 보정
+	//NextLoadedLevel->LevelTransform = Delta * NextLoadedLevel->LevelTransform;
+	NextLoadedLevel->LevelTransform *= Delta;
 
-	UE_LOG(LogTemp, Log, TEXT("Aligned level %s to connector at %s"),
-		*LoadedLevel->GetWorldAssetPackageName(),
-		*TargetPos.ToString());
-
+	NextLoadedLevel->SetShouldBeVisible(true);
 	// 직전 레벨 갱신
 	PreviousLevel = SubLevel;
+
 }

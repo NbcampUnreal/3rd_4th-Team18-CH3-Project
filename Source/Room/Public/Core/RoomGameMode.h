@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Core/RoomGameState.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "RoomGameMode.generated.h"
 
 struct FRoomData;
@@ -43,6 +44,13 @@ private:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	void InitializeGame();
 	void InitializeStartingItem();
-	void AlignLoadedLevelToConnector(TSoftObjectPtr<UWorld> LoadedLevel, AActor* TargetConnector);
-	void FindSomeTargetConnector(ULevel* SubLevel, TArray<class ALevelConnector*>& OutConnectors);
+	void AlignLoadedLevelToConnector(TSoftObjectPtr<UWorld> LoadedLevel,  class ALevelConnector* TargetConnector);
+
+	UFUNCTION()
+	void OnStreamedLevelLoadedHelper();
+	static void FindSomeTargetConnector(ULevel* SubLevel, TArray<ALevelConnector*>& OutConnectors);
+
+private:
+	ULevelStreamingDynamic* NextLoadedLevel;
+	ALevelConnector* PrevLevelConnector;
 };
