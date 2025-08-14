@@ -75,9 +75,19 @@ void ABaseProjectile::OnPoolEnd_Implementation()
 void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	if (!OtherActor || OtherActor == Shooter)
 		return;
 
+	// 피격 대상 체력 확인
+	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
+	{
+		if (TargetChar->HealthComponent && TargetChar->HealthComponent->GetCurrentHealth() <= 0.f)
+		{
+			// 체력 0이면 무시
+			return;
+		}
+	}
 	// 발사자 태그 가져오기
 	FGameplayTag OwnerTag;
 	if (ABaseCharacter* ShooterChar = Cast<ABaseCharacter>(Shooter))
@@ -92,7 +102,7 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
 	{
 		FGameplayTagContainer TargetTags;
-		TargetChar->GetOwnedGameplayTags(TargetTags); // 인터페이스 직접 호출
+		TargetChar->GetOwnedGameplayTags(TargetTags); 
 		if (TargetTags.Num() > 0)
 			TargetTag = TargetTags.GetByIndex(0);
 	}
