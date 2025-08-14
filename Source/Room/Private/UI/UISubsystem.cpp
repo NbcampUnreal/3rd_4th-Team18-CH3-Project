@@ -225,13 +225,11 @@ void UUISubsystem::ToggleInventory()
         {
             InventoryWidget->RemoveFromParent();
             SetGameInputMode();
-            ShowHUD();
         }
         else
         {
             InventoryWidget->AddToViewport();
             SetUIInputMode();
-            HideHUD();
         }
     }
 }
