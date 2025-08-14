@@ -25,6 +25,8 @@ ARangedEnemyCharacter::ARangedEnemyCharacter()
 	Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // 회전 속도
 	Movement->MaxWalkSpeed = WalkSpeed; // 기본 이동 속도
 	Movement->AirControl = 0.2f;
+
+	OwnedGameplayTags.AddTag(GameDefine::EnemyTag);
 }
 
 
@@ -63,6 +65,6 @@ void ARangedEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OwnedGameplayTags.AddTag(GameDefine::EnemyTag);
+	
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }

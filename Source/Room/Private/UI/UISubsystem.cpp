@@ -4,6 +4,7 @@
 #include "UI/Widget/HUDWidget.h"
 #include "UI/Widget/LoadingScreenWidget.h"
 #include "UI/Widget/DamageTextActor.h"
+#include "ItemSystem/UI/InventoryWidget/InventoryWidget.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Core/GameManager.h"
@@ -39,6 +40,7 @@ void UUISubsystem::InitUIResources()
     HUDWidgetClass = UIData->HUDWidgetClass.LoadSynchronous();
     LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
     DamageTextActorClass = UIData->DamageTextActorClass.LoadSynchronous();
+    InventoryWidgetClass = UIData->InventoryWidgetClass.LoadSynchronous();
 
     if (MainMenuWidgetClass)
     {
@@ -55,6 +57,7 @@ void UUISubsystem::Deinitialize()
     MainMenuWidget.Reset();
     PauseMenuWidget.Reset();
     HUDWidget.Reset();
+    InventoryWidget.Reset();
 }
 
 void UUISubsystem::SetUIInputMode()
@@ -206,5 +209,61 @@ void UUISubsystem::ShowDamageNumber(int32 Damage, FVector WorldLocation)
         {
             SpawnedActor->SetDamage(Damage);
         }
+    }
+}
+
+void UUISubsystem::ToggleInventory()
+{
+    if (!InventoryWidget.IsValid() && InventoryWidgetClass)
+    {
+        InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+    }
+
+    if (InventoryWidget.IsValid())
+    {
+        if (InventoryWidget->IsInViewport())
+        {
+            InventoryWidget->RemoveFromParent();
+            SetGameInputMode();
+            ShowHUD();
+        }
+        else
+        {
+            InventoryWidget->AddToViewport();
+            SetUIInputMode();
+            HideHUD();
+        }
+    }
+}
+
+void UUISubsystem::ShowGuideMessage(const FText& Message)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowGuideMessage(Message);
+    }
+}
+
+void UUISubsystem::ShowInteractMessage(const FText& Message)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowInteractMessage(Message);
+    }
+}
+
+void UUISubsystem::HideInteractMessage()
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->HideInteractMessage();
+    }
+}
+
+void UUISubsystem::UpdateScore(int32 NewScore)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->UpdateScore(NewScore);
     }
 }

@@ -12,6 +12,10 @@
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Define/GameDefine.h"
+#include "Characters/MeleeEnemyCharacter.h"
+#include "Characters/RangedEnemyCharacter.h"
+#include "Actor/Character/BaseCharacter.h"
 #include "StaticData/StaticDataStruct.h"
 #include "UI/UISubsystem.h"
 
@@ -19,14 +23,105 @@
 
 void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 {
-	// 사망 카운트
-	// 플레이어거나, 적이냐에 따라서 다르게 작동.
+	if (!RoomGameState || !DeadActor)
+	{
+		return;
+	}
+
+	IGameplayTagAssetInterface* TagIf = Cast<IGameplayTagAssetInterface>(DeadActor);
+	if (!TagIf)
+	{
+		return;
+	}
+
+	FGameplayTagContainer OwnedTags;
+	TagIf->GetOwnedGameplayTags(OwnedTags);
+
+	if (OwnedTags.HasTag(GameDefine::EnemyTag))
+	{
+		int32 addScore = 100;
+
+		if (Cast<ARangedEnemyCharacter>(DeadActor))
+		{
+			++RoomGameState->RangedKillCount;
+			addScore = 150;
+		}
+		else if (Cast<AMeleeEnemyCharacter>(DeadActor))
+		{
+			++RoomGameState->MeleeKillCount;
+			addScore = 100;
+		}
+
+		++RoomGameState->RoomKillCount;
+		++RoomGameState->TotalKillCount;
+		if (RoomGameState->AliveEnemyCount > 0)
+		{
+			--RoomGameState->AliveEnemyCount;
+		}
+
+		RoomGameState->Score += addScore;
+
+		if (UUISubsystem* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+		{
+			UI->UpdateObjective(
+				RoomGameState->RangedKillCount,
+				RoomGameState->RangedTotal,
+				RoomGameState->MeleeKillCount,
+				RoomGameState->MeleeTotal);
+
+			UI->UpdateScore(RoomGameState->Score);
+
+			if (IsLevelClear())
+			{
+				OnClearLevel();
+			}
+		}
+		else if (OwnedTags.HasTag(GameDefine::PlayerTag))
+		{
+			// Player Death Logic
+			// TODO : after GameOver HUD
+		}
+	}
 }
 
 void ARoomGameMode::NotifyActorSpawn(AActor* SpawnedActor)
 {
-	// 플레이어이거나 적이다.
-	// 적이 스폰됐다면 GameState를 업데이트 한다.
+	if (!RoomGameState || !SpawnedActor)
+	{
+		return;
+	}
+
+	IGameplayTagAssetInterface* TagIf = Cast<IGameplayTagAssetInterface>(SpawnedActor);
+	if (!TagIf)
+	{
+		return;
+	}
+
+	FGameplayTagContainer OwnedTags;
+	TagIf->GetOwnedGameplayTags(OwnedTags);
+
+	if (OwnedTags.HasTag(GameDefine::EnemyTag))
+	{
+		++RoomGameState->AliveEnemyCount;
+		if (Cast<ARangedEnemyCharacter>(SpawnedActor))
+		{
+			++RoomGameState->RangedTotal;
+		}
+		else if (Cast<AMeleeEnemyCharacter>(SpawnedActor))
+		{
+			++RoomGameState->MeleeTotal;
+		}
+
+		if (UUISubsystem* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+		{
+			UI->UpdateObjective(
+				RoomGameState->RangedKillCount,
+				RoomGameState->RangedTotal,
+				RoomGameState->MeleeKillCount,
+				RoomGameState->MeleeTotal
+			);
+		}
+	}
 }
 
 bool ARoomGameMode::IsLevelClear()
@@ -36,8 +131,56 @@ bool ARoomGameMode::IsLevelClear()
 
 void ARoomGameMode::StartNewRoom()
 {
-	// 모든 캐릭터 베이스 가져와서 적 태그인것만 사용.
-	//RoomGameState->AliveEnemyCount =  
+	TArray<AActor*> Found;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), Found);
+
+	int32 rangedTotal = 0;
+	int32 meleeTotal = 0;
+
+	for (AActor* A : Found)
+	{
+		IGameplayTagAssetInterface* TagIf = Cast<IGameplayTagAssetInterface>(A);
+		if (!TagIf)
+		{
+			continue;
+		}
+
+		FGameplayTagContainer OwnedTags;
+		TagIf->GetOwnedGameplayTags(OwnedTags);
+
+		if (OwnedTags.HasTag(GameDefine::EnemyTag))
+		{
+			if (Cast<ARangedEnemyCharacter>(A))
+			{
+				++rangedTotal;
+			}
+			else if (Cast<AMeleeEnemyCharacter>(A))
+			{
+				++meleeTotal;
+			}
+		}
+	}
+
+	RoomGameState->RangedTotal = rangedTotal;
+	RoomGameState->MeleeTotal = meleeTotal;
+	RoomGameState->AliveEnemyCount = rangedTotal + meleeTotal;
+
+	// 카운터 초기화
+	RoomGameState->RangedKillCount = 0;
+	RoomGameState->MeleeKillCount = 0;
+	RoomGameState->RoomKillCount = 0;
+
+	// UI 갱신
+	if (UUISubsystem* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+	{
+		UI->UpdateObjective(
+			RoomGameState->RangedKillCount,
+			RoomGameState->RangedTotal,
+			RoomGameState->MeleeKillCount,
+			RoomGameState->MeleeTotal
+		);
+		UI->UpdateScore(RoomGameState->Score);
+	}
 }
 
 void ARoomGameMode::OnClearLevel()

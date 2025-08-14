@@ -25,4 +25,7 @@ struct FUIData : public FStaticData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<ADamageTextActor> DamageTextActorClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<UUserWidget> InventoryWidgetClass;
 };

@@ -8,6 +8,8 @@ class UObjectiveWidget;
 class UWeaponInfoWidget;
 class UCrosshairWidget;
 class UHealthWidget;
+class UGuideMessageWidget;
+class UInteractMessageWidget;
 
 UCLASS()
 class ROOM_API UHUDWidget : public UUserWidget
@@ -19,6 +21,8 @@ protected:
     UPROPERTY(meta = (BindWidget)) UWeaponInfoWidget* WeaponInfoWidget;
     UPROPERTY(meta = (BindWidget)) UCrosshairWidget* CrosshairWidget;
     UPROPERTY(meta = (BindWidget)) UHealthWidget* HealthWidget;
+    UPROPERTY(meta = (BindWidget)) UGuideMessageWidget* GuideMessageWidget;
+    UPROPERTY(meta = (BindWidget)) UInteractMessageWidget* InteractMessageWidget;
 
 public:
     UFUNCTION(BlueprintCallable)
@@ -32,6 +36,22 @@ public:
     void ShowCrosshairHitMarker();
     UFUNCTION(BlueprintCallable)
     void ShowKillMarker();
+
+    UFUNCTION(BlueprintCallable)
+    void ShowGuideMessage(const FText& Message);
+    UFUNCTION(BlueprintCallable)
+    void ShowInteractMessage(const FText& Message);
+    UFUNCTION(BlueprintCallable)
+    void HideInteractMessage();
+
+    UFUNCTION(BlueprintCallable)
+    void UpdateScore(int32 NewScore)
+    {
+        OnScoreUpdated(NewScore);
+    }
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnScoreUpdated(int32 NewScore);
 
 protected:
     

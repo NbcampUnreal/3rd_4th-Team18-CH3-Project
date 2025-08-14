@@ -23,6 +23,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
 	int32 AliveEnemyCount = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
+	int32 Score = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
+	int32 RangedTotal = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
+	int32 MeleeTotal = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
+	int32 RangedKillCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Game")
+	int32 MeleeKillCount = 0;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Room Game")
 	bool bIsRoomStarted = false;
 };
