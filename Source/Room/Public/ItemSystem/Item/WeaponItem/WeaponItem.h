@@ -26,11 +26,12 @@ public:
 	float GetWeaponAttackRecoil() const;
 	float GetWeaponAttackRange() const;
 	int32 GetWeaponBulletID() const;
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponItemInfo(const FWeaponItemData& WeaponInfo);
+
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Item")
 	FWeaponItemData WeaponItemInfo;
-private:
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponItemInfo(const FWeaponItemData& WeaponInfo);
+
 };
