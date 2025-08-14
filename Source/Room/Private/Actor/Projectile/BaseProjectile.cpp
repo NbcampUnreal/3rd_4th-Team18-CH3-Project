@@ -40,6 +40,11 @@ void ABaseProjectile::BeginPlay()
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnSphereOverlap);
 }
 
+void ABaseProjectile::SetFinalDamage(float NewDamage)
+{
+	
+}
+
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
 {
 	SetActorTransform(SpawnTransform);
