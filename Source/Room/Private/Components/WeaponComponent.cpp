@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Subsystem/StaticDataSubsystem.h"
+#include "UI/UISubsystem.h"
 
 UWeaponComponent::UWeaponComponent()
 {
@@ -31,6 +32,9 @@ void UWeaponComponent::Equip(UWeaponItem* NewItem)
 		if (IsValid(Weapon))
 		{
 			InventoryRef->AddItemToInventory(Weapon,1);
+			int32 CurrentBullet = InventoryRef->GetBulletCount(Weapon->GetWeaponBulletID());
+			// TODO : 현재 작동이 안됌.
+			GetWorld()->GetGameInstance()->GetSubsystem<UUISubsystem>()->UpdateAmmo(CurrentBullet,1000,1000);
 		}
 	}
 	
@@ -56,7 +60,8 @@ void UWeaponComponent::Fire()
 {
 	if (!Weapon)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("무기가 장착되지 않음."));
+		GetWorld()->GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowGuideMessage(NeedWeaponMSG);
+		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Cyan,TEXT("무기가 필요함."));
 		return;
 	}
 
@@ -80,7 +85,7 @@ void UWeaponComponent::Fire()
 		AActor* SpawnedActor = GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
 		if (ABaseProjectile* Projectile = Cast<ABaseProjectile>(SpawnedActor))
 		{
-			Projectile->Shooter = GetOwner(); 
+			Projectile->Shooter = GetOwner();
 		}
 		
 		UStaticDataSubsystem* StaticDataSys = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
@@ -95,7 +100,8 @@ void UWeaponComponent::Fire()
 	}
 	else
 	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Cyan,TEXT("탄약 부족"));
+		GetWorld()->GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowGuideMessage(NeedAmmoMSG);
 		
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("탄알이 부족함."));
 	}
 }

@@ -5,6 +5,7 @@
 #include "ItemSystem/TestFramework/ItemPlayerController.h"
 #include "ItemSystem/UI/HUD/RoomHUD.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/UISubsystem.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -77,27 +78,21 @@ void UInteractionComponent::UpdateFocus()
 void UInteractionComponent::UpdateInteractableMessage()
 {
 	// TODO: 이후 UI 구조 봐서 수정 할 것.
+
+	auto UI = GetWorld()->GetGameInstance()->GetSubsystem<UUISubsystem>();
+	if (!UI)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Cyan,TEXT("인터렉션 컴포넌트에서 UI Subsystem 불러오기 실패"));
+		return;
+	}
 	
 	if (CurrentTargetActor.Get())
 	{
-		if (auto PC = Cast<AItemPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))
-		{
-			if (URoomHUD* HUDWidget = PC->GetHUDWidget())
-			{
-				HUDWidget->ShowInteractMessage(IInteractable::Execute_GetInteractableMessage(CurrentTargetActor.Get()));
-			}
-			
-		}
+		UI->ShowInteractMessage(IInteractable::Execute_GetInteractableMessage(CurrentTargetActor.Get()));
 	}
 	else
 	{
-		if (auto PC = Cast<AItemPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0)))
-		{
-			if (URoomHUD* HUDWidget = PC->GetHUDWidget())
-			{
-				HUDWidget->HideInteractMessage();
-			}
-		}
+		UI->HideInteractMessage();
 	}
 }
 

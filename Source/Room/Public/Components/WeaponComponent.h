@@ -4,7 +4,6 @@
 #include "Components/SceneComponent.h"
 #include "WeaponComponent.generated.h"
 
-
 class UInventoryComponent;
 class UWeaponItem;
 
@@ -26,6 +25,9 @@ protected:
 	bool bIsPlayerWeaponComp = true;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<AActor> ProjectileClass;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	FText NeedWeaponMSG;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	FText NeedAmmoMSG;
 	TWeakObjectPtr<UInventoryComponent> InventoryRef;
 };
