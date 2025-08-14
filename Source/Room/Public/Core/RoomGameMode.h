@@ -23,7 +23,6 @@ protected:
 	TObjectPtr<ARoomGameState> RoomGameState; // 캐시
 	
 public:
-
 	UPROPERTY(BlueprintAssignable, Category = "Room Game")
 	FOnStartRoomSignature OnStartRoom;
 
@@ -31,13 +30,10 @@ public:
 	virtual void NotifyActorSpawn(AActor* SpawnedActor);
 	virtual bool IsLevelClear();
 	virtual void StartNewRoom();
+	
 private:
 	virtual void OnClearLevel();
-
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-private:
 	void InitializeGame();
-	
 };

@@ -44,7 +44,8 @@ void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
-
+	RoomGameState = GetGameState<ARoomGameState>();
+	InitializeGame();
 	// TODO : 플레이어 캐릭터에게 장비 지급.
 }
 
@@ -52,9 +53,6 @@ void ARoomGameMode::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	RoomGameState = GetGameState<ARoomGameState>();
-
-	InitializeGame();
 }
 
 void ARoomGameMode::InitializeGame()

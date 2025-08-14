@@ -62,11 +62,12 @@ void UWeaponComponent::Fire()
 	if (UseBulletSuccess)
 	{
 		FTransform SpawnTransform = GetComponentTransform();
-		auto SpawnedActor = GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass,SpawnTransform);
-		auto Data = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>()->GetData<FBulletItemData>(0);
-		if (Data)
+		UWorld* World = GetWorld();
+		AActor* SpawnedActor = World->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
+		UStaticDataSubsystem* StaticDataSys = World->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+		if (auto Data =StaticDataSys->GetDataByKey<FBulletItemData, int32>(Weapon->GetWeaponBulletID()))
 		{
-			IProjectileDataReciever::Execute_SetProjectileMoveData(SpawnedActor,*Data);
+			IProjectileDataReciever::Execute_SetProjectileMoveData(SpawnedActor, *Data);
 		}
 		else
 		{
