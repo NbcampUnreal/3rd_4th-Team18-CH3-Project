@@ -1,6 +1,7 @@
 #include "Actor/Character/PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WeaponComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "ItemSystem/InteractionComponent/InteractionComponent.h"
 #include "UI/UISubsystem.h"
 
@@ -20,6 +21,10 @@ APlayerCharacter::APlayerCharacter()
 	WeaponComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
 	bUseControllerRotationYaw = true;
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = Speed;
+
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 }
 
 
@@ -116,10 +121,7 @@ void APlayerCharacter::StartFire()
 }
 void APlayerCharacter::StopFire()
 {
-	if (WeaponComponent)
-	{
-	
-	}
+	StopMontage();
 }
 
 void APlayerCharacter::Interact()
