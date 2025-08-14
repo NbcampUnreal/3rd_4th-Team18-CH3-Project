@@ -4,6 +4,7 @@
 #include "UI/Widget/HUDWidget.h"
 #include "UI/Widget/LoadingScreenWidget.h"
 #include "UI/Widget/DamageTextActor.h"
+#include "ItemSystem/UI/InventoryWidget/InventoryWidget.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Core/GameManager.h"
@@ -39,6 +40,7 @@ void UUISubsystem::InitUIResources()
     HUDWidgetClass = UIData->HUDWidgetClass.LoadSynchronous();
     LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
     DamageTextActorClass = UIData->DamageTextActorClass.LoadSynchronous();
+    InventoryWidgetClass = UIData->InventoryWidgetClass.LoadSynchronous();
 
     if (MainMenuWidgetClass)
     {
@@ -55,6 +57,7 @@ void UUISubsystem::Deinitialize()
     MainMenuWidget.Reset();
     PauseMenuWidget.Reset();
     HUDWidget.Reset();
+    InventoryWidget.Reset();
 }
 
 void UUISubsystem::SetUIInputMode()
@@ -205,6 +208,28 @@ void UUISubsystem::ShowDamageNumber(int32 Damage, FVector WorldLocation)
         if (SpawnedActor)
         {
             SpawnedActor->SetDamage(Damage);
+        }
+    }
+}
+
+void UUISubsystem::ToggleInventory()
+{
+    if (!InventoryWidget.IsValid() && InventoryWidgetClass)
+    {
+        InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+    }
+
+    if (InventoryWidget.IsValid())
+    {
+        if (InventoryWidget->IsInViewport())
+        {
+            InventoryWidget->RemoveFromParent();
+            SetGameInputMode();
+        }
+        else
+        {
+            InventoryWidget->AddToViewport();
+            SetUIInputMode();
         }
     }
 }

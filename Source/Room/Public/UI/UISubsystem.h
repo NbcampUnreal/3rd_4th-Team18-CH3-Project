@@ -11,6 +11,7 @@ class UMainMenuWidget;
 class UPauseMenuWidget;
 class UHUDWidget;
 class ULoadingScreenWidget;
+class UInventoryWidget;
 
 UCLASS()
 class ROOM_API UUISubsystem : public URoomSubsystem
@@ -54,6 +55,9 @@ public:
 	void ShowKillMarkerOnHUD();
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ToggleInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowDamageNumber(int32 Damage, FVector WorldLocation);
 
 private:
@@ -61,6 +65,7 @@ private:
 	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
 	TWeakObjectPtr<UHUDWidget> HUDWidget;
 	TWeakObjectPtr<ULoadingScreenWidget> LoadingWidget;
+	TWeakObjectPtr<UInventoryWidget> InventoryWidget;
 
 	UPROPERTY()
 	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
@@ -73,6 +78,9 @@ private:
 
 	UPROPERTY()
 	TSubclassOf<ULoadingScreenWidget> LoadingWidgetClass;
+
+	UPROPERTY()
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 
 	UPROPERTY()
 	TSubclassOf<class ADamageTextActor> DamageTextActorClass;
