@@ -20,17 +20,13 @@ class ROOM_API IBaseAICharacterInterface
 	GENERATED_BODY()
 
 public:
-	virtual class UBaseAttackComponent* GetAttackComponent() const = 0;
-	//virtual EAIStateType GetCurrentState() const = 0;
-	//virtual void SetCurrentState(EAIStateType NewState) = 0;
-
+	/*
+		BTTask_SetMovementSpeed 관련
+	*/
 	// 이동 속도 설정 함수
 	virtual void SetMovementSpeed(float Speed) = 0;
 
 	// 이동 속도 가져오기 함수들
 	virtual float GetWalkSpeed() const = 0;
 	virtual float GetRunSpeed() const = 0;
-	
-	// 죽음 처리 함수들 추가
-	virtual void PlayDeathAnimation() = 0;
 };

@@ -34,6 +34,14 @@ public:
 	// AI의 상태를 외부에서 변경할 때 사용하는 함수
 	void SetAIState(EAIStateType NewState);
 
+	// OnHit 처리 함수 (피격 시)
+	UFUNCTION()
+	void HandleOnHit();
+
+	// Behavior Tree 중단 (사망 시)
+	UFUNCTION()
+	void StopBehaviorTree();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
