@@ -8,6 +8,8 @@
 #include "ItemSystem/InventoryComponent/InventoryComponent.h"
 #include "ItemSystem/UI/InventorySlotWidget/InventorySlotWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "UI/UISubsystem.h"
 
 
 void UInventoryWidget::UpdateInventorySlotByIndex(int32 Index, const FInventorySlot& SlotInfo)
@@ -35,4 +37,15 @@ void UInventoryWidget::NativeConstruct()
 	
 }
 
-
+FReply UInventoryWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::I)
+	{
+		if (UUISubsystem* Sub = GetGameInstance()->GetSubsystem<UUISubsystem>())
+		{
+			Sub->ToggleInventory();
+			return FReply::Handled();
+		}
+	}
+	return Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+}

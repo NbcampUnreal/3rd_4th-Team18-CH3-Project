@@ -1,6 +1,7 @@
 
 #include "Components/WeaponComponent.h"
 
+#include "Actor/Character/PlayerCharacter.h"
 #include "Actor/Projectile/BaseProjectile.h"
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -58,13 +59,31 @@ void UWeaponComponent::Fire()
 		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("무기가 장착되지 않음."));
 		return;
 	}
+
+	APlayerCharacter* PC = Cast<APlayerCharacter>(GetOwner());
+	if (!PC) return;
+
+	// 카메라 기준 방향
+	FVector CameraLocation = PC->Camera->GetComponentLocation();
+	FVector CameraForward = PC->Camera->GetForwardVector();
+
+	// 총구 위치
+	FVector MuzzleLocation = GetComponentLocation();
+	FVector ShootDir = (CameraLocation + CameraForward * 10000.f - MuzzleLocation).GetSafeNormal(); // 화면 중앙 방향
+	FRotator SpawnRotation = ShootDir.Rotation();
+	
 	bool UseBulletSuccess = InventoryRef->UseBulletForWeaponFire(Weapon->GetWeaponBulletID());
 	if (UseBulletSuccess)
 	{
-		FTransform SpawnTransform = GetComponentTransform();
-		UWorld* World = GetWorld();
-		AActor* SpawnedActor = World->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
-		UStaticDataSubsystem* StaticDataSys = World->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+		FTransform SpawnTransform(SpawnRotation, MuzzleLocation);
+		
+		AActor* SpawnedActor = GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
+		if (ABaseProjectile* Projectile = Cast<ABaseProjectile>(SpawnedActor))
+		{
+			Projectile->Shooter = GetOwner(); 
+		}
+		
+		UStaticDataSubsystem* StaticDataSys = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
 		if (auto Data =StaticDataSys->GetDataByKey<FBulletItemData, int32>(Weapon->GetWeaponBulletID()))
 		{
 			IProjectileDataReciever::Execute_SetProjectileMoveData(SpawnedActor, *Data);

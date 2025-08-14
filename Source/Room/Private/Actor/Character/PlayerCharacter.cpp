@@ -1,5 +1,6 @@
 #include "Actor/Character/PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WeaponComponent.h"
 #include "ItemSystem/InteractionComponent/InteractionComponent.h"
 #include "UI/UISubsystem.h"
 
@@ -10,13 +11,13 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm->SetupAttachment(GetCapsuleComponent()); 
 	
 	SpringArm->TargetArmLength = 400.0f; 
-    SpringArm->SocketOffset = FVector(0.0f, 150.0f, 0.0f);
+    SpringArm->SocketOffset = FVector(0.0f, 50.0f, 0.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	
-	PlayerAttackComponent = CreateDefaultSubobject<UPlayerAttackComponent>(TEXT("PlayerAttackComponent"));
-	PlayerAttackComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	WeaponComponent->SetupAttachment(GetMesh(), FName("Muzzle"));
 
 	bUseControllerRotationYaw = true;
 }
@@ -107,17 +108,17 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 }
 void APlayerCharacter::StartFire()
 {
-	if (PlayerAttackComponent)
+	if (WeaponComponent)
 	{
-		PlayerAttackComponent->StartFire();
+		WeaponComponent->Fire();
 		RunMontage(ECharacterAnim::Attacking);
 	}
 }
 void APlayerCharacter::StopFire()
 {
-	if (PlayerAttackComponent)
+	if (WeaponComponent)
 	{
-		PlayerAttackComponent->StopFire();
+	
 	}
 }
 
@@ -130,7 +131,7 @@ void APlayerCharacter::InventoryToggle()
 {
 	if (!UISubsystem) return;
 	
-	//UISubsystem->ToggleInventory();
+	UISubsystem->ToggleInventory();
 }
 
 void APlayerCharacter::OnPlayerHealthChanged(float CurrentHealth, float MaxHealth)
