@@ -19,4 +19,6 @@ class ROOM_API IProjectileDataReciever
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void SetProjectileMoveData(const FBulletItemData& BulletInfo);
+	UFUNCTION(BlueprintNativeEvent)
+	void SetDamage(float NewDamage);
 };

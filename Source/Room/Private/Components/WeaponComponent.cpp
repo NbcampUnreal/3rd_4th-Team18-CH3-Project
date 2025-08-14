@@ -82,11 +82,15 @@ void UWeaponComponent::Fire()
 		{
 			Projectile->Shooter = GetOwner(); 
 		}
-		
 		UStaticDataSubsystem* StaticDataSys = GetWorld()->GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+
+		IProjectileDataReciever::Execute_SetDamage(SpawnedActor,Weapon->GetWeaponAttackDamage());
+		
+		
 		if (auto Data =StaticDataSys->GetDataByKey<FBulletItemData, int32>(Weapon->GetWeaponBulletID()))
 		{
 			IProjectileDataReciever::Execute_SetProjectileMoveData(SpawnedActor, *Data);
+			
 		}
 		else
 		{
