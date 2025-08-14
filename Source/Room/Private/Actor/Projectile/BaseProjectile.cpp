@@ -22,6 +22,11 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+
+	SphereComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void ABaseProjectile::SetProjectileMoveData_Implementation(const FBulletItemData& BulletInfo)
@@ -39,6 +44,7 @@ void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnSphereOverlap);
+	SphereComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnSphereHit);
 }
 
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
@@ -93,7 +99,7 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ABaseCharacter* ShooterChar = Cast<ABaseCharacter>(Shooter))
 	{
 		FGameplayTagContainer OwnerTags;
-		ShooterChar->GetOwnedGameplayTags(OwnerTags); // 인터페이스 직접 호출
+		ShooterChar->GetOwnedGameplayTags(OwnerTags); 
 		if (OwnerTags.Num() > 0)
 			OwnerTag = OwnerTags.GetByIndex(0);
 	}
@@ -112,6 +118,18 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, FinalDamage, nullptr, Shooter, UDamageType::StaticClass());
 		UE_LOG(LogTemp, Warning, TEXT("Damage : %f"), FinalDamage);
+		if (GetWorld())
+			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
+	}
+}
+
+void ABaseProjectile::OnSphereHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	//지형 충돌 시 풀
+	if (OtherComp && (OtherComp->GetCollisionObjectType() == ECC_WorldStatic ||
+				  OtherComp->GetCollisionObjectType() == ECC_WorldDynamic))
+	{
 		if (GetWorld())
 			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
 	}
