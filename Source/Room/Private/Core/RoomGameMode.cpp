@@ -74,6 +74,7 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 		else if (OwnedTags.HasTag(GameDefine::PlayerTag))
 		{
 			// Player Death Logic
+			// TODO : after GameOver HUD
 		}
 	}
 }
