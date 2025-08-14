@@ -28,6 +28,7 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FInventoryData>(GetDTName<FInventoryData>());
     RegisterDataManager<FWeaponItemData>(GetDTName<FWeaponItemData>());
     RegisterDataManager<FHealingItemData>(GetDTName<FHealingItemData>());
+    RegisterDataManager<FBulletItemData>(GetDTName<FBulletItemData>());
     RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
     RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
     RegisterDataManager<FUIData>(GetDTName<FUIData>());
