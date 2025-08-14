@@ -3,6 +3,8 @@
 #include "UI/HUD/WeaponInfoWidget.h"
 #include "UI/HUD/CrosshairWidget.h"
 #include "UI/HUD/HealthWidget.h"
+#include "UI/HUD/GuideMessageWidget.h"
+#include "UI/HUD/InteractMessageWidget.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HUDWidget)
 
@@ -44,4 +46,28 @@ void UHUDWidget::ShowKillMarker()
     {
         CrosshairWidget->ShowKillMarker();
 	}
+}
+
+void UHUDWidget::ShowGuideMessage(const FText& Message)
+{
+    if (GuideMessageWidget)
+    {
+        GuideMessageWidget->ShowGuideMessage(Message);
+    }
+}
+
+void UHUDWidget::ShowInteractMessage(const FText& Message)
+{
+    if (InteractMessageWidget)
+    {
+        InteractMessageWidget->ShowMessage(Message);
+    }
+}
+
+void UHUDWidget::HideInteractMessage()
+{
+    if (InteractMessageWidget)
+    {
+        InteractMessageWidget->HideMessage();
+    }
 }

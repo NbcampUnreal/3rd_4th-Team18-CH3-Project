@@ -233,3 +233,27 @@ void UUISubsystem::ToggleInventory()
         }
     }
 }
+
+void UUISubsystem::ShowGuideMessage(const FText& Message)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowGuideMessage(Message);
+    }
+}
+
+void UUISubsystem::ShowInteractMessage(const FText& Message)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->ShowInteractMessage(Message);
+    }
+}
+
+void UUISubsystem::HideInteractMessage()
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->HideInteractMessage();
+    }
+}

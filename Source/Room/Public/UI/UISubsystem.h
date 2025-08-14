@@ -60,6 +60,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowDamageNumber(int32 Damage, FVector WorldLocation);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowGuideMessage(const FText& Message);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowInteractMessage(const FText& Message);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void HideInteractMessage();
+
+
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;
 	TWeakObjectPtr<UPauseMenuWidget> PauseMenuWidget;
