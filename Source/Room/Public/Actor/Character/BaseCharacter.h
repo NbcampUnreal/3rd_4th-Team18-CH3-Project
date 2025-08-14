@@ -1,20 +1,16 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
-#include "GameplayTagAssetInterface.h" 
 #include "Define/GameDefine.h"
-#include "Components/HealthComponent.h"
-#include "ItemSystem/Interfaces/Equipper.h"
 #include "AI/Enums/AIEnums.h"
+#include "Components/HealthComponent.h"
 #include "Interface/SpawnableFromStaticDataInterface.h"
 #include "BaseCharacter.generated.h"
 
-
-
-
 UCLASS()
-class ROOM_API ABaseCharacter : public ACharacter, public IEquipper, public IGameplayTagAssetInterface, public ISpawnableFromStaticDataInterface
+class ROOM_API ABaseCharacter : public ACharacter, public IGameplayTagAssetInterface, public ISpawnableFromStaticDataInterface
 {
 	GENERATED_BODY()
 
@@ -31,12 +27,11 @@ public:
 	UFUNCTION()
 	void HandleHit();
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UHealthComponent> HealthComponent;
-    
+	
 	UFUNCTION(BlueprintCallable, Category = "States")
 	FORCEINLINE bool IsDead() const { return bIsDead; }
-
 
 	// 애니메이션 몽타주를 담을 TMap 변수
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
@@ -51,9 +46,9 @@ public:
 	ECharacterAnim GetCurrentCharacterAnim() const;
 	float GetMontagePlayLength(ECharacterAnim AnimType) const;
 
+
 protected:
 	virtual void BeginPlay() override;
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "States")
 	bool bIsDead = false;
 

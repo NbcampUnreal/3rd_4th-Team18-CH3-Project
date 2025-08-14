@@ -2,6 +2,8 @@
 
 
 #include "Core/RoomGameMode.h"
+
+#include "Core/GameManager.h"
 #include "Subsystem/StaticDataSubsystem.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,6 +44,8 @@ void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
+
+	// TODO : 플레이어 캐릭터에게 장비 지급.
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
@@ -75,6 +79,10 @@ void ARoomGameMode::InitializeGame()
 	{
 		ObjectPoolSubsystem->InitializePool(PoolableActorData.ActorClass.Get(), PoolableActorData.InitialPoolSize);
 	}
+	// UGameManager* GManager = Cast<UGameManager>( GetGameInstance());
+	// int32 bulletStaticID = GManager->Config->PlayerPreLoadData.DefaultWeaponData.ID;
+	// const FBulletItemData* BulletData = GManager->GetSubsystem<UStaticDataSubsystem>()->GetData<FBulletItemData>(bulletStaticID);
+	// ObjectPoolSubsystem->InitializePool(BulletData->ProjectileClass, 40);
 
 	RoomGameState->bIsRoomStarted = true;
 	OnStartRoom.Broadcast();

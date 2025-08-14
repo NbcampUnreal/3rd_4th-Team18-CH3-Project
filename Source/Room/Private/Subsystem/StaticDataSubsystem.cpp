@@ -1,6 +1,8 @@
 #include "Room/Public/Subsystem/StaticDataSubsystem.h"
 
 #include "Engine/AssetManager.h"
+
+#include "Engine/AssetManager.h"
 #include "StaticData/StaticDataStruct.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 
@@ -24,8 +26,9 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     //신규 데이터 테이블 추가시 매니저 등록 함수도 추가
     RegisterDataManager<FItemData>(GetDTName<FItemData>());
     RegisterDataManager<FInventoryData>(GetDTName<FInventoryData>());
-    RegisterDataManager<FBulletData>(GetDTName<FBulletData>());
-    RegisterDataManager<FWeaponData>(GetDTName<FWeaponData>());
+    RegisterDataManager<FBulletItemData>(GetDTName<FBulletItemData>());
+    RegisterDataManager<FWeaponItemData>(GetDTName<FWeaponItemData>());
+    RegisterDataManager<FHealingItemData>(GetDTName<FHealingItemData>());
     RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
     RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
     RegisterDataManager<FUIData>(GetDTName<FUIData>());

@@ -1,6 +1,7 @@
 
 #include "Room/Public/ItemSystem/InventoryComponent/InventoryComponent.h"
 
+#include "ItemSystem/Item/BulletItem/BulletItem.h"
 #include "ItemSystem/Item/FieldItem/FieldItem.h"
 #include "ItemSystem/Structure/InventorySlot.h"
 #include "ItemSystem/Item/ItemBase/ItemBase.h"
@@ -92,6 +93,51 @@ const FInventorySlot& UInventoryComponent::GetInventorySlotByIndex(int32 SlotInd
 	return InventorySlots[SlotIndex];
 }
 
+int UInventoryComponent::GetBulletCount(int32 BulletID)
+{
+	int BulletCount = 0;
+	for (FInventorySlot& Slot : InventorySlots)
+	{
+		if (Slot.Item == nullptr) continue;
+
+		if (auto BulletItem = Cast<UBulletItem>(Slot.Item))
+		{
+			if (BulletItem->GetBulletID() == BulletID)
+			{
+				BulletCount += Slot.Quantity;
+			}
+		}
+	}
+	return BulletCount;
+}
+
+bool UInventoryComponent::UseBulletForWeaponFire(int32 BulletID)
+{
+
+	for (FInventorySlot& Slot : InventorySlots)
+	{
+		if (Slot.Item == nullptr) continue;
+
+		if (auto BulletItem = Cast<UBulletItem>(Slot.Item))
+		{
+			if (BulletItem->GetBulletID() == BulletID)
+			{
+				Slot.Quantity--;
+				if (Slot.Quantity <= 0)
+				{
+					Slot.Item = nullptr;
+					Slot.Quantity = 0;
+				}
+				OnSlotChanged.Broadcast();
+				return true;
+			}
+		}
+
+	}
+	
+	return false;
+}
+
 int32 UInventoryComponent::AddStackableItem(UItemBase* NewItem, int32 Quantity)
 {
 	int32 MaxStackCount = NewItem->GetMaxStackCount();
@@ -171,7 +217,7 @@ bool UInventoryComponent::UseStackableItem(int32 SlotIndex)
 		return false;
 	}
 
-	Slot.Item->Use(GetOwner());
+	Slot.Item->Use(UGameplayStatics::GetPlayerPawn(this, 0));
 	Slot.Quantity--;
 	
 	if (Slot.Quantity <= 0)
@@ -197,7 +243,7 @@ bool UInventoryComponent::UseNonStackableItem(int32 SlotIndex)
 		return false;
 	}
 
-	Slot.Item->Use(GetOwner());
+	Slot.Item->Use(UGameplayStatics::GetPlayerPawn(this, 0));
 	Slot.Item = nullptr;
 	Slot.Quantity = 0;
 	OnSlotChanged.Broadcast();

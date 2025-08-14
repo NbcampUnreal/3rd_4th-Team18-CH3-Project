@@ -1,10 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HealingItemInfo.generated.h"
+#include "StaticData/StaticData.h"
+#include "HealingItemData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FHealingItemInfo : public FTableRowBase
+struct FHealingItemData : public FStaticData
 {
 	GENERATED_BODY()
 
@@ -22,6 +23,8 @@ struct FHealingItemInfo : public FTableRowBase
 	bool bConsumable = true;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
 	int32 MaxStackCount = 9;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
+	bool bUsable = true;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item")
 	float HealingAmount;
 };

@@ -1,5 +1,6 @@
 #include "Actor/Character/PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "ItemSystem/InteractionComponent/InteractionComponent.h"
 #include "UI/UISubsystem.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -121,6 +122,8 @@ void APlayerCharacter::StopFire()
 
 void APlayerCharacter::Interact()
 {
+	InteractionComponent = FindComponentByClass<UInteractionComponent>();
+	InteractionComponent->Interact();
 }
 
 void APlayerCharacter::OnPlayerHealthChanged(float CurrentHealth, float MaxHealth)
