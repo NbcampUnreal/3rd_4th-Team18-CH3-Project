@@ -18,7 +18,8 @@ void ALoadingLevelGameMode::BeginPlay()
 	{
 		if (ULoadingSubsystem* Loader = GI->GetSubsystem<ULoadingSubsystem>())
 		{
-			Loader->StartLoadingAssets();
+			Loader->StartLoadingAssets(
+				FStreamableDelegate::CreateUObject(Loader, &ULoadingSubsystem::OpenTargetLevel));
 		}
 	}
 }

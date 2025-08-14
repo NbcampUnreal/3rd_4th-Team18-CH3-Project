@@ -235,13 +235,22 @@ void ULoadingSubsystem::LoadLevelWithLoadingScreen(const FRoomData& NewRoomData)
     UGameplayStatics::OpenLevel(GetWorld(), FName(*LoadingMapPath));
 }
 
-void ULoadingSubsystem::StartLoadingAssets()
+void ULoadingSubsystem::LoadLevel(const FRoomData& NewRoomData, FStreamableDelegate OnEnd)
+{
+    PendingTargetLevel = NewRoomData.Level;
+    PendingResourcesPath.Empty();
+    PendingResourcesPath = GetRoomDataNeedSoftPaths(NewRoomData);
+
+    StartLoadingAssets(OnEnd);
+}
+
+void ULoadingSubsystem::StartLoadingAssets(FStreamableDelegate OnEnd)
 {
     ActiveHandles.Empty();
 
     FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
 
-    // 4. 리소스 목록 로드
+    // 리소스 목록 로드
     for (const auto& AssetPath : PendingResourcesPath)
     {
         if (!AssetPath.IsNull())
@@ -256,10 +265,10 @@ void ULoadingSubsystem::StartLoadingAssets()
     }
 
     auto LevelSoftPath = PendingTargetLevel.ToSoftObjectPath();
-    // 5. 타겟 레벨 로드 (비동기, 하지만 Visible 상태로는 안 띄움)
+    // 타겟 레벨 로드 (비동기, 하지만 Visible 상태로는 안 띄움)
     auto LevelHandle = Streamable.RequestAsyncLoad(
         LevelSoftPath,
-        FStreamableDelegate::CreateUObject(this, &ULoadingSubsystem::OpenTargetLevel),
+        OnEnd,
         FStreamableManager::AsyncLoadHighPriority
     );
     ActiveHandles.Add(LevelSoftPath, LevelHandle);

@@ -35,6 +35,7 @@ void UUISubsystem::InitUIResources()
     const FUIData* UIData = StaticDataSubsystem->GetData<FUIData>(UIDataID);
     if (!UIData) return;
 
+    //TODO: 로드 매니저를 통해 로드되도록 변경 
     MainMenuWidgetClass = UIData->MainMenuWidgetClass.LoadSynchronous();
     PauseMenuWidgetClass = UIData->PauseMenuWidgetClass.LoadSynchronous();
     HUDWidgetClass = UIData->HUDWidgetClass.LoadSynchronous();

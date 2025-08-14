@@ -30,8 +30,9 @@ public:
     TArray<FSoftObjectPath> GetRoomDataNeedSoftPaths(const FRoomData& NewRoomData) const;
     // 에셋들이 모두 로드 될 때 까지 Loading 레벨을 로드하여 로드를 기다립니다.ㅏ
     void LoadLevelWithLoadingScreen(const FRoomData& NewRoomData);
+    void LoadLevel(const FRoomData& NewRoomData, FStreamableDelegate OnEnd);
 
-    void StartLoadingAssets();
+    void StartLoadingAssets(FStreamableDelegate OnEnd);
     void OpenTargetLevel() const;
 
     TArray<FSoftObjectPath> GetAllLoadedAssets() const;

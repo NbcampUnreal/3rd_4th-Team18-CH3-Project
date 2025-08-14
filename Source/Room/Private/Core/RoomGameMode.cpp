@@ -3,6 +3,7 @@
 
 #include "Core/RoomGameMode.h"
 
+#include "Actor/LevelConnector.h"
 #include "Components/WeaponComponent.h"
 #include "Core/GameManager.h"
 #include "GameFramework/PlayerState.h"
@@ -16,7 +17,10 @@
 #include "Characters/MeleeEnemyCharacter.h"
 #include "Characters/RangedEnemyCharacter.h"
 #include "Actor/Character/BaseCharacter.h"
+#include "Engine/LevelStreamingDynamic.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "StaticData/StaticDataStruct.h"
+#include "Subsystem/LoadingSubsystem.h"
 #include "UI/UISubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RoomGameMode)
@@ -185,7 +189,27 @@ void ARoomGameMode::StartNewRoom()
 
 void ARoomGameMode::OnClearLevel()
 {
-	
+	ULoadingSubsystem* LoadingSys = GetGameInstance()->GetSubsystem<ULoadingSubsystem>();
+	if (!LoadingSys)
+	{
+		return;
+	}
+
+	const FRoomData RoomData; // 이 부분은 실제로는 적절히 가져오겠죠
+
+	// 델리게이트: 로드 완료 후 호출할 람다
+	FStreamableDelegate OnLoadComplete = FStreamableDelegate::CreateLambda([this, RoomData]()
+	{
+		// 로드 완료된 레벨 정렬
+		// 여기서 TargetConnector 는 미리 선택해둔 커넥터
+		TArray<ALevelConnector*> Connectors;
+		FindSomeTargetConnector(PreviousLevel, Connectors); // 임시 함수, 구현 필요
+		AActor* TargetConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
+
+		AlignLoadedLevelToConnector(RoomData.Level, TargetConnector);
+	});
+
+	LoadingSys->LoadLevel(RoomData, OnLoadComplete);
 }
 
 void ARoomGameMode::BeginPlay()
@@ -193,6 +217,8 @@ void ARoomGameMode::BeginPlay()
 	Super::BeginPlay();
 	GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHUD();
 	RoomGameState = GetGameState<ARoomGameState>();
+	PreviousLevel = GetWorld()->PersistentLevel;
+	
 	InitializeGame();
 	InitializeStartingItem();
 }
@@ -268,4 +294,82 @@ void ARoomGameMode::InitializeStartingItem()
 		Inventory->AddItemToInventory(StartingBullet, 100);
 	}
 	
+}
+
+void ARoomGameMode::FindSomeTargetConnector(ULevel* SubLevel, TArray<ALevelConnector*>& OutConnectors)
+{
+	for (AActor* Actor : SubLevel->Actors)
+	{
+		if (ALevelConnector* Connector = Cast<ALevelConnector>(Actor))
+		{
+			OutConnectors.Add(Connector);
+		}
+	}
+}
+
+void ARoomGameMode::AlignLoadedLevelToConnector(
+	TSoftObjectPtr<UWorld> LevelAsset,
+	AActor* TargetConnector
+)
+{
+	UWorld* World = GetWorld();
+	if (!World || !LevelAsset.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid world or level asset"));
+		return;
+	}
+
+	bool bSuccess = false;
+	ULevelStreamingDynamic* LoadedLevel = ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(
+		World,
+		LevelAsset,
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		bSuccess
+	);
+
+	if (!bSuccess || !LoadedLevel)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load streaming level from asset: %s"), *LevelAsset.ToString());
+		return;
+	}
+
+	ULevel* SubLevel = LoadedLevel->GetLoadedLevel();
+	if (!SubLevel)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AlignLoadedLevelToConnector: LoadedLevel has no ULevel"));
+		return;
+	}
+
+	TArray<ALevelConnector*> Connectors;
+	FindSomeTargetConnector(SubLevel, Connectors);
+
+	if (Connectors.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AlignLoadedLevelToConnector: No connectors found in %s"),
+			*LoadedLevel->GetWorldAssetPackageName());
+		return;
+	}
+
+	// 랜덤으로 하나 선택
+	ALevelConnector* NewConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
+
+	// TargetConnector 위치/회전
+	FVector TargetPos = TargetConnector->GetActorLocation();
+	FRotator TargetRot = TargetConnector->GetActorRotation();
+
+	// 새 커넥터를 TargetConnector에 맞추는 Transform 보정
+	FTransform Delta = UKismetMathLibrary::MakeRelativeTransform(
+		FTransform(TargetRot, TargetPos),
+		NewConnector->GetActorTransform()
+	);
+
+	LoadedLevel->LevelTransform = Delta * LoadedLevel->LevelTransform;
+
+	UE_LOG(LogTemp, Log, TEXT("Aligned level %s to connector at %s"),
+		*LoadedLevel->GetWorldAssetPackageName(),
+		*TargetPos.ToString());
+
+	// 직전 레벨 갱신
+	PreviousLevel = SubLevel;
 }

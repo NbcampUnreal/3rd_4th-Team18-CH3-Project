@@ -21,6 +21,9 @@ class ROOM_API ARoomGameMode : public AGameModeBase
 protected:
 	UPROPERTY()
 	TObjectPtr<ARoomGameState> RoomGameState; // 캐시
+
+	UPROPERTY()
+	TObjectPtr<ULevel> PreviousLevel = nullptr;
 	
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Room Game")
@@ -30,11 +33,13 @@ public:
 	virtual void NotifyActorSpawn(AActor* SpawnedActor);
 	virtual bool IsLevelClear();
 	virtual void StartNewRoom();
-	
+
 private:
 	virtual void OnClearLevel();
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	void InitializeGame();
 	void InitializeStartingItem();
+	void AlignLoadedLevelToConnector(TSoftObjectPtr<UWorld> LoadedLevel, AActor* TargetConnector);
+	void FindSomeTargetConnector(ULevel* SubLevel, TArray<class ALevelConnector*>& OutConnectors);
 };
