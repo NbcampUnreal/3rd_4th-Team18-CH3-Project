@@ -1,4 +1,4 @@
-#include "UI/UISubsystem.h"
+﻿#include "UI/UISubsystem.h"
 #include "UI/Widget/MainMenuWidget.h"
 #include "UI/Widget/PauseMenuWidget.h"
 #include "UI/Widget/HUDWidget.h"
@@ -64,11 +64,21 @@ void UUISubsystem::SetUIInputMode()
 {
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
-        FInputModeUIOnly InputMode;
+        FInputModeGameAndUI InputMode;
         InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        InputMode.SetWidgetToFocus(nullptr);
+        InputMode.SetHideCursorDuringCapture(false);
+        InputMode.SetWidgetToFocus(nullptr); 
+
         PC->SetInputMode(InputMode);
+
         PC->bShowMouseCursor = true;
+        PC->bEnableClickEvents = true;
+        PC->bEnableMouseOverEvents = true;
+
+        PC->SetIgnoreLookInput(true);
+        PC->SetIgnoreMoveInput(true);
+
+        PC->FlushPressedKeys();
     }
 }
 
@@ -77,7 +87,13 @@ void UUISubsystem::SetGameInputMode()
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
         PC->SetInputMode(FInputModeGameOnly());
+
         PC->bShowMouseCursor = false;
+        PC->bEnableClickEvents = false;
+        PC->bEnableMouseOverEvents = false;
+
+        PC->SetIgnoreLookInput(false);
+        PC->SetIgnoreMoveInput(false);
     }
 }
 
@@ -214,23 +230,22 @@ void UUISubsystem::ShowDamageNumber(int32 Damage, FVector WorldLocation)
 
 void UUISubsystem::ToggleInventory()
 {
-    if (!InventoryWidget.IsValid() && InventoryWidgetClass)
+    if (!HUDWidget.IsValid())
     {
-        InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+        return;
     }
 
-    if (InventoryWidget.IsValid())
+    const bool bOpen = HUDWidget->IsInventoryVisible();
+
+    if (bOpen)
     {
-        if (InventoryWidget->IsInViewport())
-        {
-            InventoryWidget->RemoveFromParent();
-            SetGameInputMode();
-        }
-        else
-        {
-            InventoryWidget->AddToViewport();
-            SetUIInputMode();
-        }
+        HUDWidget->SetInventoryVisible(false);
+        SetGameInputMode(); 
+    }
+    else
+    {
+        HUDWidget->SetInventoryVisible(true);
+        SetUIInputMode(); 
     }
 }
 
