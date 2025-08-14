@@ -10,6 +10,7 @@ class UCrosshairWidget;
 class UHealthWidget;
 class UGuideMessageWidget;
 class UInteractMessageWidget;
+class UInventoryWidget;
 
 UCLASS()
 class ROOM_API UHUDWidget : public UUserWidget
@@ -53,6 +54,14 @@ public:
     UFUNCTION(BlueprintImplementableEvent)
     void OnScoreUpdated(int32 NewScore);
 
+    UFUNCTION(BlueprintCallable)
+    void SetInventoryVisible(bool bVisible);
+
+    UFUNCTION(BlueprintPure)
+    bool IsInventoryVisible() const;
+
 protected:
     
+    UPROPERTY(meta=(BindWidgetOptional))
+    TObjectPtr<UInventoryWidget> InventoryWidget;
 };

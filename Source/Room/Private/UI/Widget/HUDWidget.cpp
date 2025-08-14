@@ -5,6 +5,7 @@
 #include "UI/HUD/HealthWidget.h"
 #include "UI/HUD/GuideMessageWidget.h"
 #include "UI/HUD/InteractMessageWidget.h"
+#include "ItemSystem/UI/InventoryWidget/InventoryWidget.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HUDWidget)
 
@@ -70,4 +71,29 @@ void UHUDWidget::HideInteractMessage()
     {
         InteractMessageWidget->HideMessage();
     }
+}
+
+void UHUDWidget::SetInventoryVisible(bool bVisible)
+{
+    if (!InventoryWidget)
+    {
+        return;
+    }
+
+    InventoryWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+
+    if (bVisible)
+    {
+        InventoryWidget->SetUserFocus(GetOwningPlayer());
+    }
+}
+
+bool UHUDWidget::IsInventoryVisible() const
+{
+    if (!InventoryWidget)
+    {
+        return false;
+    }
+
+    return InventoryWidget->GetVisibility() == ESlateVisibility::Visible;
 }

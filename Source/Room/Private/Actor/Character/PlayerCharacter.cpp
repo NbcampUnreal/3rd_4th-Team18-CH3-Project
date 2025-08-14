@@ -131,7 +131,7 @@ void APlayerCharacter::InventoryToggle()
 {
 	if (!UISubsystem) return;
 	
-	//UISubsystem->ToggleInventory();
+	UISubsystem->ToggleInventory();
 }
 
 void APlayerCharacter::OnPlayerHealthChanged(float CurrentHealth, float MaxHealth)

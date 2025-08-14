@@ -20,6 +20,7 @@ public:
 	void UpdateInventorySlotByIndex(int32 Index, const FInventorySlot& SlotInfo);
 protected:
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 private:
 	UPROPERTY(meta=(BindWidget))
