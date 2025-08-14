@@ -11,7 +11,7 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm->SetupAttachment(GetCapsuleComponent()); 
 	
 	SpringArm->TargetArmLength = 400.0f; 
-    SpringArm->SocketOffset = FVector(0.0f, 150.0f, 0.0f);
+    SpringArm->SocketOffset = FVector(0.0f, 50.0f, 0.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
