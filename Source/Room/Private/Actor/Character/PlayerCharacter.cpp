@@ -108,6 +108,10 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 }
 void APlayerCharacter::StartFire()
 {
+	if (UISubsystem && UISubsystem->IsInventoryOpen())
+	{
+		return;
+	}
 	if (WeaponComponent)
 	{
 		WeaponComponent->Fire();

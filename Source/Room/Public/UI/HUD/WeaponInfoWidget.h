@@ -3,30 +3,36 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 
+class UImage;
 class UTextBlock;
+class UTexture2D;
 
 #include "WeaponInfoWidget.generated.h"
-
-
 
 UCLASS()
 class ROOM_API UWeaponInfoWidget : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo);
+    UFUNCTION(BlueprintCallable, Category = "Weapon")
+    void SetWeaponDisplay(UTexture2D* Icon, FName Name, int32 AmmoCount);
+
+    UFUNCTION(BlueprintCallable, Category = "Weapon")
+    void ClearDisplay();
 
 protected:
-	virtual void NativeConstruct() override;
+    virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* CurrentAmmoText;
+    UPROPERTY(meta = (BindWidgetOptional))
+    UImage* WeaponIcon;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TotalAmmoText;
+    UPROPERTY(meta = (BindWidgetOptional))
+    UTextBlock* WeaponNameText;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "AmmoSegment")
-	void OnAmmoUpdated(int32 CurrentAmmo, int32 MaxAmmo);
+    UPROPERTY(meta = (BindWidgetOptional))
+    UTextBlock* AmmoCountText;
 
+    UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
+    void OnWeaponDisplayUpdated();
 };

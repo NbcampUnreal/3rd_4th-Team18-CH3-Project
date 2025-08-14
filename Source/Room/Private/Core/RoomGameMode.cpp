@@ -18,11 +18,13 @@
 #include "Actor/Character/BaseCharacter.h"
 #include "StaticData/StaticDataStruct.h"
 #include "UI/UISubsystem.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(RoomGameMode)
 
 void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 {
+	
 	if (!RoomGameState || !DeadActor)
 	{
 		return;
@@ -70,6 +72,10 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 				RoomGameState->MeleeTotal);
 
 			UI->UpdateScore(RoomGameState->Score);
+
+			
+			UI->ShowKillMarkerOnHUD();
+			
 
 			if (IsLevelClear())
 			{
@@ -266,6 +272,15 @@ void ARoomGameMode::InitializeStartingItem()
 	if (Inventory)
 	{
 		Inventory->AddItemToInventory(StartingBullet, 100);
+	}
+
+	if (auto* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+	{
+		const int32 BulletID = StartingWeapon->GetWeaponBulletID();
+		const int32 Ammo = Inventory ? Inventory->GetBulletCount(BulletID) : 0;
+
+		UI->UpdateWeaponInfo(StartingWeapon->GetItemIcon(), StartingWeapon->GetItemName(), Ammo);
+
 	}
 	
 }

@@ -18,23 +18,23 @@ void UInventoryWidget::UpdateInventorySlotByIndex(int32 Index, const FInventoryS
 	{
 		InventorySlotWidgets[Index]->UpdateSlotWidget(SlotInfo);
 	}
-	
+
 }
 
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	InventoryComponent = UGameplayStatics::GetPlayerState(this,0)->FindComponentByClass<UInventoryComponent>();
-	
+	InventoryComponent = UGameplayStatics::GetPlayerState(this, 0)->FindComponentByClass<UInventoryComponent>();
+
 	int32 TargetCount = InventoryComponent->GetInventorySize();
-	for (int32 i = 0; i<TargetCount; i++)
+	for (int32 i = 0; i < TargetCount; i++)
 	{
-		auto SlotWidget = CreateWidget<UInventorySlotWidget>(this,InventorySlotWidgetClass);
+		auto SlotWidget = CreateWidget<UInventorySlotWidget>(this, InventorySlotWidgetClass);
 		SlotWidget->SlotIndex = i;
 		InventorySlotWidgets.Add(SlotWidget);
-		UniformGridPanel_Slots->AddChildToUniformGrid(SlotWidget,i/5,i%5);
+		UniformGridPanel_Slots->AddChildToUniformGrid(SlotWidget, i / 5, i % 5);
 	}
-	
+
 }
 
 FReply UInventoryWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

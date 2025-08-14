@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
 #include "Subsystem/StaticDataSubsystem.h"
+#include "UI/UISubsystem.h"
 
 UWeaponComponent::UWeaponComponent()
 {
@@ -35,6 +36,19 @@ void UWeaponComponent::Equip(UWeaponItem* NewItem)
 	}
 	
 	Weapon = NewItem;
+	if (bIsPlayerWeaponComp && InventoryRef.IsValid() && IsValid(Weapon))
+	{
+		const int32 BulletID = Weapon->GetWeaponBulletID();
+		const int32 Ammo = InventoryRef->GetBulletCount(BulletID);
+		
+		if (UGameInstance* GI = GetWorld()->GetGameInstance())
+		{
+			if (UUISubsystem* UI = GI->GetSubsystem<UUISubsystem>())
+			{
+				UI->UpdateWeaponInfo(Weapon->GetItemIcon(), Weapon->GetItemName(), Ammo);
+			}
+		}
+	}
 }
 
 void UWeaponComponent::UnEquip()
@@ -46,6 +60,17 @@ void UWeaponComponent::UnEquip()
 			auto PlayerState = UGameplayStatics::GetPlayerState(this,0);
 			auto Inventory = PlayerState->FindComponentByClass<UInventoryComponent>();
 			Inventory->AddItemToInventory(Weapon,1);
+		}
+	}
+
+	if (bIsPlayerWeaponComp)
+	{
+		if (UGameInstance* GI = GetWorld()->GetGameInstance())
+		{
+			if (UUISubsystem* UI = GI->GetSubsystem<UUISubsystem>())
+			{
+				UI->UpdateWeaponInfo(nullptr, NAME_None, 0);
+			}
 		}
 	}
 	
@@ -78,6 +103,15 @@ void UWeaponComponent::Fire()
 		FTransform SpawnTransform(SpawnRotation, MuzzleLocation);
 		
 		AActor* SpawnedActor = GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
+		if (SpawnedActor)
+		{
+			SpawnedActor->SetOwner(GetOwner());
+			if (APawn* PawnOwner = Cast<APawn>(GetOwner()))
+			{
+				SpawnedActor->SetInstigator(PawnOwner);
+			}
+		}
+		
 		if (ABaseProjectile* Projectile = Cast<ABaseProjectile>(SpawnedActor))
 		{
 			Projectile->Shooter = GetOwner(); 
@@ -91,6 +125,20 @@ void UWeaponComponent::Fire()
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Cyan,TEXT("데이터 로딩 실패"));
+		}
+
+		if (bIsPlayerWeaponComp && InventoryRef.IsValid())
+		{
+			const int32 BulletID = Weapon->GetWeaponBulletID();
+			const int32 Ammo = InventoryRef->GetBulletCount(BulletID);
+
+			if (UGameInstance* GI = GetWorld()->GetGameInstance())
+			{
+				if (UUISubsystem* UI = GI->GetSubsystem<UUISubsystem>())
+				{
+					UI->UpdateWeaponInfo(Weapon->GetItemIcon(), Weapon->GetItemName(), Ammo);
+				}
+			}
 		}
 	}
 	else

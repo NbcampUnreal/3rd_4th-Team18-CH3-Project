@@ -8,6 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Subsystem/ObjectPoolSubsystem.h"
+#include "UI/UISubsystem.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()
@@ -104,6 +105,8 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		UE_LOG(LogTemp, Warning, TEXT("Damage : %f"), FinalDamage);
 		if (GetWorld())
 			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
+
+		GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHitMarkerOnHUD();
 	}
 }
 

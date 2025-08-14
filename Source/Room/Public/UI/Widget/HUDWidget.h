@@ -27,7 +27,7 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable)
-    void UpdateWeaponInfo(int32 CurrentAmmo,int32 MaxAmmo, int32 TotalAmmo);
+    void UpdateWeaponAndAmmo(UTexture2D* Icon, FName Name, int32 AmmoCount);
     UFUNCTION(BlueprintCallable)
     void UpdateObjective(int32 RangedKills, int32 RangedTotal, int32 MeleeKills, int32 MeleeTotal);
     UFUNCTION(BlueprintCallable)

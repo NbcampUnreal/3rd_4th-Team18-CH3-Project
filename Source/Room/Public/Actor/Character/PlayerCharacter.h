@@ -65,4 +65,5 @@ private:
 	void OnPlayerHealthChanged(float CurrentHealth, float MaxHealth);
 	TObjectPtr<UUISubsystem> UISubsystem;
 	UInteractionComponent* InteractionComponent;
+	
 };

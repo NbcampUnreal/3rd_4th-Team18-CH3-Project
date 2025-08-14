@@ -32,6 +32,8 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 
 void AMeleeEnemyCharacter::HandleDeath()
 {
+	Super::HandleDeath();
+
 	
 	bIsDead = true;
 	//AI 컨트롤러 비활성화

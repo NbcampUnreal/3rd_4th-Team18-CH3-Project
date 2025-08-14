@@ -1,4 +1,4 @@
-#include "UI/Widget/HUDWidget.h"
+﻿#include "UI/Widget/HUDWidget.h"
 #include "UI/HUD/ObjectiveWidget.h"
 #include "UI/HUD/WeaponInfoWidget.h"
 #include "UI/HUD/CrosshairWidget.h"
@@ -9,11 +9,11 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HUDWidget)
 
-void UHUDWidget::UpdateWeaponInfo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo)
+void UHUDWidget::UpdateWeaponAndAmmo(UTexture2D* Icon, FName Name, int32 AmmoCount)
 {
     if (WeaponInfoWidget)
     {
-        WeaponInfoWidget->UpdateAmmo(CurrentAmmo, MaxAmmo, TotalAmmo);
+        WeaponInfoWidget->SetWeaponDisplay(Icon, Name, AmmoCount);
     }
 }
 
@@ -46,7 +46,7 @@ void UHUDWidget::ShowKillMarker()
     if (CrosshairWidget)
     {
         CrosshairWidget->ShowKillMarker();
-	}
+    }
 }
 
 void UHUDWidget::ShowGuideMessage(const FText& Message)
