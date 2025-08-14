@@ -26,7 +26,6 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     //신규 데이터 테이블 추가시 매니저 등록 함수도 추가
     RegisterDataManager<FItemData>(GetDTName<FItemData>());
     RegisterDataManager<FInventoryData>(GetDTName<FInventoryData>());
-    RegisterDataManager<FBulletItemData>(GetDTName<FBulletItemData>());
     RegisterDataManager<FWeaponItemData>(GetDTName<FWeaponItemData>());
     RegisterDataManager<FHealingItemData>(GetDTName<FHealingItemData>());
     RegisterDataManager<FEnemyData>(GetDTName<FEnemyData>());
@@ -34,6 +33,10 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FUIData>(GetDTName<FUIData>());
     RegisterDataManager<FSoundData>(GetDTName<FSoundData>());
 
+    RegisterExtraKey<FBulletItemData, int32>([](const FBulletItemData& Data)
+    {
+        return Data.ID;
+    });
     // FRoomData에 대한 보조 인덱스 등록 예시 (LevelName을 키로 사용)
     RegisterExtraKey<FRoomData, FName>([](const FRoomData& Data) {
         return FName(Data.Level.ToSoftObjectPath().GetAssetName());
