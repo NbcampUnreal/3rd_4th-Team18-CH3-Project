@@ -23,6 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void SetFinalDamage(float NewDamage);
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
