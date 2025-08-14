@@ -26,18 +26,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float RunSpeed = 600.0f;
 
-	//사망 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
-	UAnimMontage* DeathMontage;
-	
-	// 현재 장착된 공격 컴포넌트 반환 (원거리 공격 컴포넌트 캐스팅)
-	virtual UBaseAttackComponent* GetAttackComponent() const override { return Cast<UBaseAttackComponent>(AttackComponent); }
-
-	// 현재 AI 상태 반환
-	//virtual EAIStateType GetCurrentState() const override { return CurrentState; }
-
-	// AI 상태 설정
-	//virtual void SetCurrentState(EAIStateType NewState) override { CurrentState = NewState; }
+	// 이동 속도 변경 함수
+	void SetMovementSpeed(float NewSpeed);
 
 	// 걷기 속도 반환
 	virtual float GetWalkSpeed() const override { return WalkSpeed; }
@@ -45,24 +35,13 @@ public:
 	// 달리기 속도 반환
 	virtual float GetRunSpeed() const override { return RunSpeed; }
 
-	// 사망 처리 함수 (죽음 발생 시 호출, Killer는 죽인 액터)
-	virtual void HandleDeath() override;
-
-	// 사망 애니메이션 재생 함수
-	virtual void PlayDeathAnimation() override;
-
-	// 이동 속도 변경 함수
-	void SetMovementSpeed(float NewSpeed);
-
-	
 protected:
 	// 원거리 공격 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
 	TObjectPtr<URangedAttackComponent> AttackComponent;
 
-	// 현재 AI 상태 저장 변수
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	EAIStateType CurrentState;
-
 	virtual void BeginPlay() override;
+
+	// 사망 처리 함수
+	virtual void HandleDeath() override;
 };

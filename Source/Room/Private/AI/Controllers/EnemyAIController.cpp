@@ -5,25 +5,18 @@
 //#include "Perception/AISense_Sight.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Kismet/GameplayStatics.h"
-#include "AI/Interface/BaseAICharacterInterface.h"
-#include "GameFramework/Character.h"
+//#include "AI/Interface/BaseAICharacterInterface.h"
 #include "AI/Components/Attack/BaseAttackComponent.h"
+#include "GameFramework/Character.h"
+#include "Actor/Character/BaseCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
-#include "Actor/Character/BaseCharacter.h"
 #include "Define/GameDefine.h"
 
 #include "Subsystem/StaticDataSubsystem.h"  // UStaticDataSubsystem, GetDataByKey 함수
 #include "StaticData/RoomData.h"
 
-// StaticDataSubsystem 관련 포함은 팀 프로젝트에서만 존재하므로 조건부 include
-//#if __has_include("Room/StaticData/StaticDataSubsystem.h")
-//#include "Room/StaticData/StaticDataSubsystem.h"
-//#include "Room/StaticData/StaticDataStruct.h"
-//#define USE_STATIC_DATA 1
-//#else
-//#define USE_STATIC_DATA 0
-//#endif
+#include "Components/HealthComponent.h"
 
 // 블랙보드 키 초기화 (정적 상수 정의)
 const FName AEnemyAIController::BBKey_TargetActor(TEXT("TargetActor"));
@@ -48,9 +41,9 @@ AEnemyAIController::AEnemyAIController()
 	// -> PerceptionComponent 프로퍼티에 AIPerception을 할당
 	SetPerceptionComponent(*AIPerception);
 
-	//=========================================
+	//======================================================
 	// 시야 감지 구성 설정
-	//=========================================
+	//======================================================
 	// 시야 감지 설정 컴포넌트를 생성
 	// -> 시야 범위, 각도, 감지 지속 시간 등을 설정할 수 있는 구성 요소
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
@@ -73,19 +66,22 @@ AEnemyAIController::AEnemyAIController()
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;	// 우호적인 액터도 감지 가능
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;		// 중립적인 액터도 감지 가능
 
-	//=========================================
+	//======================================================
 	// 감지 구성 등록 및 우선 감지 방식 지정
-	//=========================================
+	//======================================================
 	// 어떤 감지를 사용할지 설정
-	// AIPerception에 시야 감지(Sight) 설정을 등록 -> 이 설정(SightConfig)은 시야 범위, 각도, 감지 지속 시간 등을 포함함
+	// AIPerception에 시야 감지(Sight) 설정을 등록
+	// -> 이 설정(SightConfig)은 시야 범위, 각도, 감지 지속 시간 등을 포함함
 	AIPerception->ConfigureSense(*SightConfig);
 
 	// 우선 감지 방식을 지정
-	// AI가 사용하는 기본 감지 센스를 시야(Sight)로 설정 -> 여러 감지 센스가 있을 경우, 가장 우선시되는 감지를 지정함
+	// AI가 사용하는 기본 감지 센스를 시야(Sight)로 설정
+	// -> 여러 감지 센스가 있을 경우, 가장 우선시되는 감지를 지정함
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
 
 	// 감지가 발생했을 때 실행될 함수를 바인딩
-	// 감지 이벤트가 발생했을 때 호출할 델리게이트 함수(OnTargetPerceptionUpdated)를 등록 -> 대상 감지 시 or 시야에서 사라질 때 자동 호출됨
+	// 감지 이벤트가 발생했을 때 호출할 델리게이트 함수(OnTargetPerceptionUpdated)를 등록
+	// -> 대상 감지 시 or 시야에서 사라질 때 자동 호출됨
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnTargetPerceptionUpdated);
 }
 
@@ -93,6 +89,9 @@ void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//======================================================
+	// RoomData 값으로 AI 감지 설정 업데이트
+	//======================================================
 	// 현재 월드에서 레벨 이름 얻기
 	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this, true);
 	//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] Cleaned CurrentLevelName: %s"), *CurrentLevelName);
@@ -104,26 +103,32 @@ void AEnemyAIController::BeginPlay()
 		return;
 	}
 
-	// RoomData 검색
+	// 현재 레벨 이름을 키로 RoomData를 검색
 	const FRoomData* RoomData = SDS->GetDataByKey<FRoomData, FName>(FName(*CurrentLevelName));
 	if (!RoomData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData not found for level: %s"), *CurrentLevelName);
 		return;
 	}
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData found for level: %s"), *CurrentLevelName);
-		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] RoomData SightRadius: %f, LoseSightRadius: %f"),
-			RoomData->AISightRadius, RoomData->AILoseSightRadius);
-	}
 
-	if (SightConfig)
+	// AIPerception이 유효한지 확인하고, 그 후에 SightConfig 업데이트하고 AIPerception에 적용
+	if (AIPerception && SightConfig)
 	{
 		SightConfig->SightRadius = RoomData->AISightRadius;
 		SightConfig->LoseSightRadius = RoomData->AILoseSightRadius;
 
 		AIPerception->ConfigureSense(*SightConfig);
+	}
+	else
+	{
+		if (!AIPerception)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] AIPerception is null"));
+		}
+		if (!SightConfig)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] SightConfig is null"));
+		}
 	}
 }
 
@@ -193,30 +198,29 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 		return;
 	}
 
-//#if USE_STATIC_DATA
-//	// 팀 프로젝트: StaticDataSubsystem 활용
-//	UStaticDataSubsystem* SDS = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
-//	if (!SDS) return;
-//
-//	FName EnemyID = EnemyCharacter->Tags.IsValidIndex(0) ? EnemyCharacter->Tags[0] : FName("DefaultEnemy");
-//	const FEnemyData* EnemyData = SDS->GetEnemyData(EnemyID);
-//	if (!EnemyData) return;
-//
-//	if (UseBlackboard(EnemyData->BehaviorTree->BlackboardAsset, BlackboardComp))
-//	{
-//		BlackboardComp->SetValueAsEnum(BBKey_AIState, static_cast<uint8>(EAIStateType::Idle));
-//		BlackboardComp->SetValueAsEnum(BBKey_CombatType, static_cast<uint8>(EnemyData->CombatType));
-//		RunBehaviorTree(EnemyData->BehaviorTree);
-//	}
-//#else
+	//======================================================
+	// 블랙보드의 값 초기 설정
+	//======================================================
+	if (BlackboardComp)
+	{
+		// 타겟 액터 및 마지막 알려진 위치 초기화
+		BlackboardComp->ClearValue(BBKey_TargetActor);
+		BlackboardComp->ClearValue(BBKey_TargetLastKnownLocation);
+		//BlackboardComp->SetValueAsVector(BBKey_TargetLastKnownLocation, FVector::ZeroVector);  // 명시적으로 ZeroVector 설정
+		BlackboardComp->SetValueAsBool(BBKey_IsPlayerVisible, false);
 
-	// TODO: 캐릭터에서 OnDead 구현되면 적용
-	// 델리게이트 바인딩 추가
-	//if (EnemyCharacter)
-	//{
-	//	EnemyCharacter->OnDead.AddDynamic(this, &AEnemyAIController::HandleCharacterDead);
-	//}
+		// 기본 상태 설정 (AI 상태를 Idle로 설정)
+		BlackboardComp->SetValueAsEnum(BBKey_AIState, static_cast<uint8>(EAIStateType::Idle));
+		BlackboardComp->SetValueAsEnum(BBKey_CombatType, static_cast<uint8>(EAICombatType::None));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] BlackboardComp is null"));
+	}
 
+	//======================================================
+	// Behavior Tree 및 Blackboard 설정
+	//======================================================
 	if (BehaviorTreeAsset)
 	{
 		UBlackboardComponent* RawBlackboardComp = BlackboardComp.Get();
@@ -224,9 +228,6 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 		{
 			BlackboardComp = RawBlackboardComp;
 			//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] UseBlackboard succeeded"));
-
-			// 기본 AI 상태 설정
-			BlackboardComp->SetValueAsEnum(BBKey_AIState, static_cast<uint8>(EAIStateType::Idle));
 
 			// CombatType을 AttackComponent에서 가져와서 BB에 설정
 			SetCombatTypeToBlackboard(EnemyCharacter);
@@ -243,7 +244,23 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController] BehaviorTreeAsset is null"));
 	}
-//#endif
+
+	//======================================================
+	// Possess된 Pawn에서 HealthComponent를 찾아
+	// 해당 핸들러 함수를 바인딩
+	//======================================================
+	// HealthComponent를 Pawn에서 찾기
+	UHealthComponent* HealthComp = InPawn->FindComponentByClass<UHealthComponent>();
+
+	if (HealthComp)
+	{
+		// OnHit 이벤트를 HandleOnHit 함수에 바인딩
+		HealthComp->OnHit.AddDynamic(this, &AEnemyAIController::HandleOnHit);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AI][AIController] HealthComponent not found on Pawn"));
+	}
 }
 
 void AEnemyAIController::OnUnPossess()
@@ -271,6 +288,23 @@ void AEnemyAIController::OnUnPossess()
 	// UE_LOG(LogTemp, Log, TEXT("[AI][EnemyAIController] UnPossess called for %s"), *GetName());
 }
 
+void AEnemyAIController::HandleOnHit()
+{
+	SetAIState(EAIStateType::Hit);
+}
+
+void AEnemyAIController::StopBehaviorTree()
+{
+	// AI 상태를 Dead로 설정 (블랙보드에 업데이트)
+	SetAIState(EAIStateType::Dead);
+
+	// Behavior Tree 중단
+	if (UBrainComponent* BrainComp = GetBrainComponent())
+	{
+		BrainComp->StopLogic(TEXT("AI Dead")); // AI 행동 중지
+	}
+}
+
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	// 블랙보드가 없으면 처리 중단
@@ -279,7 +313,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 		UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController][%s] BlackboardComp is null!"), *GetName());
 		return;
 	}
-	
+
 	// 감지된 Actor가 플레이어가 아니면 무시
 	if (ABaseCharacter* PerceptionCharacter = Cast<ABaseCharacter>(Actor))
 	{
@@ -323,7 +357,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 			{
 				// 타겟의 마지막 위치를 블랙보드에 기록
 				BlackboardComp->SetValueAsVector(BBKey_TargetLastKnownLocation, ProjectedLocation.Location);
-				//UE_LOG(LogTemp, Warning, TEXT("[AI][%s] Target sensed: Updating TargetActor & Location: %s"), *GetName(), *ProjectedLocation.Location.ToString());
+				UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController][%s] Target sensed: Updating TargetActor & Location: %s"), *GetName(), *ProjectedLocation.Location.ToString());
 			}
 			else
 			{// 투영 실패 시 (ex. 내비 영역 밖) 업데이트 생략
