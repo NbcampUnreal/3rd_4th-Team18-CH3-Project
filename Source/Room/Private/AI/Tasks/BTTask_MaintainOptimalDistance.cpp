@@ -97,33 +97,56 @@ EBTNodeResult::Type UBTTask_MaintainOptimalDistance::ExecuteTask(UBehaviorTreeCo
         {
             OwnerComp.GetAIOwner()->SetFocalPoint(PlayerLocation);
         }
-
-        //UE_LOG(LogTemp, Log, TEXT("[AI][MaintainDistance] %s focusing on player (Angle diff: %.1f)"),
-        //    *OwnerPawn->GetName(), AngleDifference);
+        //UE_LOG(LogTemp, Log, TEXT("[AI][MaintainDistance] %s focusing on player (Angle diff: %.1f)"), *OwnerPawn->GetName(), AngleDifference);
     }
 
     //=====================================
     // 거리에 따른 이동 결정
     //=====================================
     //UE_LOG(LogTemp, Warning, TEXT("[AI][MaintainDistance] DEBUG - %s: Current=%.1f, TooClose=%.1f, TooFar=%.1f"),
-    //    *OwnerPawn->GetName(), CurrentDistance, TooCloseDistance, TooFarDistance);
+    // *OwnerPawn->GetName(), CurrentDistance, TooCloseDistance, TooFarDistance);
 
     if (CurrentDistance < TooCloseDistance)
-    {// 너무 가까움 -> 후진 (도망가기)
+    {// 플레이어와의 거리가 너무 가까워지면 뒤로 이동
         FVector BackwardDirection = (OwnerLocation - PlayerLocation).GetSafeNormal();
         FVector TargetLocation = OwnerLocation + (BackwardDirection * MovementSpeed);
 
-        //UE_LOG(LogTemp, Warning, TEXT("[AI][MaintainDistance] BACKING AWAY - From: %s To: %s"),
-        //    *OwnerLocation.ToString(), *TargetLocation.ToString());
-
         OwnerComp.GetAIOwner()->MoveToLocation(TargetLocation, 5.0f);
-        //UE_LOG(LogTemp, Warning, TEXT("[AI][MaintainDistance] MoveToLocation called for backing away"));
     }
     else
-    {// 적정 거리 또는 멀음 -> 이동 정지 (멀면 어차피 Chase로 전환됨)
-        OwnerComp.GetAIOwner()->StopMovement();
-        //UE_LOG(LogTemp, Log, TEXT("[AI][MaintainDistance] %s staying in position (%.1f)"),
-        //    *OwnerPawn->GetName(), CurrentDistance);
+    {
+        // 기존 로직 : 적정 거리 또는 멀음 -> 이동 정지 (멀면 어차피 Chase로 전환됨)
+        //OwnerComp.GetAIOwner()->StopMovement();
+
+        // 적정 거리 이상일 때, 고정된 위치에 있지 않게 작은 이동을 추가
+        // 좌우로 작은 이동을 반복하여 플레이어가 겨냥하기 어렵게 만들기
+
+        // 일정 시간마다 좌우로 이동하도록 하거나, 패턴을 설정
+        float SineWaveMovementX = FMath::Sin(GetWorld()->GetTimeSeconds() * 3.0f) * 70.0f;
+        FVector NewTargetLocation = OwnerLocation + FVector(SineWaveMovementX, 0.0f, 0.0f);
+
+        // 목표 위치로 이동
+        OwnerComp.GetAIOwner()->MoveToLocation(NewTargetLocation, 5.0f);
+
+        // 회전 (플레이어를 향하는 회전)
+        DirectionToPlayer = (PlayerLocation - OwnerLocation).GetSafeNormal();
+        TargetRotation = DirectionToPlayer.Rotation();
+        TargetRotation.Pitch = 0.0f;
+        TargetRotation.Roll = 0.0f;
+
+        // 회전 차이 계산, 각도 차이가 10도 이상일 때만 회전
+        AngleDifference = FMath::Abs(FMath::FindDeltaAngleDegrees(OwnerPawn->GetActorRotation().Yaw, TargetRotation.Yaw));
+        if (AngleDifference > 10.0f)
+        {
+            if (TargetActor)
+            {
+                OwnerComp.GetAIOwner()->SetFocus(TargetActor);
+            }
+            else
+            {
+                OwnerComp.GetAIOwner()->SetFocalPoint(PlayerLocation);
+            }
+        }
     }
 
     return EBTNodeResult::Succeeded;
