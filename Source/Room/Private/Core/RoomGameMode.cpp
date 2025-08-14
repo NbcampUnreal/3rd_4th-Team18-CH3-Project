@@ -318,6 +318,8 @@ void ARoomGameMode::FindSomeTargetConnector(ULevel* SubLevel, TArray<ALevelConne
 {
 	for (AActor* Actor : SubLevel->Actors)
 	{
+		if ( Actor->IsHidden()) continue;
+		
 		if (ALevelConnector* Connector = Cast<ALevelConnector>(Actor))
 		{
 			OutConnectors.Add(Connector);
@@ -384,7 +386,7 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 	FTransform NewTransform = NewConnector->TransformCache;// *  NextLoadedLevel->LevelTransform; 
 	// TargetConnector의 월드 트랜스폼
 	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(), PrevLevelConnector->GetActorLocation());
-
+	PrevLevelConnector->SetActorHiddenInGame(true);
 	// NewConnector의 월드 트랜스폼
 
 	// Delta = Target * New⁻¹
