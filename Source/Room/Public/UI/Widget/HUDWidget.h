@@ -44,6 +44,15 @@ public:
     UFUNCTION(BlueprintCallable)
     void HideInteractMessage();
 
+    UFUNCTION(BlueprintCallable)
+    void UpdateScore(int32 NewScore)
+    {
+        OnScoreUpdated(NewScore);
+    }
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnScoreUpdated(int32 NewScore);
+
 protected:
     
 };

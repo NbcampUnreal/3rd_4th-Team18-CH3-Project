@@ -225,11 +225,13 @@ void UUISubsystem::ToggleInventory()
         {
             InventoryWidget->RemoveFromParent();
             SetGameInputMode();
+            ShowHUD();
         }
         else
         {
             InventoryWidget->AddToViewport();
             SetUIInputMode();
+            HideHUD();
         }
     }
 }
@@ -255,5 +257,13 @@ void UUISubsystem::HideInteractMessage()
     if (HUDWidget.IsValid())
     {
         HUDWidget->HideInteractMessage();
+    }
+}
+
+void UUISubsystem::UpdateScore(int32 NewScore)
+{
+    if (HUDWidget.IsValid())
+    {
+        HUDWidget->UpdateScore(NewScore);
     }
 }

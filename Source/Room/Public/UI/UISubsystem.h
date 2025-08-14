@@ -69,6 +69,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HideInteractMessage();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateScore(int32 NewScore);
+
 
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;

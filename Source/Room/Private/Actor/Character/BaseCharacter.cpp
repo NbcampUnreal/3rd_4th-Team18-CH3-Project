@@ -21,10 +21,18 @@ void ABaseCharacter::BeginPlay()
 		HealthComponent->OnHit.AddDynamic(this, &ABaseCharacter::HandleHit);
 	}
 
-	ARoomGameMode* RoomGameMode = Cast<ARoomGameMode>( GetWorld()->GetAuthGameMode());
-	if (RoomGameMode)
+	if (UWorld* W = GetWorld())
 	{
-		RoomGameMode->NotifyActorSpawn(this);
+		W->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			if (UWorld* W2 = GetWorld())
+			{
+				if (ARoomGameMode* GM = Cast<ARoomGameMode>(W2->GetAuthGameMode()))
+				{
+					GM->NotifyActorSpawn(this);
+				}
+			}
+		}));
 	}
 }
 
