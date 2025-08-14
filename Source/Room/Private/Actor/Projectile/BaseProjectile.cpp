@@ -23,6 +23,11 @@ ABaseProjectile::ABaseProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+
+	SphereComponent->SetCollisionObjectType(ECC_WorldDynamic);
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void ABaseProjectile::SetProjectileMoveData_Implementation(const FBulletItemData& BulletInfo)
@@ -40,6 +45,7 @@ void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnSphereOverlap);
+	SphereComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnSphereHit);
 }
 
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
@@ -76,15 +82,25 @@ void ABaseProjectile::OnPoolEnd_Implementation()
 void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	if (!OtherActor || OtherActor == Shooter)
 		return;
 
+	// 피격 대상 체력 확인
+	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
+	{
+		if (TargetChar->HealthComponent && TargetChar->HealthComponent->GetCurrentHealth() <= 0.f)
+		{
+			// 체력 0이면 무시
+			return;
+		}
+	}
 	// 발사자 태그 가져오기
 	FGameplayTag OwnerTag;
 	if (ABaseCharacter* ShooterChar = Cast<ABaseCharacter>(Shooter))
 	{
 		FGameplayTagContainer OwnerTags;
-		ShooterChar->GetOwnedGameplayTags(OwnerTags); // 인터페이스 직접 호출
+		ShooterChar->GetOwnedGameplayTags(OwnerTags); 
 		if (OwnerTags.Num() > 0)
 			OwnerTag = OwnerTags.GetByIndex(0);
 	}
@@ -93,7 +109,7 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
 	{
 		FGameplayTagContainer TargetTags;
-		TargetChar->GetOwnedGameplayTags(TargetTags); // 인터페이스 직접 호출
+		TargetChar->GetOwnedGameplayTags(TargetTags); 
 		if (TargetTags.Num() > 0)
 			TargetTag = TargetTags.GetByIndex(0);
 	}
@@ -107,6 +123,18 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
 
 		GetGameInstance()->GetSubsystem<UUISubsystem>()->ShowHitMarkerOnHUD();
+	}
+}
+
+void ABaseProjectile::OnSphereHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	//지형 충돌 시 풀
+	if (OtherComp && (OtherComp->GetCollisionObjectType() == ECC_WorldStatic ||
+				  OtherComp->GetCollisionObjectType() == ECC_WorldDynamic))
+	{
+		if (GetWorld())
+			GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
 	}
 }
 

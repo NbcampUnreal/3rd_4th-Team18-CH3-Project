@@ -92,9 +92,9 @@ void UWeaponComponent::Fire()
 	FVector CameraLocation = PC->Camera->GetComponentLocation();
 	FVector CameraForward = PC->Camera->GetForwardVector();
 
-	// 총구 위치
+	// 총구 위치, 방향
 	FVector MuzzleLocation = GetComponentLocation();
-	FVector ShootDir = (CameraLocation + CameraForward * 10000.f - MuzzleLocation).GetSafeNormal(); // 화면 중앙 방향
+	FVector ShootDir = (CameraLocation + CameraForward * 5000.f - MuzzleLocation).GetSafeNormal(); // 화면 중앙 방향
 	FRotator SpawnRotation = ShootDir.Rotation();
 	
 	bool UseBulletSuccess = InventoryRef->UseBulletForWeaponFire(Weapon->GetWeaponBulletID());
