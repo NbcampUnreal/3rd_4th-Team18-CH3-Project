@@ -20,6 +20,7 @@ class ROOM_API ABaseProjectile : public AActor, public IPoolableInterface, publi
 public:	
 	ABaseProjectile();
 	virtual void SetProjectileMoveData_Implementation(const FBulletItemData& BulletInfo) override;
+	virtual void SetDamage_Implementation(float Damage) override;
 protected:
 	virtual void BeginPlay() override;
 

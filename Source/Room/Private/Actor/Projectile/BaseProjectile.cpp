@@ -40,6 +40,12 @@ void ABaseProjectile::SetProjectileMoveData_Implementation(const FBulletItemData
 	
 }
 
+void ABaseProjectile::SetDamage_Implementation(float Damage)
+{
+	IProjectileDataReciever::SetDamage_Implementation(Damage);
+	FinalDamage = Damage;
+}
+
 // Called when the game starts or when spawned
 void ABaseProjectile::BeginPlay()
 {
