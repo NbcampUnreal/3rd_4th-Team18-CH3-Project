@@ -116,10 +116,7 @@ void APlayerCharacter::StartFire()
 }
 void APlayerCharacter::StopFire()
 {
-	if (WeaponComponent)
-	{
-	
-	}
+	StopMontage();
 }
 
 void APlayerCharacter::Interact()
