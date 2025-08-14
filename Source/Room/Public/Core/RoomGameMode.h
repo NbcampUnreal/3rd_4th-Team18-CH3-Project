@@ -6,6 +6,7 @@
 #include "Core/RoomGameState.h"
 #include "RoomGameMode.generated.h"
 
+struct FRoomData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartRoomSignature);
 
 /**
@@ -24,6 +25,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ULevel> PreviousLevel = nullptr;
+	
+	FRoomData* PreviousRoomData = nullptr;
 	
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Room Game")

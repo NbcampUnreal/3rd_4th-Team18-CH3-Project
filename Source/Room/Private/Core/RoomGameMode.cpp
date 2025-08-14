@@ -76,21 +76,17 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 				RoomGameState->MeleeTotal);
 
 			UI->UpdateScore(RoomGameState->Score);
-
-			
 			UI->ShowKillMarkerOnHUD();
-			
-
 			if (IsLevelClear())
 			{
 				OnClearLevel();
 			}
 		}
-		else if (OwnedTags.HasTag(GameDefine::PlayerTag))
-		{
-			// Player Death Logic
-			// TODO : after GameOver HUD
-		}
+	}
+	else if (OwnedTags.HasTag(GameDefine::PlayerTag))
+	{
+		// Player Death Logic
+		// TODO : after GameOver HUD
 	}
 }
 
@@ -135,8 +131,8 @@ void ARoomGameMode::NotifyActorSpawn(AActor* SpawnedActor)
 }
 
 bool ARoomGameMode::IsLevelClear()
-{
-	return false;
+{	// 클리어 조건에 따라 변경 될 수 있음.
+	return RoomGameState->AliveEnemyCount == 0;
 }
 
 void ARoomGameMode::StartNewRoom()
@@ -191,7 +187,7 @@ void ARoomGameMode::StartNewRoom()
 		);
 		UI->UpdateScore(RoomGameState->Score);
 	}
-}
+} 
 
 void ARoomGameMode::OnClearLevel()
 {
@@ -201,21 +197,28 @@ void ARoomGameMode::OnClearLevel()
 		return;
 	}
 
-	const FRoomData RoomData; // 이 부분은 실제로는 적절히 가져오겠죠
+	UStaticDataSubsystem* StaticSys = GetGameInstance()->GetSubsystem<UStaticDataSubsystem>();
+	
+	FString PrevLevelString = PreviousLevel->GetWorld()->GetMapName();
+	
+	const FRoomData* RoomData = nullptr;
+	int32 NextDataID = 2;
+	if (PreviousRoomData != nullptr)
+		NextDataID = PreviousRoomData->ID + 1;
 
+	RoomData = StaticSys->GetData<FRoomData>(NextDataID);
+	// 로드 완료된 레벨 정렬
+	// 여기서 TargetConnector 는 미리 선택해둔 커넥터
+	TArray<ALevelConnector*> Connectors;
+	FindSomeTargetConnector(PreviousLevel, Connectors); // 임시 함수, 구현 필요
+	ALevelConnector* TargetConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
+	
 	// 델리게이트: 로드 완료 후 호출할 람다
-	FStreamableDelegate OnLoadComplete = FStreamableDelegate::CreateLambda([this, RoomData]()
+	FStreamableDelegate OnLoadComplete = FStreamableDelegate::CreateLambda([this, RoomData, &TargetConnector]()
 	{
-		// 로드 완료된 레벨 정렬
-		// 여기서 TargetConnector 는 미리 선택해둔 커넥터
-		TArray<ALevelConnector*> Connectors;
-		FindSomeTargetConnector(PreviousLevel, Connectors); // 임시 함수, 구현 필요
-		AActor* TargetConnector = Connectors[FMath::RandRange(0, Connectors.Num() - 1)];
-
-		AlignLoadedLevelToConnector(RoomData.Level, TargetConnector);
+		AlignLoadedLevelToConnector(RoomData->Level, TargetConnector);
 	});
-
-	LoadingSys->LoadLevel(RoomData, OnLoadComplete);
+	LoadingSys->LoadLevel(*RoomData, OnLoadComplete);
 }
 
 void ARoomGameMode::BeginPlay()
