@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Interface/PoolableInterface.h"
 #include "ItemSystem/Interfaces/ProjectileDataReciever.h"
@@ -23,11 +24,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void SetFinalDamage(float NewDamage);
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USphereComponent> SphereComponent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
+	TObjectPtr<AActor> Shooter;
+
 
 	//~ Begin IPoolable Interface
 	virtual void OnPoolBegin_Implementation(const FTransform& SpawnTransform) override;

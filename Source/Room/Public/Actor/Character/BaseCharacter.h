@@ -25,7 +25,7 @@ public:
 	UFUNCTION()
 	virtual void HandleDeath();
 	UFUNCTION()
-	void HandleHit();
+	virtual void HandleHit();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UHealthComponent> HealthComponent;

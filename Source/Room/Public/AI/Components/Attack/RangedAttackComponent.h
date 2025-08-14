@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "BaseAttackComponent.h"
+#include "Actor/Projectile/BaseProjectile.h"
 #include "RangedAttackComponent.generated.h"
 
-// class AProjectileBase; // 총알 클래스
+ class ABaseProjectile; // 총알 클래스
 
 UCLASS()
 class ROOM_API URangedAttackComponent : public UBaseAttackComponent
@@ -38,5 +39,5 @@ protected:
 
 	// 투사체가 생성될 소켓명 (총구 위치 기준)
 	UPROPERTY(EditAnywhere, Category = "Ranged Attack")
-	FName MuzzleSocketName = TEXT("Muzzle");
+	FName MuzzleSocketName = TEXT("Muzzle_01");
 };

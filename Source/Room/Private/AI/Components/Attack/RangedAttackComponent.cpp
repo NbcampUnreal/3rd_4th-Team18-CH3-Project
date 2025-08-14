@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Characters/RangedEnemyCharacter.h"
+#include "Subsystem/ObjectPoolSubsystem.h"
 
 URangedAttackComponent::URangedAttackComponent()
 {
@@ -61,39 +62,29 @@ void URangedAttackComponent::StopAttack()
 
 void URangedAttackComponent::PerformRangedAttack()
 {
-	if (!GetOwner())
-		return;
-
-	// TODO: 총알 클래스가 준비되면 아래 부분을 구현할 것
-	/*
-	if (!ProjectileClass)
-		return;
+	if (!GetOwner() || !ProjectileClass) return;
 
 	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (!OwnerCharacter)
-		return;
+	if (!OwnerCharacter) return;
 
-	FVector MuzzleLocation = GetComponentLocation(); // 또는 총구 소켓 위치
-	FRotator MuzzleRotation = GetComponentRotation();
+	// 총구 소켓
+	FVector MuzzleLocation = OwnerCharacter->GetMesh()->GetSocketLocation(MuzzleSocketName);
+	FVector FireDirection = OwnerCharacter->GetControlRotation().Vector();
+	FRotator MuzzleRotation = FireDirection.Rotation();
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Instigator = OwnerCharacter;
-	SpawnParams.Owner = OwnerCharacter;
+	// Object Pool에서 발사체 가져오기
+	UWorld* World = GetWorld();
+	if (!World) return;
 
-	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(
-		ProjectileClass,
-		MuzzleLocation,
-		MuzzleRotation,
-		SpawnParams
-	);
+	FTransform SpawnTransform(MuzzleRotation, MuzzleLocation);
+	AActor* SpawnedActor = World->GetSubsystem<UObjectPoolSubsystem>()->GetPooledObject(ProjectileClass, SpawnTransform);
 
-	if (Projectile)
+	if (ABaseProjectile* Projectile = Cast<ABaseProjectile>(SpawnedActor))
 	{
-		Projectile->FireInDirection(MuzzleRotation.Vector());
+		// Shooter 지정
+		Projectile->Shooter = GetOwner();
 	}
-	*/
-
-	UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called, but ProjectileClass is not set yet."));
+	UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called"));
 
 	// 공격 종료 처리 (애니메이션 종료 시 호출할 수도 있음)
 	StopAttack();

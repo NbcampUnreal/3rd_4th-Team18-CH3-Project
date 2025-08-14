@@ -5,7 +5,7 @@
 #include "Input/InputConfig.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/PlayerAttackComponent.h"
+#include "Components/WeaponComponent.h"
 #include "ItemSystem/InteractionComponent/InteractionComponent.h"
 #include "PlayerCharacter.generated.h"
 
@@ -37,7 +37,7 @@ public:
 	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UPlayerAttackComponent> PlayerAttackComponent;
+	TObjectPtr<UWeaponComponent> WeaponComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
 	TObjectPtr<UAnimMontage> FireMontage;
@@ -51,7 +51,6 @@ public:
 protected:
 	
 	virtual void HandleDeath() override;
-	void OnDeathMontageEnded();
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void Move(const FInputActionValue& Value);
