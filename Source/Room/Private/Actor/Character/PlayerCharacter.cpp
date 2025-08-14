@@ -64,6 +64,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 		EnhancedInput->BindAction(InputConfig.FireAction,  ETriggerEvent::Started, this, &APlayerCharacter::StartFire);
 		EnhancedInput->BindAction(InputConfig.FireAction,ETriggerEvent::Completed, this, &APlayerCharacter::StopFire);
 		EnhancedInput->BindAction(InputConfig.InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Interact);
+		EnhancedInput->BindAction(InputConfig.InventoryToggle, ETriggerEvent::Triggered, this, &APlayerCharacter::InventoryToggle);
 	}
 }
 
@@ -122,8 +123,14 @@ void APlayerCharacter::StopFire()
 
 void APlayerCharacter::Interact()
 {
-	InteractionComponent = FindComponentByClass<UInteractionComponent>();
 	InteractionComponent->Interact();
+}
+
+void APlayerCharacter::InventoryToggle()
+{
+	if (!UISubsystem) return;
+	
+	//UISubsystem->ToggleInventory();
 }
 
 void APlayerCharacter::OnPlayerHealthChanged(float CurrentHealth, float MaxHealth)

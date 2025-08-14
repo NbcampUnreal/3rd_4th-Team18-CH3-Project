@@ -30,6 +30,7 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 
 void AMeleeEnemyCharacter::HandleDeath()
 {
+	
 	bIsDead = true;
 	//AI 컨트롤러 비활성화
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
