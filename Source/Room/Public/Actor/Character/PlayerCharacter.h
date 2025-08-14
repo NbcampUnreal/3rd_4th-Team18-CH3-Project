@@ -20,7 +20,7 @@ class ROOM_API APlayerCharacter : public ABaseCharacter
 public:
 	APlayerCharacter();
 
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
@@ -34,7 +34,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UInteractionComponent> InteractionComponent;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
@@ -53,9 +53,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
 	TObjectPtr<UAnimMontage> DeathMontage;
 
-	
+
 protected:
-	
+
 	virtual void HandleDeath() override;
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

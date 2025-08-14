@@ -39,7 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void HideHUD();
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateAmmo(int32 Current, int32 Max, int32 Total);
+	void UpdateWeaponInfo(UTexture2D* Icon, FName Name, int32 AmmoCount);
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateObjective(int32 RangedKill, int32 RangedTotal, int32 MeleeKill, int32 MeleeTotal);
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -71,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateScore(int32 NewScore);
+
+	UFUNCTION(BlueprintPure)
+	bool IsInventoryOpen() const;
 
 
 private:

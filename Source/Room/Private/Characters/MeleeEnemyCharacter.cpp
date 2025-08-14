@@ -7,7 +7,7 @@
 AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	
+
 	// 공격 컴포넌트 생성 및 루트에 붙이기
 	AttackComponent = CreateDefaultSubobject<UMeleeAttackComponent>(TEXT("MeleeAttackComponent"));
 	AttackComponent->SetupAttachment(RootComponent);
@@ -91,6 +91,6 @@ void AMeleeEnemyCharacter::HandleDeath()
 void AMeleeEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
 }

@@ -1,25 +1,50 @@
 #include "UI/HUD/WeaponInfoWidget.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(WeaponInfoWidget)
 
 void UWeaponInfoWidget::NativeConstruct()
 {
-	Super::NativeConstruct();
+    Super::NativeConstruct();
 
+    ClearDisplay();
 }
 
-void UWeaponInfoWidget::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo, int32 TotalAmmo)
+void UWeaponInfoWidget::SetWeaponDisplay(UTexture2D* Icon, FName Name, int32 AmmoCount)
 {
-	if (CurrentAmmoText)
-	{
-		CurrentAmmoText->SetText(FText::AsNumber(CurrentAmmo));
-	}
+    if (WeaponIcon != nullptr)
+    {
+        WeaponIcon->SetBrushFromTexture(Icon);
+    }
 
-	if (TotalAmmoText)
-	{
-		TotalAmmoText->SetText(FText::AsNumber(TotalAmmo));
-	}
+    if (WeaponNameText != nullptr)
+    {
+        WeaponNameText->SetText(FText::FromName(Name));
+    }
 
-	OnAmmoUpdated(CurrentAmmo, MaxAmmo);
+    if (AmmoCountText != nullptr)
+    {
+        AmmoCountText->SetText(FText::AsNumber(AmmoCount));
+    }
+
+    OnWeaponDisplayUpdated();
+}
+
+void UWeaponInfoWidget::ClearDisplay()
+{
+    if (WeaponIcon != nullptr)
+    {
+        WeaponIcon->SetBrushFromTexture(nullptr);
+    }
+
+    if (WeaponNameText != nullptr)
+    {
+        WeaponNameText->SetText(FText::GetEmpty());
+    }
+
+    if (AmmoCountText != nullptr)
+    {
+        AmmoCountText->SetText(FText::FromString(TEXT("0")));
+    }
 }

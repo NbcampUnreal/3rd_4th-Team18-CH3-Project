@@ -17,7 +17,7 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UISubsystem)
 
 
-void UUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UUISubsystem::Initialize(FSubsystemCollectionBase & Collection)
 {
     Super::Initialize(Collection);
     //auto Data = Collection.InitializeDependency<UStaticDataSubsystem>();
@@ -65,10 +65,9 @@ void UUISubsystem::SetUIInputMode()
 {
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
-        FInputModeGameAndUI InputMode;
+        FInputModeUIOnly InputMode{};
+        InputMode.SetWidgetToFocus(nullptr);
         InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        InputMode.SetHideCursorDuringCapture(false);
-        InputMode.SetWidgetToFocus(nullptr); 
 
         PC->SetInputMode(InputMode);
 
@@ -78,8 +77,6 @@ void UUISubsystem::SetUIInputMode()
 
         PC->SetIgnoreLookInput(true);
         PC->SetIgnoreMoveInput(true);
-
-        PC->FlushPressedKeys();
     }
 }
 
@@ -159,10 +156,12 @@ void UUISubsystem::HideHUD()
         HUDWidget->RemoveFromParent();
 }
 
-void UUISubsystem::UpdateAmmo(int32 Current,int32 Max, int32 Total)
+void UUISubsystem::UpdateWeaponInfo(UTexture2D* Icon, FName Name, int32 AmmoCount)
 {
     if (HUDWidget.IsValid())
-        HUDWidget->UpdateWeaponInfo(Current, Max, Total);
+    {
+        HUDWidget->UpdateWeaponAndAmmo(Icon, Name, AmmoCount);
+    }
 }
 
 void UUISubsystem::UpdateObjective(int32 RangedKill, int32 RangedTotal, int32 MeleeKill, int32 MeleeTotal)
@@ -241,12 +240,12 @@ void UUISubsystem::ToggleInventory()
     if (bOpen)
     {
         HUDWidget->SetInventoryVisible(false);
-        SetGameInputMode(); 
+        SetGameInputMode();
     }
     else
     {
         HUDWidget->SetInventoryVisible(true);
-        SetUIInputMode(); 
+        SetUIInputMode();
     }
 }
 
@@ -280,4 +279,8 @@ void UUISubsystem::UpdateScore(int32 NewScore)
     {
         HUDWidget->UpdateScore(NewScore);
     }
+}
+bool UUISubsystem::IsInventoryOpen() const
+{
+    return HUDWidget.IsValid() && HUDWidget->IsInventoryVisible();
 }
