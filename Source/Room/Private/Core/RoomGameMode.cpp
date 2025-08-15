@@ -318,7 +318,7 @@ void ARoomGameMode::FindSomeTargetConnector(ULevel* SubLevel, TArray<ALevelConne
 {
 	for (AActor* Actor : SubLevel->Actors)
 	{
-		if ( Actor->IsHidden()) continue;
+		if ( !Actor || Actor->IsHidden()) continue;
 		
 		if (ALevelConnector* Connector = Cast<ALevelConnector>(Actor))
 		{
@@ -387,17 +387,82 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 	// TargetConnector의 월드 트랜스폼
 	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(), PrevLevelConnector->GetActorLocation());
 	PrevLevelConnector->SetActorHiddenInGame(true);
-	// NewConnector의 월드 트랜스폼
 
-	// Delta = Target * New⁻¹
-	FTransform Delta = TargetTransform * NewTransform.Inverse();
+	FVector RelativeLocation = TargetTransform.GetLocation() - NewTransform.GetLocation();
+	FVector TargetForward = TargetTransform.GetRotation().GetForwardVector();
+	FVector NewForward = -TargetForward;  // 반대 방향
+	FRotator DeltaRot = NewForward.Rotation();  // Forward 기준 회전
 
-	// LoadedLevel 전체 트랜스폼 보정
-	//NextLoadedLevel->LevelTransform = Delta * NextLoadedLevel->LevelTransform;
-	NextLoadedLevel->LevelTransform *= Delta;
-
+	FTransform DeltaTransform;
+	DeltaTransform.SetLocation(RelativeLocation); // 이동 벡터
+	DeltaTransform.SetRotation(FQuat(DeltaRot));  // 회전
+	
+	NextLoadedLevel->LevelTransform = DeltaTransform;
 	NextLoadedLevel->SetShouldBeVisible(true);
 	// 직전 레벨 갱신
 	PreviousLevel = SubLevel;
+
+	FVector NewVector = NewTransform.GetLocation();
+	FVector Start = NewVector + FVector(0,0,500);
+	FVector End   = NewVector - FVector(0,0,500);
+	UWorld* World = GetWorld();
+	DrawDebugLine(
+		World,
+		Start,
+		End,
+		FColor::Red,
+		/*bPersistentLines=*/true,
+		/*LifeTime=*/2.f,
+		/*DepthPriority=*/0,
+		/*Thickness=*/2.f
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("NewConnectPos : %s"), *NewVector.ToString());
+	
+	NewVector = TargetTransform.GetLocation();
+	Start = NewVector + FVector(0,0,500);
+	End   = NewVector - FVector(0,0,500);
+	
+	DrawDebugLine(
+		World,
+		Start,
+		End,
+		FColor::Blue,
+		/*bPersistentLines=*/true,
+		/*LifeTime=*/2.f,
+		/*DepthPriority=*/0,
+		/*Thickness=*/2.f
+	);
+	// UE_LOG(LogTemp, Log, TEXT("TargetPos : %s"), *NewVector.ToString());
+	//
+	// NewVector = Delta.GetLocation();
+	// Start = NewVector + FVector(0,0,500);
+	// End   = NewVector - FVector(0,0,500);
+	//
+	// DrawDebugLine(
+	// 	World,
+	// 	Start,
+	// 	End,
+	// 	FColor::Green,
+	// 	/*bPersistentLines=*/true,
+	// 	/*LifeTime=*/2.f,
+	// 	/*DepthPriority=*/0,
+	// 	/*Thickness=*/2.f
+	// );
+	// UE_LOG(LogTemp, Log, TEXT("Delta : %s"), *NewVector.ToString());
+	//
+	// Start  = TargetTransform.GetLocation() + FVector(0,0,500);
+	// End = (Delta * NewTransform).GetLocation() + FVector(0,0,500);
+	//
+	// DrawDebugLine(
+	// 	World,
+	// 	Start,
+	// 	End,
+	// 	FColor::Purple,
+	// 	/*bPersistentLines=*/true,
+	// 	/*LifeTime=*/2.f,
+	// 	/*DepthPriority=*/0,
+	// 	/*Thickness=*/2.f
+	// );
 
 }
