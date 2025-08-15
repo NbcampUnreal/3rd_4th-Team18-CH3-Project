@@ -3,6 +3,10 @@
 #include "AI/Components/Attack/RangedAttackComponent.h"
 #include "AI/Controllers/EnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Actor/Projectile/BaseProjectile.h"	// 총알 클래스
+#include "Components/SphereComponent.h"			// 스피어 컴포넌트
+#include "Components/CapsuleComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ARangedEnemyCharacter::ARangedEnemyCharacter()
 {
@@ -23,7 +27,28 @@ ARangedEnemyCharacter::ARangedEnemyCharacter()
 	Movement->MaxWalkSpeed = WalkSpeed; // 기본 이동 속도
 	Movement->AirControl = 0.2f;
 
+	// 목표 재생 시간
+	DesiredDuration = 2.0f;
+
+	//======================================================
+	// 총알 감지 범위 설정
+	//======================================================
+	// 스피어 컴포넌트 생성 (총알 감지 범위)
+	BulletDetectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("BulletDetectionSphere"));
+	BulletDetectionSphere->SetupAttachment(RootComponent);
+	BulletDetectionSphere->InitSphereRadius(500.f);	// 감지 반경 설정
+
+	BulletDetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // 충돌을 감지만 하고 실제 물리적인 충돌은 처리하지 않음
+	BulletDetectionSphere->SetCollisionObjectType(ECC_Pawn);
+	BulletDetectionSphere->SetCollisionResponseToAllChannels(ECR_Ignore); // 모든 채널 무시
+	BulletDetectionSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap); // WorldDynamic 채널에 대해 오버랩
+
+	// 오버랩 이벤트 바인딩
+	BulletDetectionSphere->OnComponentBeginOverlap.AddDynamic(this, &ARangedEnemyCharacter::OnBulletDetected);
+
+	//======================================================
 	// 캐릭터가 속한 태그 추가
+	//======================================================
 	OwnedGameplayTags.AddTag(GameDefine::EnemyTag);
 }
 
@@ -67,7 +92,6 @@ void ARangedEnemyCharacter::HandleDeath()
 	{// 몽타주가 유효한 경우
 		// 애니메이션 길이를 알고 있다고 가정하고 속도를 계산
 		float AnimationLength = DeadMontage->GetPlayLength(); // 애니메이션 길이
-		float DesiredDuration = 6.0f; // 목표 재생 시간
 
 		// 속도 계산
 		float Speed = AnimationLength / DesiredDuration;
@@ -91,7 +115,59 @@ void ARangedEnemyCharacter::HandleDeath()
 void ARangedEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
+
+	if (BulletDetectionSphere)
+	{
+		BulletDetectionSphere->SetHiddenInGame(false);
+		BulletDetectionSphere->SetVisibility(true);
+	}
 	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
+}
+
+void ARangedEnemyCharacter::OnBulletDetected(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor || OtherActor == this || OverlappedComponent != BulletDetectionSphere)
+		return;
+
+	if (ABaseProjectile* Projectile = Cast<ABaseProjectile>(OtherActor))
+	{
+		AActor* Shooter = Projectile->Shooter;
+		if (Shooter && Shooter != this)
+		{
+			TrackBulletShooter(Shooter);
+		}
+	}
+}
+
+void ARangedEnemyCharacter::TrackBulletShooter(AActor* BulletShooter)
+{
+	if (!BulletShooter)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AI][ARangedEnemyCharacter] BulletShooter is NULL!"));
+		return;
+	}
+
+	FVector ShooterLocation = BulletShooter->GetActorLocation();
+
+	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+	{
+
+		UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
+		if (BlackboardComp)
+		{
+			// Blackboard에 플레이어 정보 설정 - BT가 자동으로 추적할 것임
+			BlackboardComp->SetValueAsObject(TEXT("TargetActor"), BulletShooter);
+			BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
+			BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), ShooterLocation);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[AI][ARangedEnemyCharacter] Blackboard NOT FOUND!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AI][ARangedEnemyCharacter] AIController NOT FOUND!"));
+	}
 }
