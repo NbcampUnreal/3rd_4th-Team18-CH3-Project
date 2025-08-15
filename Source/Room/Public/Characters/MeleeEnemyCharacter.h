@@ -10,6 +10,8 @@
 #include "AI/Components/Attack/MeleeAttackComponent.h"	// 근접 공격 컴포넌트
 #include "MeleeEnemyCharacter.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 class ROOM_API AMeleeEnemyCharacter : public ABaseCharacter, public IBaseAICharacterInterface
 {
@@ -26,6 +28,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float RunSpeed = 600.0f;
 
+	// 목표 재생 시간
+	UPROPERTY(EditAnywhere, Category = "AI")
+	float DesiredDuration;
+
 	// 캐릭터 이동 속도를 변경하는 함수
 	void SetMovementSpeed(float NewSpeed);
 	
@@ -40,9 +46,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
 	TObjectPtr<UMeleeAttackComponent> AttackComponent;
 
+	// 총알 감지 범위로 사용할 스피어 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	USphereComponent* BulletDetectionSphere;
+
+	// 총알 감지 시 호출되는 함수
+	UFUNCTION()
+	void OnBulletDetected(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+
+	// 발사자 추적 함수
+	virtual void TrackBulletShooter(AActor* BulletShooter) override;
+
 	virtual void BeginPlay() override;
 
 	// 사망 처리 함수
 	virtual void HandleDeath() override;
-
 };

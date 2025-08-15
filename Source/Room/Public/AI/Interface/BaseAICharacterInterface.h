@@ -29,4 +29,14 @@ public:
 	// 이동 속도 가져오기 함수들
 	virtual float GetWalkSpeed() const = 0;
 	virtual float GetRunSpeed() const = 0;
+
+	/*
+		총알 감지 및 발사자 추적 관련 함수들
+	*/
+	// 총알 감지 함수 (총알이 들어오면 호출됨)
+	virtual void OnBulletDetected(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) = 0;
+
+	// 총알의 발사자 추적 함수 (총알의 발사자 위치를 추적)
+	virtual void TrackBulletShooter(AActor* BulletShooter) = 0;
 };
