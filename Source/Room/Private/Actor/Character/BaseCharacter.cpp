@@ -20,19 +20,9 @@ void ABaseCharacter::BeginPlay()
 		HealthComponent->OnDead.AddDynamic(this, &ABaseCharacter::HandleDeath);
 		HealthComponent->OnHit.AddDynamic(this, &ABaseCharacter::HandleHit);
 	}
-
-	if (UWorld* W = GetWorld())
+	if (ARoomGameMode* GM = Cast<ARoomGameMode>(GetWorld()->GetAuthGameMode()))
 	{
-		W->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-		{
-			if (UWorld* W2 = GetWorld())
-			{
-				if (ARoomGameMode* GM = Cast<ARoomGameMode>(W2->GetAuthGameMode()))
-				{
-					GM->NotifyActorSpawn(this);
-				}
-			}
-		}));
+		GM->NotifyActorSpawn(this);
 	}
 }
 
@@ -137,4 +127,16 @@ void ABaseCharacter::InitializeFromStaticData(const FStaticData* InStaticData)
 	{
 		AIController->RunBehaviorTree(EnemyData->Behavior.Get());
 	}
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (!Capsule) return;
+
+	// 1. 캡슐 중심 위치와 반높이 가져오기
+	FVector CapsuleCenter = Capsule->GetComponentLocation();
+	float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+
+	// 2. 캡슐 Up 벡터
+	FVector CapsuleUp = Capsule->GetUpVector();
+
+	SetActorLocation(GetActorLocation() + CapsuleUp * HalfHeight);
 }

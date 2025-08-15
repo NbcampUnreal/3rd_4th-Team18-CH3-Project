@@ -1,5 +1,8 @@
 #include "Components/HealthComponent.h"
 
+#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
+
 UHealthComponent::UHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;

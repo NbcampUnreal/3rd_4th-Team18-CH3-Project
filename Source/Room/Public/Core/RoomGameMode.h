@@ -5,6 +5,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Core/RoomGameState.h"
 #include "Engine/LevelStreamingDynamic.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
 #include "RoomGameMode.generated.h"
 
 struct FRoomData;
@@ -27,8 +28,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<ULevel> PreviousLevel = nullptr;
 	
-	FRoomData* PreviousRoomData = nullptr;
-	
+	const FRoomData* PreviousRoomData = nullptr;
+
+
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Room Game")
 	FOnStartRoomSignature OnStartRoom;

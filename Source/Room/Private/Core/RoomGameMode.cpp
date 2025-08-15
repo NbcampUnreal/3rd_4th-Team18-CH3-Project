@@ -3,6 +3,8 @@
 
 #include "Core/RoomGameMode.h"
 
+#include "AssetTypeCategories.h"
+#include "NavigationSystem.h"
 #include "Actor/LevelConnector.h"
 #include "Components/WeaponComponent.h"
 #include "Core/GameManager.h"
@@ -206,7 +208,7 @@ void ARoomGameMode::OnClearLevel()
 	if (PreviousRoomData != nullptr)
 		NextDataID = PreviousRoomData->ID + 1;
 
-	RoomData = StaticSys->GetData<FRoomData>(NextDataID);
+	PreviousRoomData = RoomData = StaticSys->GetData<FRoomData>(NextDataID);
 	// 로드 완료된 레벨 정렬
 	// 여기서 TargetConnector 는 미리 선택해둔 커넥터
 	TArray<ALevelConnector*> Connectors;
@@ -385,27 +387,50 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 	//FTransform NewTransform = NewConnector->GetActorTransform() *  NextLoadedLevel->LevelTransform; 
 	FTransform NewTransform = NewConnector->TransformCache;// *  NextLoadedLevel->LevelTransform; 
 	// TargetConnector의 월드 트랜스폼
-	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(), PrevLevelConnector->GetActorLocation());
+	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(),
+							   PrevLevelConnector->GetActorLocation());
 	PrevLevelConnector->SetActorHiddenInGame(true);
 
-	FVector RelativeLocation = TargetTransform.GetLocation() - NewTransform.GetLocation();
+	// 2. New → Target 회전 Delta
+	FQuat NewQuat = NewTransform.GetRotation();
 	FVector TargetForward = TargetTransform.GetRotation().GetForwardVector();
-	FVector NewForward = -TargetForward;  // 반대 방향
-	FRotator DeltaRot = NewForward.Rotation();  // Forward 기준 회전
+	FVector LookTargetForward = -TargetForward;
+	FQuat TargetQuat = FRotationMatrix::MakeFromX(LookTargetForward).ToQuat();
+	FQuat DeltaQuat = TargetQuat * NewQuat.Inverse();
 
-	FTransform DeltaTransform;
-	DeltaTransform.SetLocation(RelativeLocation); // 이동 벡터
-	DeltaTransform.SetRotation(FQuat(DeltaRot));  // 회전
-	
+	// 3. 피벗(NewTransform 위치) 기준 회전 적용
+	FVector Pivot = NewTransform.GetLocation();
+	FVector RotatedPivotOffset = DeltaQuat.RotateVector(-Pivot);
+
+	// 4. 위치 보정
+	FVector TargetLoc = TargetTransform.GetLocation();
+	FVector DeltaTranslation = TargetLoc + RotatedPivotOffset;
+
+	// 5. 최종 DeltaTransform
+	FTransform DeltaTransform(DeltaQuat, DeltaTranslation);
+
+	// 레벨 적용
 	NextLoadedLevel->LevelTransform = DeltaTransform;
+	
 	NextLoadedLevel->SetShouldBeVisible(true);
 	// 직전 레벨 갱신
 	PreviousLevel = SubLevel;
 
-	FVector NewVector = NewTransform.GetLocation();
-	FVector Start = NewVector + FVector(0,0,500);
-	FVector End   = NewVector - FVector(0,0,500);
 	UWorld* World = GetWorld();
+	if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+	{
+		for (ANavigationData* NavData : NavSys->GetNavDataSet())
+		{
+			if (ARecastNavMesh* RecastNav = Cast<ARecastNavMesh>(NavData))
+			{
+				RecastNav->RebuildAll(); // 이동된 타일에 맞춰 전체 NavMesh 재생성
+			}
+		}
+	}
+	
+	FVector NewVector = NewTransform.GetLocation();
+	FVector Start = NewTransform.GetLocation() + FVector(0,0,500);
+	FVector End   = TargetTransform.GetLocation() + FVector(0,0,500);
 	DrawDebugLine(
 		World,
 		Start,
@@ -417,7 +442,7 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 		/*Thickness=*/2.f
 	);
 
-	UE_LOG(LogTemp, Log, TEXT("NewConnectPos : %s"), *NewVector.ToString());
+
 	
 	NewVector = TargetTransform.GetLocation();
 	Start = NewVector + FVector(0,0,500);
@@ -433,36 +458,37 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 		/*DepthPriority=*/0,
 		/*Thickness=*/2.f
 	);
-	// UE_LOG(LogTemp, Log, TEXT("TargetPos : %s"), *NewVector.ToString());
-	//
-	// NewVector = Delta.GetLocation();
-	// Start = NewVector + FVector(0,0,500);
-	// End   = NewVector - FVector(0,0,500);
-	//
-	// DrawDebugLine(
-	// 	World,
-	// 	Start,
-	// 	End,
-	// 	FColor::Green,
-	// 	/*bPersistentLines=*/true,
-	// 	/*LifeTime=*/2.f,
-	// 	/*DepthPriority=*/0,
-	// 	/*Thickness=*/2.f
-	// );
-	// UE_LOG(LogTemp, Log, TEXT("Delta : %s"), *NewVector.ToString());
-	//
-	// Start  = TargetTransform.GetLocation() + FVector(0,0,500);
-	// End = (Delta * NewTransform).GetLocation() + FVector(0,0,500);
-	//
-	// DrawDebugLine(
-	// 	World,
-	// 	Start,
-	// 	End,
-	// 	FColor::Purple,
-	// 	/*bPersistentLines=*/true,
-	// 	/*LifeTime=*/2.f,
-	// 	/*DepthPriority=*/0,
-	// 	/*Thickness=*/2.f
-	// );
+
+	
+	NewVector = NewTransform.GetLocation();
+	Start = NewVector + FVector(0,0,500);
+	End   = NewVector - FVector(0,0,500);
+	
+	DrawDebugLine(
+		World,
+		Start,
+		End,
+		FColor::Green,
+		/*bPersistentLines=*/true,
+		/*LifeTime=*/2.f,
+		/*DepthPriority=*/0,
+		/*Thickness=*/2.f
+	);
+
+
+	NewVector = (DeltaTransform * NewTransform).GetLocation() ;
+	Start  = NewVector + FVector(0,0,500);
+	End = NewVector - FVector(0,0,500);
+	
+	DrawDebugLine(
+		World,
+		Start,
+		End,
+		FColor::Purple,
+		/*bPersistentLines=*/true,
+		/*LifeTime=*/2.f,
+		/*DepthPriority=*/0,
+		/*Thickness=*/2.f
+	);
 
 }
