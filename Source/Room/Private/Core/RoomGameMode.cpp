@@ -417,16 +417,6 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 	PreviousLevel = SubLevel;
 
 	UWorld* World = GetWorld();
-	if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
-	{
-		for (ANavigationData* NavData : NavSys->GetNavDataSet())
-		{
-			if (ARecastNavMesh* RecastNav = Cast<ARecastNavMesh>(NavData))
-			{
-				RecastNav->RebuildAll(); // 이동된 타일에 맞춰 전체 NavMesh 재생성
-			}
-		}
-	}
 	
 	FVector NewVector = NewTransform.GetLocation();
 	FVector Start = NewTransform.GetLocation() + FVector(0,0,500);
