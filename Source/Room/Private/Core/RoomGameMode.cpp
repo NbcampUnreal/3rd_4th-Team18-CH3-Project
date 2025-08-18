@@ -418,6 +418,7 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 	FTransform TargetTransform(PrevLevelConnector->GetActorRotation(),
 							   PrevLevelConnector->GetActorLocation());
 	PrevLevelConnector->SetActorHiddenInGame(true);
+	NewConnector->SetActorHiddenInGame(true);
 
 	// 2. New → Target 회전 Delta
 	FQuat NewQuat = NewTransform.GetRotation();
