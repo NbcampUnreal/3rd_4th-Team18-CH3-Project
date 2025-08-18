@@ -246,10 +246,10 @@ void ULoadingSubsystem::LoadLevel(const FRoomData& NewRoomData, FStreamableDeleg
 
 void ULoadingSubsystem::StartLoadingAssets(FStreamableDelegate OnEnd)
 {
-    ActiveHandles.Empty();
-
     FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+    FlushAsyncLoading();
 
+    ActiveHandles.Empty();
     // 리소스 목록 로드
     for (const auto& AssetPath : PendingResourcesPath)
     {
