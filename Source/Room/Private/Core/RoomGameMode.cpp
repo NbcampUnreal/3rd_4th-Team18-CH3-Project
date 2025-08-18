@@ -3,11 +3,8 @@
 
 #include "Core/RoomGameMode.h"
 
-#include "AssetTypeCategories.h"
-#include "NavigationSystem.h"
 #include "Actor/LevelConnector.h"
 #include "Components/WeaponComponent.h"
-#include "Core/GameManager.h"
 #include "GameFramework/PlayerState.h"
 #include "ItemSystem/InventoryComponent/InventoryComponent.h"
 #include "ItemSystem/Item/BulletItem/BulletItem.h"
@@ -20,7 +17,6 @@
 #include "Characters/RangedEnemyCharacter.h"
 #include "Actor/Character/BaseCharacter.h"
 #include "Engine/LevelStreamingDynamic.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "StaticData/StaticDataStruct.h"
 #include "Subsystem/LoadingSubsystem.h"
 #include "UI/UISubsystem.h"
@@ -87,8 +83,7 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 	}
 	else if (OwnedTags.HasTag(GameDefine::PlayerTag))
 	{
-		// Player Death Logic
-		// TODO : after GameOver HUD
+		OnEndGame(false);
 	}
 }
 
@@ -209,6 +204,13 @@ void ARoomGameMode::OnClearLevel()
 		NextDataID = PreviousRoomData->ID + 1;
 
 	PreviousRoomData = RoomData = StaticSys->GetData<FRoomData>(NextDataID);
+
+	// 다음 레벨이 존재하지 않는다 !
+	if (RoomData == nullptr)
+	{
+		OnEndGame(true);
+	}
+	
 	// 로드 완료된 레벨 정렬
 	// 여기서 TargetConnector 는 미리 선택해둔 커넥터
 	TArray<ALevelConnector*> Connectors;
