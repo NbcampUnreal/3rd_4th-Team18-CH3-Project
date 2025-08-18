@@ -193,9 +193,9 @@ void AMeleeEnemyCharacter::InitializeFromStaticData(const FStaticData* InStaticD
 		HealthComponent->SetMaxHealth(EnemyData->Stat.HP);
 		HealthComponent->SetCurrentHealth(EnemyData->Stat.HP);
 	}
-
-	// Set other properties from EnemyData->Stat as needed (Attack, Defense, etc.)
-
+	Attack = EnemyData->Stat.Attack;
+	Defense = EnemyData->Stat.Defense;
+	
 	// AI Controller setup
 	AAIController* AIController = GetController<AAIController>();
 	if (AIController && EnemyData->Behavior)
