@@ -111,7 +111,7 @@ void UMeleeAttackComponent::PerformMeleeAttack()
 
 #if WITH_EDITOR
 	// DEBUG: 공격 영역 시각화
-	DrawDebugSphere(GetWorld(), Start, AttackData.AttackRadius, 16, FColor::Red, false, 1.0f);
+	//DrawDebugSphere(GetWorld(), Start, AttackData.AttackRadius, 16, FColor::Red, false, 1.0f);
 #endif
 
 	// 공격 종료 처리
