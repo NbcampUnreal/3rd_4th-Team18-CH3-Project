@@ -56,6 +56,12 @@ void ABaseProjectile::BeginPlay()
 	SphereComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnSphereHit);
 }
 
+void ABaseProjectile::Destroyed()
+{
+	Super::Destroyed();
+	GetWorld()->GetTimerManager().ClearTimer(ReturnTimer);
+}
+
 void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransform)
 {
 	SetActorTransform(SpawnTransform);
@@ -67,8 +73,7 @@ void ABaseProjectile::OnPoolBegin_Implementation(const FTransform& SpawnTransfor
 	
 	ProjectileMovement->Activate();
 	ProjectileMovement->Velocity = SpawnTransform.GetRotation().GetForwardVector() * ProjectileMovement->InitialSpeed;
-
-	FTimerHandle ReturnTimer;
+	
 	GetWorldTimerManager().SetTimer(ReturnTimer, FTimerDelegate::CreateLambda([this]()
 	{
 		GetWorld()->GetSubsystem<UObjectPoolSubsystem>()->ReturnPooledObject(this);
