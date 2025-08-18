@@ -20,11 +20,11 @@ class ROOM_API APlayerCharacter : public ABaseCharacter
 public:
 	APlayerCharacter();
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FInputConfig InputConfig;
 
-
+	UPROPERTY(EditDefaultsOnly, Category="Stat")
+	UDataTable* PlayerStatDataTable;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
 	float Attack = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
@@ -53,6 +53,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
 	TObjectPtr<UAnimMontage> DeathMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataID")
+	int32 PlayerStatID = 2;
 
 protected:
 
@@ -65,6 +67,10 @@ protected:
 	void StopFire();
 	void Interact();
 	void InventoryToggle();
+	// ISpawnableFromStaticData interface
+	virtual void InitializeFromStaticData(const FStaticData* InStaticData) override;
+
+
 
 private:
 	UFUNCTION()
