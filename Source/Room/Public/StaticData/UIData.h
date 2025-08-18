@@ -28,4 +28,7 @@ struct FUIData : public FStaticData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSoftClassPtr<UUserWidget> InventoryWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TSoftClassPtr<UUserWidget> GameOverWidgetClass;
 };
