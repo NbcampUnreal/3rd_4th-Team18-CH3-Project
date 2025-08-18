@@ -83,6 +83,11 @@ AEnemyAIController::AEnemyAIController()
 	// 감지 이벤트가 발생했을 때 호출할 델리게이트 함수(OnTargetPerceptionUpdated)를 등록
 	// -> 대상 감지 시 or 시야에서 사라질 때 자동 호출됨
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnTargetPerceptionUpdated);
+
+	//======================================================
+	// 디버그용 시야/감지 상태 표시 여부 - 토글용 변수
+	//======================================================
+	bDrawDebug = false; // 기본값은 상태 표시 안 함
 }
 
 void AEnemyAIController::BeginPlay()

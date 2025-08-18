@@ -41,6 +41,10 @@ public:
 	// 달리기 속도 반환
 	virtual float GetRunSpeed() const override { return RunSpeed; }
 
+	// 디버그용 총알 감지 스피어 표시 여부 - 토글용 변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Debug")
+	bool bShowBulletDetectionSphere;
+
 protected:
 	// 원거리 공격 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")

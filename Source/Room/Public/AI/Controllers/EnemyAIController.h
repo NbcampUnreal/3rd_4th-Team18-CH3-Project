@@ -82,8 +82,9 @@ protected:
 	// 디버그 시각화용 타이머 핸들
 	FTimerHandle DebugDrawTimerHandle;
 
-	// 디버그용 시야/감지 상태 표시 여부 - 토글용 변수 (원하면 사용)
-	bool bDrawDebug = true;
+	// 디버그용 시야/감지 상태 표시 여부 - 토글용 변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Debug")
+	bool bDrawDebug;
 
 private:
 	// 캐릭터를 기반으로 CombatType(근거리/원거리)을 블랙보드에 설정
