@@ -12,6 +12,7 @@ class UPauseMenuWidget;
 class UHUDWidget;
 class ULoadingScreenWidget;
 class UInventoryWidget;
+class UGameOverWidget;
 
 UCLASS()
 class ROOM_API UUISubsystem : public URoomSubsystem
@@ -75,6 +76,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsInventoryOpen() const;
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowGameOver(bool bIsClear, int32 FinalScore);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void HideGameOver();
+
 
 private:
 	TWeakObjectPtr<UMainMenuWidget> MainMenuWidget;
@@ -82,6 +89,7 @@ private:
 	TWeakObjectPtr<UHUDWidget> HUDWidget;
 	TWeakObjectPtr<ULoadingScreenWidget> LoadingWidget;
 	TWeakObjectPtr<UInventoryWidget> InventoryWidget;
+	TWeakObjectPtr<UGameOverWidget> GameOverWidget;
 
 	UPROPERTY()
 	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
@@ -100,6 +108,9 @@ private:
 
 	UPROPERTY()
 	TSubclassOf<class ADamageTextActor> DamageTextActorClass;
+
+	UPROPERTY()
+	TSubclassOf<UGameOverWidget> GameOverWidgetClass;
 
 	UPROPERTY(Transient)
 	UUserWidget* MainMenuInstance = nullptr;

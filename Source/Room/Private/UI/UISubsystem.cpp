@@ -4,6 +4,7 @@
 #include "UI/Widget/HUDWidget.h"
 #include "UI/Widget/LoadingScreenWidget.h"
 #include "UI/Widget/DamageTextActor.h"
+#include "UI/Widget/GameOverWidget.h"
 #include "ItemSystem/UI/InventoryWidget/InventoryWidget.h"
 
 #include "Blueprint/UserWidget.h"
@@ -42,6 +43,7 @@ void UUISubsystem::InitUIResources()
     LoadingWidgetClass = UIData->LoadingScreenWidgetClass.LoadSynchronous();
     DamageTextActorClass = UIData->DamageTextActorClass.LoadSynchronous();
     InventoryWidgetClass = UIData->InventoryWidgetClass.LoadSynchronous();
+    GameOverWidgetClass = UIData->GameOverWidgetClass.LoadSynchronous();
 
     if (MainMenuWidgetClass)
     {
@@ -59,6 +61,7 @@ void UUISubsystem::Deinitialize()
     PauseMenuWidget.Reset();
     HUDWidget.Reset();
     InventoryWidget.Reset();
+    GameOverWidget.Reset();
 }
 
 void UUISubsystem::SetUIInputMode()
@@ -283,4 +286,47 @@ void UUISubsystem::UpdateScore(int32 NewScore)
 bool UUISubsystem::IsInventoryOpen() const
 {
     return HUDWidget.IsValid() && HUDWidget->IsInventoryVisible();
+}
+
+void UUISubsystem::ShowGameOver(bool bIsClear, int32 FinalScore)
+{
+    UE_LOG(LogTemp, Warning, TEXT("[UI Load] GameOverWidgetClass=%s"),
+        *GetNameSafe(GameOverWidgetClass));
+    if (!GameOverWidget.IsValid() && GameOverWidgetClass)
+    {
+        GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), GameOverWidgetClass);
+    }
+
+    if (GameOverWidget.IsValid())
+    {
+        HideHUD();
+        GameOverWidget->AddToViewport();
+        SetUIInputMode();
+
+        UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+        GameOverWidget->SetupGameResult(bIsClear, FinalScore);
+
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+        {
+            GameOverWidget->SetUserFocus(PC);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("ShowGameOver failed. Class=%s Widget=%s"),
+            *GetNameSafe(GameOverWidgetClass),
+            *GetNameSafe(GameOverWidget.Get()));
+    }
+}
+
+void UUISubsystem::HideGameOver()
+{
+    if (GameOverWidget.IsValid())
+    {
+        GameOverWidget->RemoveFromParent();
+    }
+
+    SetGameInputMode();
+    UGameplayStatics::SetGamePaused(GetWorld(), false);
 }

@@ -3,8 +3,11 @@
 
 #include "Core/RoomGameMode.h"
 
+#include "AssetTypeCategories.h"
+#include "NavigationSystem.h"
 #include "Actor/LevelConnector.h"
 #include "Components/WeaponComponent.h"
+#include "Core/GameManager.h"
 #include "GameFramework/PlayerState.h"
 #include "ItemSystem/InventoryComponent/InventoryComponent.h"
 #include "ItemSystem/Item/BulletItem/BulletItem.h"
@@ -17,6 +20,7 @@
 #include "Characters/RangedEnemyCharacter.h"
 #include "Actor/Character/BaseCharacter.h"
 #include "Engine/LevelStreamingDynamic.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "StaticData/StaticDataStruct.h"
 #include "Subsystem/LoadingSubsystem.h"
 #include "UI/UISubsystem.h"
@@ -81,9 +85,13 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 			}
 		}
 	}
-	else if (OwnedTags.HasTag(GameDefine::PlayerTag))
+	else if (OwnedTags.HasTag(GameDefine::PlayerTag)
+		|| DeadActor == UGameplayStatics::GetPlayerPawn(this, 0))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player died → OnEndGame(false)"));
 		OnEndGame(false);
+		UE_LOG(LogTemp, Warning, TEXT("DeadActor=%s, HasPlayerTag=%d"),
+			*GetNameSafe(DeadActor), OwnedTags.HasTag(GameDefine::PlayerTag));
 	}
 }
 
@@ -205,12 +213,12 @@ void ARoomGameMode::OnClearLevel()
 
 	PreviousRoomData = RoomData = StaticSys->GetData<FRoomData>(NextDataID);
 
-	// 다음 레벨이 존재하지 않는다 !
 	if (RoomData == nullptr)
 	{
 		OnEndGame(true);
+		return;
 	}
-	
+
 	// 로드 완료된 레벨 정렬
 	// 여기서 TargetConnector 는 미리 선택해둔 커넥터
 	TArray<ALevelConnector*> Connectors;
@@ -228,7 +236,16 @@ void ARoomGameMode::OnClearLevel()
 // 패배하거나 완전이 게임을 클리어 한 시점에 호출.
 void ARoomGameMode::OnEndGame(bool bIsClear)
 {
-	// 인풋방지 UI 출력
+	int32 FinalScore = 0;
+	if (ARoomGameState* RGS = GetGameState<ARoomGameState>())
+	{
+		FinalScore = RGS->Score;
+	}
+
+	if (UUISubsystem* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+	{
+		UI->ShowGameOver(bIsClear, FinalScore);
+	}
 	
 	// TODO : 캐릭터 사망 방지.
 }
@@ -242,6 +259,7 @@ void ARoomGameMode::BeginPlay()
 	
 	InitializeGame();
 	InitializeStartingItem();
+	StartNewRoom();
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
