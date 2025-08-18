@@ -16,6 +16,11 @@ class ROOM_API ABaseCharacter : public ACharacter, public IGameplayTagAssetInter
 
 public:
 	ABaseCharacter();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
+	float Attack = 0.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
+	float Defense = 0.0f;
 	//상속 받은 캐릭터에서 태그 설정
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 

@@ -106,37 +106,5 @@ void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) c
 
 void ABaseCharacter::InitializeFromStaticData(const FStaticData* InStaticData)
 {
-	const FEnemyData* EnemyData = static_cast<const FEnemyData*>(InStaticData);
-	if (!EnemyData)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ABaseCharacter::InitializeFromStaticData: Failed to cast to FEnemyData."));
-		return;
-	}
-
-	if (HealthComponent)
-	{
-		HealthComponent->SetMaxHealth(EnemyData->Stat.HP);
-		//HealthComponent->SetCurrentHealth(EnemyData->Stat.HP); // ????
-	}
-
-	// Set other properties from EnemyData->Stat as needed (Attack, Defense, etc.)
-
-	// AI Controller setup
-	AAIController* AIController = GetController<AAIController>();
-	if (AIController && EnemyData->Behavior)
-	{
-		AIController->RunBehaviorTree(EnemyData->Behavior.Get());
-	}
-
-	UCapsuleComponent* Capsule = GetCapsuleComponent();
-	if (!Capsule) return;
-
-	// 1. 캡슐 중심 위치와 반높이 가져오기
-	FVector CapsuleCenter = Capsule->GetComponentLocation();
-	float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-
-	// 2. 캡슐 Up 벡터
-	FVector CapsuleUp = Capsule->GetUpVector();
-
-	SetActorLocation(GetActorLocation() + CapsuleUp * HalfHeight);
+	//에너미, 플레이어 각각 구현
 }

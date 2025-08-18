@@ -33,6 +33,7 @@ void UStaticDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     RegisterDataManager<FRoomData>(GetDTName<FRoomData>());
     RegisterDataManager<FUIData>(GetDTName<FUIData>());
     RegisterDataManager<FSoundData>(GetDTName<FSoundData>());
+    RegisterDataManager<FStatData>(GetDTName<FStatData>());
 
     RegisterExtraKey<FBulletItemData, int32>([](const FBulletItemData& Data)
     {

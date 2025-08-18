@@ -66,4 +66,8 @@ protected:
 
 	// 사망 처리 함수
 	virtual void HandleDeath() override;
+
+	// ISpawnableFromStaticData interface
+	virtual void InitializeFromStaticData(const FStaticData* InStaticData) override;
+
 };

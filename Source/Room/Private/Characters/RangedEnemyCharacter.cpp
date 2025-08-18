@@ -6,6 +6,7 @@
 #include "Actor/Projectile/BaseProjectile.h"	// 총알 클래스
 #include "Components/SphereComponent.h"			// 스피어 컴포넌트
 #include "Components/CapsuleComponent.h"
+#include "StaticData/EnemyData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 ARangedEnemyCharacter::ARangedEnemyCharacter()
@@ -173,4 +174,45 @@ void ARangedEnemyCharacter::TrackBulletShooter(AActor* BulletShooter)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[AI][ARangedEnemyCharacter] AIController NOT FOUND!"));
 	}
+}
+
+
+void ARangedEnemyCharacter::InitializeFromStaticData(const FStaticData* InStaticData)
+{
+	if (!InStaticData) return;
+	
+	const FEnemyData* EnemyData = static_cast<const FEnemyData*>(InStaticData);
+	if (!EnemyData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("RangedEnemyCharacter::InitializeFromStaticData: Failed to cast to FEnemyData."));
+		return;
+	}
+
+	if (HealthComponent)
+	{
+		HealthComponent->SetMaxHealth(EnemyData->Stat.HP);
+		HealthComponent->SetCurrentHealth(EnemyData->Stat.HP);
+
+	}
+	Attack = EnemyData->Stat.Attack;
+	Defense = EnemyData->Stat.Defense;
+	
+	// AI Controller setup
+	AAIController* AIController = GetController<AAIController>();
+	if (AIController && EnemyData->Behavior)
+	{
+		AIController->RunBehaviorTree(EnemyData->Behavior.Get());
+	}
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (!Capsule) return;
+
+	// 1. 캡슐 중심 위치와 반높이 가져오기
+	FVector CapsuleCenter = Capsule->GetComponentLocation();
+	float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+
+	// 2. 캡슐 Up 벡터
+	FVector CapsuleUp = Capsule->GetUpVector();
+
+	SetActorLocation(GetActorLocation() + CapsuleUp * HalfHeight);
 }
