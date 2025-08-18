@@ -150,8 +150,7 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (!OtherActor || OtherActor == Shooter)
 		return;
 
-	UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] OnSphereOverlap - Actor: %s, Component: %s"),
-		*OtherActor->GetName(), *OtherComp->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] OnSphereOverlap - Actor: %s, Component: %s"), *OtherActor->GetName(), *OtherComp->GetName());
 	
 	if (ABaseCharacter* TargetChar = Cast<ABaseCharacter>(OtherActor))
 	{
@@ -162,14 +161,14 @@ void ABaseProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		// BulletDetectionSphere인 경우: 감지만 하고 데미지는 주지 않음
 		if (OtherComp->GetName().Contains(TEXT("BulletDetection")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] Hit BulletDetectionSphere - No damage, continue"));
+			//UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] Hit BulletDetectionSphere - No damage, continue"));
 			return; // 감지만 하고 총알은 계속 진행
 		}
 
 		// 실제 캐릭터 컴포넌트인 경우 : 데미지 적용
 		if (OtherComp->IsA<UCapsuleComponent>() || OtherComp->IsA<USkeletalMeshComponent>())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] Hit actual character component: %s"), *OtherComp->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("[BaseProjectile] Hit actual character component: %s"), *OtherComp->GetName());
 
 			// 발사자 태그 가져오기
 			FGameplayTag OwnerTag;

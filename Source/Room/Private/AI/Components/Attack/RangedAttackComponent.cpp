@@ -90,7 +90,7 @@ void URangedAttackComponent::PerformRangedAttack()
 			IProjectileDataReciever::Execute_SetDamage(Projectile, AttackDamage);
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called"));
+	//UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called"));
 
 	// 공격 종료 처리 (애니메이션 종료 시 호출할 수도 있음)
 	StopAttack();
