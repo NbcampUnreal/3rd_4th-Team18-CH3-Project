@@ -29,6 +29,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory", meta=(AllowPrivateAccess="true"))
 	TSubclassOf<UInventorySlotWidget> InventorySlotWidgetClass;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UInventorySlotWidget>> InventorySlotWidgets;
 	
 	TWeakObjectPtr<UInventoryComponent> InventoryComponent;

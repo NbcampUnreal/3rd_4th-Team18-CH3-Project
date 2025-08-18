@@ -29,9 +29,9 @@ protected:
 
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Health")
-	float CurrentHealth = 100.0;
+	float CurrentHealth = 500.0;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Health")
-	float MaxHealth = 100.0;
+	float MaxHealth = 500.0;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Health")
 	float DestroyDelay = 5.0f;
 	
