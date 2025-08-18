@@ -85,10 +85,13 @@ void ARoomGameMode::NotifyActorDead(AActor* DeadActor)
 			}
 		}
 	}
-	else if (OwnedTags.HasTag(GameDefine::PlayerTag))
+	else if (OwnedTags.HasTag(GameDefine::PlayerTag)
+		|| DeadActor == UGameplayStatics::GetPlayerPawn(this, 0))
 	{
-		// Player Death Logic
-		// TODO : after GameOver HUD
+		UE_LOG(LogTemp, Warning, TEXT("Player died → OnEndGame(false)"));
+		OnEndGame(false);
+		UE_LOG(LogTemp, Warning, TEXT("DeadActor=%s, HasPlayerTag=%d"),
+			*GetNameSafe(DeadActor), OwnedTags.HasTag(GameDefine::PlayerTag));
 	}
 }
 
@@ -209,6 +212,13 @@ void ARoomGameMode::OnClearLevel()
 		NextDataID = PreviousRoomData->ID + 1;
 
 	PreviousRoomData = RoomData = StaticSys->GetData<FRoomData>(NextDataID);
+
+	if (RoomData == nullptr)
+	{
+		OnEndGame(true);
+		return;
+	}
+
 	// 로드 완료된 레벨 정렬
 	// 여기서 TargetConnector 는 미리 선택해둔 커넥터
 	TArray<ALevelConnector*> Connectors;
@@ -226,7 +236,16 @@ void ARoomGameMode::OnClearLevel()
 // 패배하거나 완전이 게임을 클리어 한 시점에 호출.
 void ARoomGameMode::OnEndGame(bool bIsClear)
 {
-	// 인풋방지 UI 출력
+	int32 FinalScore = 0;
+	if (ARoomGameState* RGS = GetGameState<ARoomGameState>())
+	{
+		FinalScore = RGS->Score;
+	}
+
+	if (UUISubsystem* UI = GetGameInstance()->GetSubsystem<UUISubsystem>())
+	{
+		UI->ShowGameOver(bIsClear, FinalScore);
+	}
 	
 	// TODO : 캐릭터 사망 방지.
 }
@@ -240,6 +259,7 @@ void ARoomGameMode::BeginPlay()
 	
 	InitializeGame();
 	InitializeStartingItem();
+	StartNewRoom();
 }
 
 void ARoomGameMode::OnConstruction(const FTransform& Transform)
@@ -488,5 +508,4 @@ void ARoomGameMode::OnStreamedLevelLoadedHelper()
 		/*DepthPriority=*/0,
 		/*Thickness=*/2.f
 	);
-
 }
