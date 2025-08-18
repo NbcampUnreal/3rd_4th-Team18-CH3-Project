@@ -46,6 +46,9 @@ AMeleeEnemyCharacter::AMeleeEnemyCharacter()
 	// 오버랩 이벤트 바인딩
 	BulletDetectionSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeEnemyCharacter::OnBulletDetected);
 
+	// 디버그용 총알 감지 스피어 표시 여부 - 토글용 변수
+	bShowBulletDetectionSphere = false; // 기본값은 상태 표시 안 함
+
 	//======================================================
 	// 캐릭터가 속한 태그 추가
 	//======================================================
@@ -118,8 +121,8 @@ void AMeleeEnemyCharacter::BeginPlay()
 
 	if (BulletDetectionSphere)
 	{
-		BulletDetectionSphere->SetHiddenInGame(false);
-		BulletDetectionSphere->SetVisibility(true);
+		BulletDetectionSphere->SetHiddenInGame(!bShowBulletDetectionSphere);
+		BulletDetectionSphere->SetVisibility(bShowBulletDetectionSphere);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("[AI][MeleeEnemyCharacter] AI Character has been spawned"));
 }
