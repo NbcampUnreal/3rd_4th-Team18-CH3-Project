@@ -23,6 +23,7 @@ public:
 	virtual void SetDamage_Implementation(float Damage) override;
 protected:
 	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -46,4 +47,6 @@ private:
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnSphereHit(UPrimitiveComponent* HitComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	FTimerHandle ReturnTimer;
 };
