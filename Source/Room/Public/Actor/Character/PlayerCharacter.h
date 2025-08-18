@@ -25,10 +25,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Stat")
 	UDataTable* PlayerStatDataTable;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
-	float Attack = 0.0f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
-	float Defense = 0.0f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
 	float Speed = 700.0f;
 
