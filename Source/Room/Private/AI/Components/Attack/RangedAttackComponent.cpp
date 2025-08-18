@@ -83,6 +83,12 @@ void URangedAttackComponent::PerformRangedAttack()
 	{
 		// Shooter 지정
 		Projectile->Shooter = GetOwner();
+		
+		if (ARangedEnemyCharacter* RangedEnemy = Cast<ARangedEnemyCharacter>(OwnerCharacter))
+		{
+			float AttackDamage = RangedEnemy->Attack;
+			IProjectileDataReciever::Execute_SetDamage(Projectile, AttackDamage);
+		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("[AI][RangedAttack] PerformRangedAttack called"));
 
