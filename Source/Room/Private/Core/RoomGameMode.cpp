@@ -223,6 +223,14 @@ void ARoomGameMode::OnClearLevel()
 	LoadingSys->LoadLevel(*RoomData, OnLoadComplete);
 }
 
+// 패배하거나 완전이 게임을 클리어 한 시점에 호출.
+void ARoomGameMode::OnEndGame(bool bIsClear)
+{
+	// 인풋방지 UI 출력
+	
+	// TODO : 캐릭터 사망 방지.
+}
+
 void ARoomGameMode::BeginPlay()
 {
 	Super::BeginPlay();
