@@ -125,7 +125,7 @@ void ARangedEnemyCharacter::BeginPlay()
 		BulletDetectionSphere->SetHiddenInGame(!bShowBulletDetectionSphere);
 		BulletDetectionSphere->SetVisibility(bShowBulletDetectionSphere);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[AI] AI Character has been spawned"));
+	UE_LOG(LogTemp, Log, TEXT("[AI] AI Character has been spawned"));
 }
 
 void ARangedEnemyCharacter::OnBulletDetected(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -139,7 +139,34 @@ void ARangedEnemyCharacter::OnBulletDetected(UPrimitiveComponent* OverlappedComp
 		AActor* Shooter = Projectile->Shooter;
 		if (Shooter && Shooter != this)
 		{
-			TrackBulletShooter(Shooter);
+			// 총알 발사자의 태그 가져오기
+			FGameplayTag ShooterTag;
+			if (ABaseCharacter* ShooterCharacter = Cast<ABaseCharacter>(Shooter))
+			{
+				FGameplayTagContainer ShooterTags;
+				ShooterCharacter->GetOwnedGameplayTags(ShooterTags);
+				if (ShooterTags.Num() > 0)
+				{
+					ShooterTag = ShooterTags.GetByIndex(0);  // 첫 번째 태그 가져오기
+				}
+			}
+
+			// 자기 자신이 적 AI인지 확인
+			FGameplayTag TargetTag;
+			if (OwnedGameplayTags.HasTag(GameDefine::EnemyTag))
+			{
+				TargetTag = GameDefine::EnemyTag; // 이 캐릭터는 적 AI
+			}
+
+			// 발사자와 목표가 다른 태그를 가질 경우에만 추적
+			if (ShooterTag != TargetTag)
+			{
+				TrackBulletShooter(Shooter);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AI][ARangedEnemyCharacter] Bullet detected from same team. No tracking."));
+			}
 		}
 	}
 }
@@ -172,7 +199,7 @@ void ARangedEnemyCharacter::TrackBulletShooter(AActor* BulletShooter)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AI][ARangedEnemyCharacter] AIController NOT FOUND!"));
+		UE_LOG(LogTemp, Log, TEXT("[AI][ARangedEnemyCharacter] AIController NOT FOUND!"));
 	}
 }
 

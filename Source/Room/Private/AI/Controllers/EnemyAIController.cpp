@@ -362,7 +362,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 			{
 				// 타겟의 마지막 위치를 블랙보드에 기록
 				BlackboardComp->SetValueAsVector(BBKey_TargetLastKnownLocation, ProjectedLocation.Location);
-				UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController][%s] Target sensed: Updating TargetActor & Location: %s"), *GetName(), *ProjectedLocation.Location.ToString());
+				//UE_LOG(LogTemp, Warning, TEXT("[AI][EnemyAIController][%s] Target sensed: Updating TargetActor & Location: %s"), *GetName(), *ProjectedLocation.Location.ToString());
 			}
 			else
 			{// 투영 실패 시 (ex. 내비 영역 밖) 업데이트 생략
